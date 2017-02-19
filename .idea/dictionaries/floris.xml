@@ -5,7 +5,9 @@
       <w>downto</w>
       <w>endl</w>
       <w>iostream</w>
+      <w>nonassoc</w>
       <w>pred</w>
+      <w>summand</w>
     </words>
   </dictionary>
 </component>
