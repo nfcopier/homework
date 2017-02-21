@@ -1,6 +1,7 @@
 <component name="ProjectDictionaryState">
   <dictionary name="floris">
     <words>
+      <w>cerr</w>
       <w>cout</w>
       <w>downto</w>
       <w>endl</w>
@@ -8,6 +9,13 @@
       <w>nonassoc</w>
       <w>pred</w>
       <w>summand</w>
+      <w>yyerror</w>
+      <w>yylex</w>
+      <w>yylineno</w>
+      <w>yylval</w>
+      <w>yyparse</w>
+      <w>yytext</w>
+      <w>yyval</w>
     </words>
   </dictionary>
 </component>

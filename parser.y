@@ -1,26 +1,42 @@
-%{ #include <iostream> %}
+%{
+#include <iostream>
+
+extern unsigned int yylineno;
+
+int yylex(void);
+void yyerror(const char* error) {
+    std::cerr << error << " on line: " << yylineno << std::endl;
+}
+%}
+
+%union {
+    int intValue;
+    char* stringValue;
+    char charValue;
+}
 
 %token DOT_OPERATOR
-%token CONST_KEYWORD
-%token IDENTIFIER
 %token STATEMENT_TERMINATOR
-%token TYPE_KEYWORD
-%token RECORD_KEYWORD
 %token COLON
-%token END_KEYWORD
-%token ARRAY_KEYWORD
 %token OPENING_BRACKET
 %token CLOSING_BRACKET
+%token OPENING_PARENTHESIS
+%token CLOSING_PARENTHESIS
+%token ASSIGNMENT_OPERATOR
+%token COMMA
+
+%token CONST_KEYWORD
+%token TYPE_KEYWORD
+%token RECORD_KEYWORD
+%token END_KEYWORD
+%token ARRAY_KEYWORD
 %token OF_KEYWORD
 %token VARIABLE_KEYWORD
 %token PROCEDURE_KEYWORD
-%token OPENING_PARENTHESIS
-%token CLOSING_PARENTHESIS
 %token FORWARD_KEYWORD
 %token FUNCTION_KEYWORD
 %token REFERENCE_KEYWORD
 %token BEGIN_KEYWORD
-%token ASSIGNMENT_OPERATOR
 %token IF_KEYWORD
 %token THEN_KEYWORD
 %token ELSEIF_KEYWORD
@@ -35,7 +51,6 @@
 %token STOP_KEYWORD
 %token RETURN_KEYWORD
 %token READ_KEYWORD
-%token COMMA
 %token WRITE_KEYWORD
 
 %left OR_OPERATOR
@@ -62,6 +77,10 @@
 %token PRED_KEYWORD
 %token SUCC_KEYWORD
 
+%token IDENTIFIER
+%token NUMERIC_CONSTANT
+%token STRING_CONSTANT
+%token CHARACTER_CONSTANT
 %start program
 
 %%
@@ -73,7 +92,6 @@ program:
     call_definition_list_maybe
     block
     DOT_OPERATOR
-    { std::cout << "program" << std::endl; }
 ;
 
 constant_declaration_list_maybe:
@@ -90,10 +108,10 @@ constant_declaration_list:
 
 constant_declaration:
     IDENTIFIER
+    { std::cout << "Line" << yylineno << "\tIdentifier: " << yylval.stringValue << std::endl; }
     EQUALS_SIGN
     expression
     STATEMENT_TERMINATOR
-    { std::cout << "constant_declaration" << std::endl; }
 ;
 
 type_declaration_list_maybe:
@@ -110,24 +128,22 @@ type_declaration_list:
 
 type_declaration:
     IDENTIFIER
+    { std::cout << "Line" << yylineno << "\tIdentifier: " << yylval.stringValue << std::endl; }
     EQUALS_SIGN
     type
     STATEMENT_TERMINATOR
-    { std::cout << "type_declaration" << std::endl; }
 ;
 
 type:
     IDENTIFIER
 |   record_type
 |   array_type
-    { std::cout << "type" << std::endl; }
 ;
 
 record_type:
     RECORD_KEYWORD
     identifiers_by_type_list_maybe
     END_KEYWORD
-    { std::cout << "record_type" << std::endl; }
 ;
 
 identifiers_by_type_list_maybe:
@@ -144,13 +160,12 @@ array_type:
     CLOSING_BRACKET
     OF_KEYWORD
     type
-    { std::cout << "array_type" << std::endl; }
 ;
 
 variable_declaration_list_maybe:
     %empty
 |   VARIABLE_KEYWORD
-    identifiers_by_type
+    identifiers_by_type_list
 ;
 
 identifiers_by_type_list:
@@ -168,9 +183,11 @@ identifiers_by_type:
 
 identifier_list:
     IDENTIFIER
+    { std::cout << "Line" << yylineno << "\tIdentifier: " << yylval.stringValue << std::endl; }
 |   identifier_list
     COMMA
     IDENTIFIER
+    { std::cout << "Line" << yylineno << "\tIdentifier: " << yylval.stringValue << std::endl; }
 ;
 
 call_definition_list_maybe:
@@ -192,18 +209,19 @@ call_definition:
 procedure_declaration:
     PROCEDURE_KEYWORD
     IDENTIFIER
+    { std::cout << "Line" << yylineno << "\tIdentifier: " << yylval.stringValue << std::endl; }
     OPENING_PARENTHESIS
     parameter_list_maybe
     CLOSING_PARENTHESIS
     STATEMENT_TERMINATOR
     function_body
     STATEMENT_TERMINATOR
-    { std::cout << "procedure_declaration" << std::endl; }
 ;
 
 function_declaration:
     FUNCTION_KEYWORD
     IDENTIFIER
+    { std::cout << "Line" << yylineno << "\tIdentifier: " << yylval.stringValue << std::endl; }
     OPENING_PARENTHESIS
     parameter_list_maybe
     CLOSING_PARENTHESIS
@@ -212,13 +230,11 @@ function_declaration:
     STATEMENT_TERMINATOR
     function_body
     STATEMENT_TERMINATOR
-    { std::cout << "function_declaration" << std::endl; }
 ;
 
 parameter_list_maybe:
     %empty
 |   parameter_declaration_list
-    { std::cout << "parameter_list" << std::endl; }
 ;
 
 parameter_declaration_list:
@@ -233,7 +249,6 @@ parameter_declaration:
     identifier_list
     COLON
     type
-    { std::cout << "parameter_declaration" << std::endl; }
 ;
 
 var_or_ref_keyword:
@@ -251,14 +266,12 @@ body:
     type_declaration_list_maybe
     variable_declaration_list_maybe
     block
-    { std::cout << "body" << std::endl; }
 ;
 
 block:
     BEGIN_KEYWORD
     statement_sequence
     END_KEYWORD
-    { std::cout << "block" << std::endl; }
 ;
 
 statement_sequence:
@@ -286,7 +299,6 @@ assignment:
     l_value
     ASSIGNMENT_OPERATOR
     expression
-    { std::cout << "assignment" << std::endl; }
 ;
 
 if_statement:
@@ -296,7 +308,6 @@ if_statement:
     statement_sequence
     else_sequence_maybe
     END_KEYWORD
-    { std::cout << "if_statement" << std::endl; }
 ;
 
 else_sequence_maybe:
@@ -335,7 +346,6 @@ while_statement:
     DO_KEYWORD
     statement_sequence
     END_KEYWORD
-    { std::cout << "while_statement" << std::endl; }
 ;
 
 repeat_statement:
@@ -343,20 +353,16 @@ repeat_statement:
     statement_sequence
     UNTIL_KEYWORD
     expression
-    { std::cout << "repeat_statement" << std::endl; }
 ;
 
 for_statement:
     FOR_KEYWORD
-    IDENTIFIER
-    ASSIGNMENT_OPERATOR
-    expression
+    assignment
     to_or_downto
     expression
     DO_KEYWORD
     statement_sequence
     END_KEYWORD
-    { std::cout << "for_statement" << std::endl; }
 ;
 
 to_or_downto:
@@ -366,14 +372,12 @@ to_or_downto:
 
 stop_statement:
     STOP_KEYWORD
-    { std::cout << "stop_statement" << std::endl; }
 ;
 
 return_statement:
     RETURN_KEYWORD
     expression
 |   RETURN_KEYWORD
-    { std::cout << "return_statement" << std::endl; }
 ;
 
 read_statement:
@@ -381,7 +385,6 @@ read_statement:
     OPENING_PARENTHESIS
     l_value_list
     CLOSING_PARENTHESIS
-    { std::cout << "read_statement" << std::endl; }
 ;
 
 l_value_list:
@@ -396,12 +399,10 @@ write_statement:
     OPENING_PARENTHESIS
     parameters
     CLOSING_PARENTHESIS
-    { std::cout << "write_statement" << std::endl; }
 ;
 
 null_statement:
     %empty
-    { std::cout << "null_statement" << std::endl; }
 ;
 
 expression:
@@ -432,104 +433,88 @@ or_expression:
     expression
     OR_OPERATOR
     expression
-    { std::cout << "boolean_or" << std::endl; }
 ;
 and_expression:
     expression
     AND_OPERATOR
     expression
-    { std::cout << "boolean_and" << std::endl; }
 ;
 equivalence:
     expression
     EQUALS_SIGN
     expression
-    { std::cout << "equivalence" << std::endl; }
 ;
 non_equivalence:
     expression
     NON_EQUIVALENCE_OPERATOR
     expression
-    { std::cout << "non_equivalence" << std::endl; }
 ;
 less_than_comparison:
     expression
     LESS_THAN_OPERATOR
     expression
-    { std::cout << "less_than_comparison" << std::endl; }
 ;
 less_equal_comparison:
     expression
     LESS_EQUAL_OPERATOR
     expression
-    { std::cout << "less_equal_comparison" << std::endl; }
 ;
 greater_than_comparison:
     expression
     GREATER_THAN_OPERATOR
     expression
-    { std::cout << "greater_than_comparison" << std::endl; }
 ;
 greater_equal_comparison:
     expression
     GREATER_EQUAL_OPERATOR
     expression
-    { std::cout << "greater_equal_comparison" << std::endl; }
 ;
 addition:
     expression
     PLUS_SIGN
     expression
-    { std::cout << "addition" << std::endl; }
 ;
 subtraction:
     expression
     MINUS_SIGN
     expression
-    { std::cout << "subtraction" << std::endl; }
 ;
 multiplication:
     expression
     MULTIPLY_SIGN
     expression
-    { std::cout << "multiplication" << std::endl; }
 ;
 division:
     expression
     DIVIDE_SIGN
     expression
-    { std::cout << "division" << std::endl; }
 ;
 modulo_division:
     expression
     MODULO_SIGN
     expression
-    { std::cout << "modulo_division" << std::endl; }
 ;
 not_expression:
     NOT_OPERATOR
     expression
-    { std::cout << "boolean_not" << std::endl; }
 ;
 negation:
     MINUS_SIGN %prec UNARY_MINUS
     expression
-    { std::cout << "negation" << std::endl; }
 ;
 
 parenthetic_expression:
     OPENING_PARENTHESIS
     expression
     CLOSING_PARENTHESIS
-    { std::cout << "parenthetic_expression" << std::endl; }
 ;
 
 procedure_call:
     IDENTIFIER
+    { std::cout << "Identifier: " << yylval.stringValue << std::endl; }
     OPENING_PARENTHESIS
     parameters
     CLOSING_PARENTHESIS
-    { std::cout << "procedure_call" << std::endl; }
 ;
 
 parameters:
@@ -537,7 +522,6 @@ parameters:
 |   parameters
     COMMA
     expression
-    { std::cout << "parameters" << std::endl; }
 ;
 
 character_cast:
@@ -545,7 +529,6 @@ character_cast:
     OPENING_PARENTHESIS
     expression
     CLOSING_PARENTHESIS
-    { std::cout << "character_cast" << std::endl; }
 ;
 
 ordinal_cast:
@@ -553,7 +536,6 @@ ordinal_cast:
     OPENING_PARENTHESIS
     expression
     CLOSING_PARENTHESIS
-    { std::cout << "ordinal_cast" << std::endl; }
 ;
 
 predecessor:
@@ -561,7 +543,6 @@ predecessor:
     OPENING_PARENTHESIS
     expression
     CLOSING_PARENTHESIS
-    { std::cout << "predecessor" << std::endl; }
 ;
 
 successor:
@@ -569,13 +550,18 @@ successor:
     OPENING_PARENTHESIS
     expression
     CLOSING_PARENTHESIS
-    { std::cout << "successor" << std::endl; }
 ;
 
 l_value:
-    IDENTIFIER
+    NUMERIC_CONSTANT
+    { std::cout << " int_l_value: " << yylval.intValue; }
+|   CHARACTER_CONSTANT
+    { std::cout << " char_l_value" << yylval.stringValue; }
+|   STRING_CONSTANT
+    { std::cout << " string_l_value: " << yylval.stringValue; }
+|   IDENTIFIER
+    { std::cout << " id_l_value: " << yylval.stringValue; }
     l_value_access_list_maybe
-    { std::cout << "l_value" << std::endl; }
 ;
 
 l_value_access_list_maybe:
