@@ -1,19 +1,20 @@
-%{
+%skeleton "lalr1.cc"
+
+%code{
 #include <iostream>
+#include <vector>
+    #include <stdlib.h>
+#include "ParserInterface.h"
 
 extern unsigned int yylineno;
 
-int yylex(void);
-void yyerror(const char* error) {
+int yylex(yy::parser::semantic_type* const $1);
+void yy::parser::error(const std::string& error) {
     std::cerr << error << " on line: " << yylineno << std::endl;
 }
-%}
-
-%union {
-    int intValue;
-    char* stringValue;
-    char charValue;
 }
+
+%define api.value.type variant
 
 %token DOT_OPERATOR
 %token STATEMENT_TERMINATOR
@@ -83,6 +84,9 @@ void yyerror(const char* error) {
 %token CHARACTER_CONSTANT
 %start program
 
+%type <std::vector<char*>*> identifier_list
+%type <char*> IDENTIFIER
+
 %%
 
 program:
@@ -108,7 +112,7 @@ constant_declaration_list:
 
 constant_declaration:
     IDENTIFIER
-    { std::cout << "Line" << yylineno << "\tIdentifier: " << yylval.stringValue << std::endl; }
+    { std::cout << "Line" << yylineno << "\tIdentifier: " << $1 << std::endl; }
     EQUALS_SIGN
     expression
     STATEMENT_TERMINATOR
@@ -128,7 +132,7 @@ type_declaration_list:
 
 type_declaration:
     IDENTIFIER
-    { std::cout << "Line" << yylineno << "\tIdentifier: " << yylval.stringValue << std::endl; }
+    { std::cout << "Line" << yylineno << "\tIdentifier: " << $1 << std::endl; }
     EQUALS_SIGN
     type
     STATEMENT_TERMINATOR
@@ -183,11 +187,11 @@ identifiers_by_type:
 
 identifier_list:
     IDENTIFIER
-    { std::cout << "Line" << yylineno << "\tIdentifier: " << yylval.stringValue << std::endl; }
+    { $$ = new std::vector<char*>(); $$->push_back($1); }
 |   identifier_list
     COMMA
     IDENTIFIER
-    { std::cout << "Line" << yylineno << "\tIdentifier: " << yylval.stringValue << std::endl; }
+    { $$ = $1; $$->push_back($3); std::cout << "Line" << yylineno << "\tIdentifier: " << $3 << std::endl; }
 ;
 
 call_definition_list_maybe:
@@ -209,7 +213,6 @@ call_definition:
 procedure_declaration:
     PROCEDURE_KEYWORD
     IDENTIFIER
-    { std::cout << "Line" << yylineno << "\tIdentifier: " << yylval.stringValue << std::endl; }
     OPENING_PARENTHESIS
     parameter_list_maybe
     CLOSING_PARENTHESIS
@@ -221,7 +224,6 @@ procedure_declaration:
 function_declaration:
     FUNCTION_KEYWORD
     IDENTIFIER
-    { std::cout << "Line" << yylineno << "\tIdentifier: " << yylval.stringValue << std::endl; }
     OPENING_PARENTHESIS
     parameter_list_maybe
     CLOSING_PARENTHESIS
@@ -511,7 +513,7 @@ parenthetic_expression:
 
 procedure_call:
     IDENTIFIER
-    { std::cout << "Identifier: " << yylval.stringValue << std::endl; }
+    { std::cout << "Identifier: " << $1 << std::endl; }
     OPENING_PARENTHESIS
     parameters
     CLOSING_PARENTHESIS
@@ -554,13 +556,9 @@ successor:
 
 l_value:
     NUMERIC_CONSTANT
-    { std::cout << " int_l_value: " << yylval.intValue; }
 |   CHARACTER_CONSTANT
-    { std::cout << " char_l_value" << yylval.stringValue; }
 |   STRING_CONSTANT
-    { std::cout << " string_l_value: " << yylval.stringValue; }
 |   IDENTIFIER
-    { std::cout << " id_l_value: " << yylval.stringValue; }
     l_value_access_list_maybe
 ;
 

@@ -7,6 +7,7 @@
       <w>endl</w>
       <w>iostream</w>
       <w>nonassoc</w>
+      <w>noyywrap</w>
       <w>pred</w>
       <w>summand</w>
       <w>yyerror</w>

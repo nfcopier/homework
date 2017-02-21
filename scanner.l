@@ -2,9 +2,11 @@
 
 %{
     #include <iostream>
-    #include <stdlib.h>
     #include <string.h>
-    #include "parser.tab.h"
+    #include "parser.tab.hpp"
+    typedef yy::parser::token Token;
+    #undef YY_DECL
+    #define YY_DECL int yylex(yy::parser::semantic_type* const yylval)
 %}
 
 %option yylineno
@@ -63,68 +65,68 @@ CATCHALL                        .
 
 %%
 
-{ARRAY}                         { return ARRAY_KEYWORD; }
-{BEGIN}                         { return BEGIN_KEYWORD; }
-{CHR}                           { return CHR_KEYWORD; }
-{CONST}                         { return CONST_KEYWORD; }
-{DO}                            { return DO_KEYWORD; }
-{DOWNTO}                        { return DOWNTO_KEYWORD; }
-{ELSE}                          { return ELSE_KEYWORD; }
-{ELSEIF}                        { return ELSEIF_KEYWORD; }
-{END}                           { return END_KEYWORD; }
-{FOR}                           { return FOR_KEYWORD; }
-{FORWARD}                       { return FORWARD_KEYWORD; }
-{FUNCTION}                      { return FUNCTION_KEYWORD; }
-{IF}                            { return IF_KEYWORD; }
-{OF}                            { return OF_KEYWORD; }
-{ORD}                           { return ORD_KEYWORD; }
-{PRED}                          { return PRED_KEYWORD; }
-{PROCEDURE}                     { return PROCEDURE_KEYWORD; }
-{READ}                          { return READ_KEYWORD; }
-{RECORD}                        { return RECORD_KEYWORD; }
-{REF}                           { return REFERENCE_KEYWORD; }
-{REPEAT}                        { return REPEAT_KEYWORD; }
-{RETURN}                        { return RETURN_KEYWORD; }
-{STOP}                          { return STOP_KEYWORD; }
-{SUCC}                          { return SUCC_KEYWORD; }
-{THEN}                          { return THEN_KEYWORD; }
-{TO}                            { return TO_KEYWORD; }
-{TYPE}                          { return TYPE_KEYWORD; }
-{UNTIL}                         { return UNTIL_KEYWORD; }
-{VAR}                           { return VARIABLE_KEYWORD; }
-{WHILE}                         { return WHILE_KEYWORD; }
-{WRITE}                         { return WRITE_KEYWORD; }
+{ARRAY}                         { return Token::ARRAY_KEYWORD; }
+{BEGIN}                         { return Token::BEGIN_KEYWORD; }
+{CHR}                           { return Token::CHR_KEYWORD; }
+{CONST}                         { return Token::CONST_KEYWORD; }
+{DO}                            { return Token::DO_KEYWORD; }
+{DOWNTO}                        { return Token::DOWNTO_KEYWORD; }
+{ELSE}                          { return Token::ELSE_KEYWORD; }
+{ELSEIF}                        { return Token::ELSEIF_KEYWORD; }
+{END}                           { return Token::END_KEYWORD; }
+{FOR}                           { return Token::FOR_KEYWORD; }
+{FORWARD}                       { return Token::FORWARD_KEYWORD; }
+{FUNCTION}                      { return Token::FUNCTION_KEYWORD; }
+{IF}                            { return Token::IF_KEYWORD; }
+{OF}                            { return Token::OF_KEYWORD; }
+{ORD}                           { return Token::ORD_KEYWORD; }
+{PRED}                          { return Token::PRED_KEYWORD; }
+{PROCEDURE}                     { return Token::PROCEDURE_KEYWORD; }
+{READ}                          { return Token::READ_KEYWORD; }
+{RECORD}                        { return Token::RECORD_KEYWORD; }
+{REF}                           { return Token::REFERENCE_KEYWORD; }
+{REPEAT}                        { return Token::REPEAT_KEYWORD; }
+{RETURN}                        { return Token::RETURN_KEYWORD; }
+{STOP}                          { return Token::STOP_KEYWORD; }
+{SUCC}                          { return Token::SUCC_KEYWORD; }
+{THEN}                          { return Token::THEN_KEYWORD; }
+{TO}                            { return Token::TO_KEYWORD; }
+{TYPE}                          { return Token::TYPE_KEYWORD; }
+{UNTIL}                         { return Token::UNTIL_KEYWORD; }
+{VAR}                           { return Token::VARIABLE_KEYWORD; }
+{WHILE}                         { return Token::WHILE_KEYWORD; }
+{WRITE}                         { return Token::WRITE_KEYWORD; }
 
-{IDENTIFIER}                    { yylval.stringValue = strdup(yytext); return IDENTIFIER; }
-{NUMERIC_CONSTANT}              { yylval.intValue = atoi(yytext); return NUMERIC_CONSTANT; }
-{CHARACTER_CONSTANT}            { yylval.stringValue = strdup(yytext); return CHARACTER_CONSTANT; }
-{STRING_CONSTANT}               { yylval.stringValue = strdup(yytext); return STRING_CONSTANT; }
+{IDENTIFIER}                    { yylval->build<char*>(yytext); return Token::IDENTIFIER; }
+{NUMERIC_CONSTANT}              { yylval->build<char*>(yytext); return Token::NUMERIC_CONSTANT; }
+{CHARACTER_CONSTANT}            { yylval->build<char*>(yytext); return Token::CHARACTER_CONSTANT; }
+{STRING_CONSTANT}               { yylval->build<char*>(yytext); return Token::STRING_CONSTANT; }
 
-"."                             { return DOT_OPERATOR; }
-";"                             { return STATEMENT_TERMINATOR; }
-":"                             { return COLON; }
-"["                             { return OPENING_BRACKET; }
-"]"                             { return CLOSING_BRACKET; }
-"("                             { return OPENING_PARENTHESIS; }
-")"                             { return CLOSING_PARENTHESIS; }
-":="                            { return ASSIGNMENT_OPERATOR; }
-","                             { return COMMA; }
+"."                             { return Token::DOT_OPERATOR; }
+";"                             { return Token::STATEMENT_TERMINATOR; }
+":"                             { return Token::COLON; }
+"["                             { return Token::OPENING_BRACKET; }
+"]"                             { return Token::CLOSING_BRACKET; }
+"("                             { return Token::OPENING_PARENTHESIS; }
+")"                             { return Token::CLOSING_PARENTHESIS; }
+":="                            { return Token::ASSIGNMENT_OPERATOR; }
+","                             { return Token::COMMA; }
 
 
-"|"                             { return OR_OPERATOR; }
-"&"                             { return AND_OPERATOR; }
-"~"                             { return NOT_OPERATOR; }
-"="                             { return EQUALS_SIGN; }
-"<>"                            { return NON_EQUIVALENCE_OPERATOR; }
-"<"                             { return LESS_THAN_OPERATOR; }
-"<="                            { return LESS_EQUAL_OPERATOR; }
-">"                             { return GREATER_THAN_OPERATOR; }
-">="                            { return GREATER_EQUAL_OPERATOR; }
-"+"                             { return PLUS_SIGN; }
-"-"                             { return MINUS_SIGN; }
-"*"                             { return MULTIPLY_SIGN; }
-"/"                             { return DIVIDE_SIGN; }
-"%"                             { return MODULO_SIGN; }
+"|"                             { return Token::OR_OPERATOR; }
+"&"                             { return Token::AND_OPERATOR; }
+"~"                             { return Token::NOT_OPERATOR; }
+"="                             { return Token::EQUALS_SIGN; }
+"<>"                            { return Token::NON_EQUIVALENCE_OPERATOR; }
+"<"                             { return Token::LESS_THAN_OPERATOR; }
+"<="                            { return Token::LESS_EQUAL_OPERATOR; }
+">"                             { return Token::GREATER_THAN_OPERATOR; }
+">="                            { return Token::GREATER_EQUAL_OPERATOR; }
+"+"                             { return Token::PLUS_SIGN; }
+"-"                             { return Token::MINUS_SIGN; }
+"*"                             { return Token::MULTIPLY_SIGN; }
+"/"                             { return Token::DIVIDE_SIGN; }
+"%"                             { return Token::MODULO_SIGN; }
 
 {COMMENT}                       {}
 {NEWLINE}                       {}
@@ -134,7 +136,8 @@ CATCHALL                        .
 %%
 
 int main() {
-    yyparse();
+    yy::parser parser;
+    parser.parse();
     std::cout << "Line Count:\t" << yylineno << std::endl;
     return 0;
 }
