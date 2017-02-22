@@ -2,7 +2,24 @@
 <module type="CPP_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/NumericLiteral.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ExpressionInRegister.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Variable.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Literal.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/CharacterLiteral.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ParserInterface.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/CharacterLiteral.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/SymbolTable.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/BooleanLiteral.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/StringLiteral.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Variable.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/NumericLiteral.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Symbol.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ParserInterface.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/IdentifierList.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/IExpression.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/SymbolTable.cpp" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">

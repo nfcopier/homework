@@ -52,9 +52,9 @@ WRITE                           (write)|(WRITE)
 
 IDENTIFIER                      {LETTER}({UNDERSCORE}|{DIGIT}|{LETTER})*
 
-NUMERIC_CONSTANT                "-"?(0|(0x))?({HEX_DIGIT})+
-CHARACTER_CONSTANT              "'"(.|(\\[[:print:]]))"'"
-STRING_CONSTANT                 \"(\\.|[^\\"])*\"
+NUMERIC_LITERAL                "-"?(0|(0x))?({HEX_DIGIT})+
+CHARACTER_LITERAL              "'"(.|(\\[[:print:]]))"'"
+STRING_LITERAL                 \"(\\.|[^\\"])*\"
 
 COMMENT                         \$.*\n
 NEW_LINE                        \n
@@ -98,9 +98,9 @@ CATCHALL                        .
 {WRITE}                         { return Token::WRITE_KEYWORD; }
 
 {IDENTIFIER}                    { yylval->build<char*>(yytext); return Token::IDENTIFIER; }
-{NUMERIC_CONSTANT}              { yylval->build<char*>(yytext); return Token::NUMERIC_CONSTANT; }
-{CHARACTER_CONSTANT}            { yylval->build<char*>(yytext); return Token::CHARACTER_CONSTANT; }
-{STRING_CONSTANT}               { yylval->build<char*>(yytext); return Token::STRING_CONSTANT; }
+{NUMERIC_LITERAL}              { yylval->build<int>(atoi(yytext)); return Token::NUMERIC_LITERAL; }
+{CHARACTER_LITERAL}            { yylval->build<char>(yytext[0]); return Token::CHARACTER_LITERAL; }
+{STRING_LITERAL}               { yylval->build<char*>(yytext); return Token::STRING_LITERAL; }
 
 "."                             { return Token::DOT_OPERATOR; }
 ";"                             { return Token::STATEMENT_TERMINATOR; }
