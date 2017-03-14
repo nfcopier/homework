@@ -427,7 +427,6 @@ void ParserInterface::Assign(Symbol* variable, IExpression* rvalue) {
 ExpressionInRegister& ParserInterface::getRegisterFor(IExpression* expr) {
     if (!expr->IsConstant()) return (ExpressionInRegister&)*expr;
     auto& result = *Encoder::Instance().LoadImmediate((Literal*)expr);
-    delete expr;
     return result;
 }
 

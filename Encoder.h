@@ -11,11 +11,13 @@
 #include <vector>
 #include "ExpressionInRegister.h"
 #include "Variable.h"
+#include "WhileStatement.h"
+#include "RepeatStatement.h"
 
 class Encoder {
 private:
     std::ostream& out_;
-    std::stringstream instructionBuffer;
+    std::stringstream instructionBuffer_;
     std::vector<std::string*> strings_;
     static Encoder* instance_;
 protected:
@@ -40,6 +42,13 @@ public:
     ExpressionInRegister* Read(ExpressionType type);
     ExpressionInRegister* LoadImmediate(Literal* literal);
     ExpressionInRegister* LoadFrom(Variable* variable);
+
+    void Start(WhileStatement& whileStatement);
+    void Test(WhileStatement& whileStatement, ExpressionInRegister& condition);
+    void End(WhileStatement& whileStatement);
+
+    void Start(RepeatStatement& repeatStatement);
+    void Test(RepeatStatement& repeatStatement, ExpressionInRegister& condition);
 };
 
 

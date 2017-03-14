@@ -2,6 +2,7 @@
 
 %code requires {
     #include <string.h>
+    #include "StatementController.h"
     #include "ParserInterface.h"
     extern int yyleng;
 }
@@ -121,6 +122,9 @@ void yy::parser::error(const std::string& error) {
 %type <Symbol*> l_value
 %type <std::vector<Symbol*>*> l_value_list
 %type <std::vector<IExpression*>*> parameters
+
+%type <WhileStatement*> while_header
+%type <RepeatStatement*> repeat_header
 
 %%
 
@@ -391,18 +395,31 @@ else_declaration:
 ;
 
 while_statement:
-    WHILE_KEYWORD
+    while_header
     expression
+    { StatementController::Instance().Test( $1, $2 ); }
     DO_KEYWORD
     statement_sequence
+    { StatementController::Instance().End( $1 ); }
     END_KEYWORD
 ;
 
+while_header:
+    WHILE_KEYWORD
+    { $$ = StatementController::Instance().StartWhile(); }
+;
+
 repeat_statement:
-    REPEAT_KEYWORD
+    repeat_header
     statement_sequence
     UNTIL_KEYWORD
     expression
+    { StatementController::Instance().Test( $1, $4 ); }
+;
+
+repeat_header:
+    REPEAT_KEYWORD
+    { $$ = StatementController::Instance().StartRepeat(); }
 ;
 
 for_statement:

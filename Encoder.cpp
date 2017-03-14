@@ -25,88 +25,88 @@ Encoder& Encoder::Instance() {
 
 ExpressionInRegister* Encoder::Modulo(ExpressionInRegister& left, ExpressionInRegister& right) {
     auto outExpr = new ExpressionInRegister(left.GetType());
-    instructionBuffer << "div \t$t" << left.GetAddress() << ", $t" << right.GetAddress() << std::endl;
-    instructionBuffer << "mfhi\t$t" << outExpr->GetAddress() << std::endl;
+    instructionBuffer_ << "div \t$t" << left.GetAddress() << ", $t" << right.GetAddress() << std::endl;
+    instructionBuffer_ << "mfhi\t$t" << outExpr->GetAddress() << std::endl;
     return outExpr;
 }
 
 ExpressionInRegister* Encoder::Divide(ExpressionInRegister& left, ExpressionInRegister& right) {
     auto outExpr = new ExpressionInRegister(left.GetType());
-    instructionBuffer << "div \t$t" << left.GetAddress() << ", $t" << right.GetAddress() << std::endl;
-    instructionBuffer << "mflo\t$t" << outExpr->GetAddress() << std::endl;
+    instructionBuffer_ << "div \t$t" << left.GetAddress() << ", $t" << right.GetAddress() << std::endl;
+    instructionBuffer_ << "mflo\t$t" << outExpr->GetAddress() << std::endl;
     return outExpr;
 }
 
 ExpressionInRegister* Encoder::Multiply(ExpressionInRegister& left, ExpressionInRegister& right) {
     auto outExpr = new ExpressionInRegister(left.GetType());
-    instructionBuffer << "mult\t$t" << left.GetAddress() << ", $t" << right.GetAddress() << std::endl;
-    instructionBuffer << "mflo\t$t" << outExpr->GetAddress() << std::endl;
+    instructionBuffer_ << "mult\t$t" << left.GetAddress() << ", $t" << right.GetAddress() << std::endl;
+    instructionBuffer_ << "mflo\t$t" << outExpr->GetAddress() << std::endl;
     return outExpr;
 }
 
 ExpressionInRegister* Encoder::Subtract(ExpressionInRegister& left, ExpressionInRegister& right) {
     auto outExpr = new ExpressionInRegister(left.GetType());
-    instructionBuffer << "sub \t$t" << outExpr->GetAddress() << ", $t" << left.GetAddress() << ", $t" << right.GetAddress() << std::endl;
+    instructionBuffer_ << "sub \t$t" << outExpr->GetAddress() << ", $t" << left.GetAddress() << ", $t" << right.GetAddress() << std::endl;
     return outExpr;
 }
 
 ExpressionInRegister* Encoder::Add(ExpressionInRegister& left, ExpressionInRegister& right) {
     auto outExpr = new ExpressionInRegister(left.GetType());
-    instructionBuffer << "add \t$t" << outExpr->GetAddress() << ", $t" << left.GetAddress() << ", $t" << right.GetAddress() << std::endl;
+    instructionBuffer_ << "add \t$t" << outExpr->GetAddress() << ", $t" << left.GetAddress() << ", $t" << right.GetAddress() << std::endl;
     return outExpr;
 }
 
 ExpressionInRegister* Encoder::CompareGreater(ExpressionInRegister& left, ExpressionInRegister& right) {
     auto outExpr = new ExpressionInRegister(ExpressionType::BOOLEAN);
-    instructionBuffer << "slt \t$t" << outExpr->GetAddress() << ", $t" << right.GetAddress() << ", $t" << left.GetAddress() << std::endl;
+    instructionBuffer_ << "slt \t$t" << outExpr->GetAddress() << ", $t" << right.GetAddress() << ", $t" << left.GetAddress() << std::endl;
     return outExpr;
 }
 
 ExpressionInRegister* Encoder::CompareGreaterOrEqual(ExpressionInRegister& left, ExpressionInRegister& right) {
     auto outExpr = new ExpressionInRegister(ExpressionType::BOOLEAN);
-    instructionBuffer << "sle \t$t" << outExpr->GetAddress() << ", $t" << right.GetAddress() << ", $t" << left.GetAddress() << std::endl;
+    instructionBuffer_ << "sle \t$t" << outExpr->GetAddress() << ", $t" << right.GetAddress() << ", $t" << left.GetAddress() << std::endl;
     return outExpr;
 }
 
 ExpressionInRegister* Encoder::CompareNotEqual(ExpressionInRegister& left, ExpressionInRegister& right) {
     auto outExpr = new ExpressionInRegister(ExpressionType::BOOLEAN);
-    instructionBuffer << "sne \t$t" << outExpr->GetAddress() << ", $t" << left.GetAddress() << ", $t" << right.GetAddress() << std::endl;
+    instructionBuffer_ << "sne \t$t" << outExpr->GetAddress() << ", $t" << left.GetAddress() << ", $t" << right.GetAddress() << std::endl;
     return outExpr;
 }
 
 ExpressionInRegister* Encoder::CompareEqual(ExpressionInRegister& left, ExpressionInRegister& right) {
     auto outExpr = new ExpressionInRegister(ExpressionType::BOOLEAN);
-    instructionBuffer << "seq \t$t" << outExpr->GetAddress() << ", $t" << left.GetAddress() << ", $t" << right.GetAddress() << std::endl;
+    instructionBuffer_ << "seq \t$t" << outExpr->GetAddress() << ", $t" << left.GetAddress() << ", $t" << right.GetAddress() << std::endl;
     return outExpr;
 }
 
 ExpressionInRegister* Encoder::Or(ExpressionInRegister& left, ExpressionInRegister& right) {
     auto outExpr = new ExpressionInRegister(ExpressionType::BOOLEAN);
-    instructionBuffer << "or  \t$t" << outExpr->GetAddress() << ", $t" << left.GetAddress() << ", $t" << right.GetAddress() << std::endl;
+    instructionBuffer_ << "or  \t$t" << outExpr->GetAddress() << ", $t" << left.GetAddress() << ", $t" << right.GetAddress() << std::endl;
     return outExpr;
 }
 
 ExpressionInRegister* Encoder::And(ExpressionInRegister& left, ExpressionInRegister& right) {
     auto outExpr = new ExpressionInRegister(ExpressionType::BOOLEAN);
-    instructionBuffer << "and \t$t" << outExpr->GetAddress() << ", $t" << left.GetAddress() << ", $t" << right.GetAddress() << std::endl;
+    instructionBuffer_ << "and \t$t" << outExpr->GetAddress() << ", $t" << left.GetAddress() << ", $t" << right.GetAddress() << std::endl;
     return outExpr;
 }
 
 void Encoder::EndProgram() {
     printOutStrings(out_, strings_);
-    printOutInstructions(instructionBuffer, out_);
+    printOutInstructions(instructionBuffer_, out_);
     out_ << "li  \t$v0, 10" << std::endl;
     out_ << "syscall" << std::endl;
 }
 
 void Encoder::Assign(Variable& variable, ExpressionInRegister* reg) {
-    instructionBuffer << "sw  \t$t" << reg->GetAddress() << ", " << getAddressFrom(variable) << std::endl;
+    instructionBuffer_ << "sw  \t$t" << reg->GetAddress() << ", " << getAddressFrom(variable) << std::endl;
 }
 
 void Encoder::Write(IExpression* value) {
     if (value->GetType() == STRING) {
-        instructionBuffer << "li  \t$v0, 4" << std::endl;
-        instructionBuffer << "la  \t$a0, str" << strings_.size() << std::endl;
+        instructionBuffer_ << "li  \t$v0, 4" << std::endl;
+        instructionBuffer_ << "la  \t$a0, str" << strings_.size() << std::endl;
         strings_.push_back(((StringLiteral*)value)->GetValue());
         delete value;
     }
@@ -118,11 +118,11 @@ void Encoder::Write(IExpression* value) {
             v = (ExpressionInRegister*)value;
         }
         auto sysCallNumber = getWriteCallNumberFrom(v->GetType());
-        instructionBuffer << "li  \t$v0, " << sysCallNumber << std::endl;
-        instructionBuffer << "move  \t$a0, $t" << v->GetAddress() << std::endl;
+        instructionBuffer_ << "li  \t$v0, " << sysCallNumber << std::endl;
+        instructionBuffer_ << "move  \t$a0, $t" << v->GetAddress() << std::endl;
         delete v;
     }
-    instructionBuffer << "syscall" << std::endl;
+    instructionBuffer_ << "syscall" << std::endl;
 }
 
 int getWriteCallNumberFrom(ExpressionType type) {
@@ -137,11 +137,11 @@ int getWriteCallNumberFrom(ExpressionType type) {
 
 ExpressionInRegister* Encoder::Read(ExpressionType type) {
     auto expr = new ExpressionInRegister(type);
-    instructionBuffer << "li  \t$v0, ";
+    instructionBuffer_ << "li  \t$v0, ";
     auto sysCallNumber = getReadCallNumberFrom(type);
-    instructionBuffer << sysCallNumber << std::endl;
-    instructionBuffer << "syscall" << std::endl;
-    instructionBuffer << "move\t$t" << expr->GetAddress() << ", $v0" << std::endl;
+    instructionBuffer_ << sysCallNumber << std::endl;
+    instructionBuffer_ << "syscall" << std::endl;
+    instructionBuffer_ << "move\t$t" << expr->GetAddress() << ", $v0" << std::endl;
     return expr;
 }
 
@@ -156,32 +156,32 @@ int getReadCallNumberFrom(ExpressionType type) {
 
 ExpressionInRegister* Encoder::LoadImmediate(Literal* literal) {
     auto expression = new ExpressionInRegister(literal->GetType());
-    instructionBuffer << "li  \t$t" << expression->GetAddress() << ", ";
+    instructionBuffer_ << "li  \t$t" << expression->GetAddress() << ", ";
     switch (literal->GetType()) {
         case NUMERIC: {
-            instructionBuffer << ((NumericLiteral*)literal)->GetValue();
+            instructionBuffer_ << ((NumericLiteral*)literal)->GetValue();
             break;
         }
         case CHARACTER: {
-            instructionBuffer << +((CharacterLiteral*)literal)->GetValue();
+            instructionBuffer_ << +((CharacterLiteral*)literal)->GetValue();
             break;
         }
         case STRING: {
             throw;
         }
         case BOOLEAN: {
-            instructionBuffer << ((BooleanLiteral*)literal)->GetValue();
+            instructionBuffer_ << ((BooleanLiteral*)literal)->GetValue();
             break;
         }
         case USER_DEFINED:throw;
     }
-    instructionBuffer << std::endl;
+    instructionBuffer_ << std::endl;
     return expression;
 }
 
 ExpressionInRegister* Encoder::LoadFrom(Variable* variable) {
     auto reg = new ExpressionInRegister(variable->GetType());
-    instructionBuffer << "lw  \t$t" << reg->GetAddress() << ", " << getAddressFrom(*variable) << std::endl;
+    instructionBuffer_ << "lw  \t$t" << reg->GetAddress() << ", " << getAddressFrom(*variable) << std::endl;
     return reg;
 }
 
@@ -215,5 +215,28 @@ void printOutInstructions(std::stringstream& instructions, std::ostream& out) {
     std::flush(out);
 }
 
+void Encoder::Start(WhileStatement& whileStatement) {
+    instructionBuffer_ << "whileStart" << whileStatement.GetNumber() << ':' << std::endl;
+}
+
+void Encoder::Test(WhileStatement& whileStatement, ExpressionInRegister& condition) {
+    if (condition.GetType() != ExpressionType::BOOLEAN) throw;
+    instructionBuffer_ << "beq \t$t" << condition.GetAddress() << ", $zero, whileEnd" << whileStatement.GetNumber() << std::endl;
+}
+
+void Encoder::End(WhileStatement& whileStatement) {
+    instructionBuffer_ << "j   \twhileStart" << whileStatement.GetNumber() << std::endl;
+    instructionBuffer_ << "whileEnd" << whileStatement.GetNumber() << ':' << std::endl;
+}
+
 
 Encoder* Encoder::instance_ = nullptr;
+
+void Encoder::Start(RepeatStatement& repeatStatement) {
+    instructionBuffer_ << "repeat" << repeatStatement.GetNumber() << ':' << std::endl;
+}
+
+void Encoder::Test(RepeatStatement& repeatStatement, ExpressionInRegister& condition) {
+    if (condition.GetType() != ExpressionType::BOOLEAN) throw;
+    instructionBuffer_ << "bne \t$t" << condition.GetAddress() << ", $zero, repeat" << repeatStatement.GetNumber() << std::endl;
+}
