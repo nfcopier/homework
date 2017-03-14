@@ -14,7 +14,9 @@
 #include "CharacterLiteral.h"
 #include "BooleanLiteral.h"
 #include "Variable.h"
+#include "Constant.h"
 #include "ExpressionInRegister.h"
+#include "Encoder.h"
 
 
 class ParserInterface {
@@ -31,7 +33,7 @@ private:
     IExpression* compareGreaterEqualImmediate(IExpression* left, IExpression* right);
     IExpression* compareGreaterImmediate(IExpression* left, IExpression* right);
     IExpression* compareNotEqualImmediate(IExpression* left, IExpression* right);
-    IExpression* compareNEqualImmediate(IExpression* left, IExpression* right);
+    IExpression* compareEqualImmediate(IExpression* left, IExpression* right);
 
     IExpression* andImmediate(IExpression* left, IExpression* right);
     IExpression* orImmediate(IExpression* left, IExpression* right);
@@ -43,6 +45,7 @@ private:
     bool areBoolean(IExpression* left, IExpression* right);
     char getCharFrom(IExpression* expr);
     bool getBoolFrom(IExpression* expr);
+    ExpressionInRegister& getRegisterFor(IExpression* expr);
 
 public:
     static ParserInterface& Instance();
@@ -52,7 +55,8 @@ public:
     void StartBlock();
     void EndBlock();
 
-    IExpression* GetExpressionFrom(char* identifier);
+    Symbol* GetSymbolFor(std::string* identifier);
+    IExpression* GetExpressionFrom(Symbol* symbol);
     IExpression* GetSuccessorFor(IExpression* expression);
     IExpression* GetPredecessorFor(IExpression* expression);
     IExpression* CastToOrdinal(IExpression* expression);
@@ -74,6 +78,10 @@ public:
 
     IExpression* And(IExpression* left, IExpression* right);
     IExpression* Or(IExpression* left, IExpression* right);
+
+    void Assign(Symbol* variable, IExpression* rvalue);
+    void Write(std::vector<IExpression*>* expressions);
+    void Read(std::vector<Symbol*>* symbols);
 };
 
 

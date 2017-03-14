@@ -5,8 +5,13 @@
 #ifndef COMPILER_SYMBOL_H
 #define COMPILER_SYMBOL_H
 
-#include "IExpression.h"
 
-class Symbol : public IExpression {};
+class Symbol {
+protected:
+    Symbol() {}
+public:
+    virtual bool IsConstant() = 0;
+};
+
 
 #endif //COMPILER_SYMBOL_H

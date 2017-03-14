@@ -8,24 +8,32 @@
 
 #include <string>
 #include "Symbol.h"
+#include "IExpression.h"
+
+enum PointerType {
+    Global,
+    Frame,
+    Stack
+};
 
 class Variable : public Symbol {
 private:
-    int address_;
-    std::string& typeName_;
+    static int currentAddress;
+    int offset;
+    std::string* typeName_;
+    PointerType pointerType_;
 public:
-    Variable(int address, std::string& typeName) : address_(address), typeName_(typeName) {}
+    Variable(std::string* typeName) : typeName_(typeName), offset(currentAddress++) {
+        auto t = typeName;
+    }
     bool IsConstant() { return false; }
-    int GetAddress() { return address_; }
-    std::string& GetTypeName() { return typeName_; }
+    int GetAddress() { return offset; }
+    std::string* GetTypeName() { return typeName_; }
     ExpressionType GetType();
-
-    IExpression* GetSuccessor() { return new Variable(0, *(new std::string(""))); }
-    IExpression* GetPredecessor() { return new Variable(0, *(new std::string(""))); }
-    IExpression* CastToOrdinal()  { return new Variable(0, *(new std::string(""))); }
-    IExpression* CastToCharacter()  { return new Variable(0, *(new std::string(""))); }
-    IExpression* Negate() { return new Variable(0, *(new std::string(""))); }
-    IExpression* Not() { return new Variable(0, *(new std::string(""))); }
+    void Set(PointerType pointerType) {
+        pointerType_ = pointerType;
+    }
+    ~Variable() { currentAddress--; }
 };
 
 

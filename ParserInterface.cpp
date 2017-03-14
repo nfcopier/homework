@@ -16,8 +16,9 @@ ParserInterface& ParserInterface::Instance() {
 void ParserInterface::AddVariables(std::vector<IdentifierList*>* identifiersByType) {
     for (auto idList : *identifiersByType) {
         auto typeName = idList->TypeName;
-        for (auto id : idList->Identifiers) {
-            SymbolTable::Instance().Add(typeName, *id);
+        for (auto id : *(idList->Identifiers)) {
+            auto variable = new Variable(typeName);
+            SymbolTable::Instance().Add(id, variable);
         }
     }
 }
@@ -26,19 +27,24 @@ void ParserInterface::StartProgram() {
 }
 
 void ParserInterface::EndProgram() {
-    std::cout << "." << std::endl;
+    Encoder::Instance().EndProgram();
 }
 
 void ParserInterface::StartBlock() {
-    std::cout << "BEGIN" << std::endl;
+    SymbolTable::Instance().EnterLocalScope();
 }
 
 void ParserInterface::EndBlock() {
-    std::cout << "END" << std::endl;
+    SymbolTable::Instance().ExitLocalScope();
 }
 
-IExpression* ParserInterface::GetExpressionFrom(char* identifier) {
+Symbol* ParserInterface::GetSymbolFor(std::string* identifier) {
     return SymbolTable::Instance().GetFor(identifier);
+}
+
+IExpression* ParserInterface::GetExpressionFrom(Symbol* symbol) {
+    if (symbol->IsConstant()) return (IExpression*)((Constant*)symbol)->GetLiteral();
+    return new ExpressionInRegister(*((Variable*)symbol));
 }
 
 ParserInterface* ParserInterface::instance_ = nullptr;
@@ -68,161 +74,257 @@ IExpression* ParserInterface::Not(IExpression* expression) {
 }
 
 IExpression* ParserInterface::Modulo(IExpression* left, IExpression* right) {
-    if (!areNumeric(left, right)) throw;
+    if (!areNumeric(left, right)) {
+        delete left;
+        delete right;
+        throw;
+    }
     if (areConstant(left, right)) return moduloImmediate(left, right);
-    return left;
+    auto l = getRegisterFor(left);
+    auto r = getRegisterFor(right);
+    return Encoder::Instance().Modulo(l,r);
 }
 
 IExpression* ParserInterface::moduloImmediate(IExpression* left, IExpression* right) {
     auto value = getIntFrom(left) % getIntFrom(right);
+    delete left;
+    delete right;
     return new NumericLiteral(value);
 }
 
 IExpression* ParserInterface::Divide(IExpression* left, IExpression* right) {
-    if (!areNumeric(left, right)) throw;
+    if (!areNumeric(left, right)) {
+        delete left;
+        delete right;
+        throw;
+    }
     if (areConstant(left, right)) return divideImmediate(left, right);
-    return left;
+    auto l = getRegisterFor(left);
+    auto r = getRegisterFor(right);
+    return Encoder::Instance().Divide(l,r);
 }
 
 IExpression* ParserInterface::divideImmediate(IExpression* left, IExpression* right) {
     auto value = getIntFrom(left) / getIntFrom(right);
+    delete left;
+    delete right;
     return new NumericLiteral(value);
 }
 
 IExpression* ParserInterface::Multiply(IExpression* left, IExpression* right) {
-    if (!areNumeric(left, right)) throw;
+    if (!areNumeric(left, right)) {
+        delete left;
+        delete right;
+        throw;
+    }
     if (areConstant(left, right)) return multiplyImmediate(left, right);
-    return left;
+    auto l = getRegisterFor(left);
+    auto r = getRegisterFor(right);
+    return Encoder::Instance().Multiply(l,r);
 }
 
 IExpression* ParserInterface::multiplyImmediate(IExpression* left, IExpression* right) {
     auto value = getIntFrom(left) * getIntFrom(right);
+    delete left;
+    delete right;
     return new NumericLiteral(value);
 }
 
 IExpression* ParserInterface::Subtract(IExpression* left, IExpression* right) {
-    if (!areNumeric(left, right)) throw;
+    if (!areNumeric(left, right)) {
+        delete left;
+        delete right;
+        throw;
+    }
     if (areConstant(left, right)) return subtractImmediate(left, right);
-    return left;
+    auto l = getRegisterFor(left);
+    auto r = getRegisterFor(right);
+    return Encoder::Instance().Subtract(l,r);
 }
 
 IExpression* ParserInterface::subtractImmediate(IExpression* left, IExpression* right) {
     auto value = getIntFrom(left) - getIntFrom(right);
+    delete left;
+    delete right;
     return new NumericLiteral(value);
 }
 
 IExpression* ParserInterface::Add(IExpression* left, IExpression* right) {
-    if (!areNumeric(left, right)) throw;
+    if (!areNumeric(left, right)) {
+        delete left;
+        delete right;
+        throw;
+    }
     if (areConstant(left, right)) return addImmediate(left, right);
-    return left;
+    auto l = getRegisterFor(left);
+    auto r = getRegisterFor(right);
+    return Encoder::Instance().Add(l,r);
 }
 
 IExpression* ParserInterface::addImmediate(IExpression* left, IExpression* right) {
     auto value = getIntFrom(left) + getIntFrom(right);
+    delete left;
+    delete right;
     return new NumericLiteral(value);
 }
 
 IExpression* ParserInterface::CompareGreaterOrEqual(IExpression* left, IExpression* right) {
-    if (!areSameType(left, right)) throw;
+    if (!areSameType(left, right)) {
+        delete left;
+        delete right;
+        throw;
+    }
     if (areConstant(left, right)) return compareGreaterEqualImmediate(left, right);
-    return left;
+    auto l = getRegisterFor(left);
+    auto r = getRegisterFor(right);
+    return Encoder::Instance().CompareGreaterOrEqual(l,r);
 }
 
 IExpression* ParserInterface::compareGreaterEqualImmediate(IExpression* left, IExpression* right) {
     switch (left->GetType()) {
         case NUMERIC: {
             auto value = getIntFrom(left) >= getIntFrom(right);
+            delete left;
+            delete right;
             return new BooleanLiteral(value);
         };
         case CHARACTER: {
             auto value = getCharFrom(left) >= getCharFrom(right);
+            delete left;
+            delete right;
             return new BooleanLiteral(value);
         }
-        case STRING: throw;
         case BOOLEAN: {
             auto value = getBoolFrom(left) >= getBoolFrom(right);
+            delete left;
+            delete right;
             return new BooleanLiteral(value);
         };
-        case USER_DEFINED: throw;
-        default: throw;
+        default: {
+            delete left;
+            delete right;
+            throw;
+        }
     }
 }
 
 IExpression* ParserInterface::CompareGreater(IExpression* left, IExpression* right) {
-    if (!areSameType(left, right)) throw;
+    if (!areSameType(left, right)) {
+        delete left;
+        delete right;
+        throw;
+    }
     if (areConstant(left, right)) return compareGreaterImmediate(left, right);
-    return left;
+    auto l = getRegisterFor(left);
+    auto r = getRegisterFor(right);
+    return Encoder::Instance().CompareGreater(l,r);
 }
 
 IExpression* ParserInterface::compareGreaterImmediate(IExpression* left, IExpression* right) {
     switch (left->GetType()) {
         case NUMERIC: {
             auto value = getIntFrom(left) > getIntFrom(right);
+            delete left;
+            delete right;
             return new BooleanLiteral(value);
         };
         case CHARACTER: {
             auto value = getCharFrom(left) > getCharFrom(right);
+            delete left;
+            delete right;
             return new BooleanLiteral(value);
         }
-        case STRING: throw;
         case BOOLEAN: {
             auto value = getBoolFrom(left) > getBoolFrom(right);
+            delete left;
+            delete right;
             return new BooleanLiteral(value);
         };
-        case USER_DEFINED: throw;
-        default: throw;
+        default: {
+            delete left;
+            delete right;
+            throw;
+        }
     }
 }
 
 IExpression* ParserInterface::CompareNotEqual(IExpression* left, IExpression* right) {
-    if (!areSameType(left, right)) throw;
+    if (!areSameType(left, right)) {
+        delete left;
+        delete right;
+        throw;
+    }
     if (areConstant(left, right)) return compareNotEqualImmediate(left, right);
-    return left;
+    auto l = getRegisterFor(left);
+    auto r = getRegisterFor(right);
+    return Encoder::Instance().CompareNotEqual(l,r);
 }
 
 IExpression* ParserInterface::compareNotEqualImmediate(IExpression* left, IExpression* right) {
     switch (left->GetType()) {
         case NUMERIC: {
             auto value = getIntFrom(left) != getIntFrom(right);
+            delete left;
+            delete right;
             return new BooleanLiteral(value);
         };
         case CHARACTER: {
             auto value = getCharFrom(left) != getCharFrom(right);
+            delete left;
+            delete right;
             return new BooleanLiteral(value);
         }
-        case STRING: throw;
         case BOOLEAN: {
             auto value = getBoolFrom(left) != getBoolFrom(right);
+            delete left;
+            delete right;
             return new BooleanLiteral(value);
         };
-        case USER_DEFINED: throw;
-        default: throw;
+        default: {
+            delete left;
+            delete right;
+            throw;
+        }
     }
 }
 
 IExpression* ParserInterface::CompareEqual(IExpression* left, IExpression* right) {
-    if (!areSameType(left, right)) throw;
-    if (areConstant(left, right)) return compareNEqualImmediate(left, right);
-    return left;
+    if (!areSameType(left, right)) {
+        delete left;
+        delete right;
+        throw;
+    }
+    if (areConstant(left, right)) return compareEqualImmediate(left, right);
+    auto l = getRegisterFor(left);
+    auto r = getRegisterFor(right);
+    return Encoder::Instance().CompareEqual(l,r);
 }
 
-IExpression* ParserInterface::compareNEqualImmediate(IExpression* left, IExpression* right) {
+IExpression* ParserInterface::compareEqualImmediate(IExpression* left, IExpression* right) {
     switch (left->GetType()) {
         case NUMERIC: {
             auto value = getIntFrom(left) == getIntFrom(right);
+            delete left;
+            delete right;
             return new BooleanLiteral(value);
         };
         case CHARACTER: {
             auto value = getCharFrom(left) == getCharFrom(right);
+            delete left;
+            delete right;
             return new BooleanLiteral(value);
         }
-        case STRING: throw;
         case BOOLEAN: {
             auto value = getBoolFrom(left) == getBoolFrom(right);
+            delete left;
+            delete right;
             return new BooleanLiteral(value);
         };
-        case USER_DEFINED: throw;
-        default: throw;
+        default: {
+            delete left;
+            delete right;
+            throw;
+        }
     }
 }
 
@@ -245,7 +347,9 @@ char ParserInterface::getCharFrom(IExpression* expr) {
 IExpression* ParserInterface::And(IExpression* left, IExpression* right) {
     if(!areBoolean(left, right)) throw;
     if (areConstant(left, right)) return andImmediate(left, right);
-    return left;
+    auto l = getRegisterFor(left);
+    auto r = getRegisterFor(right);
+    return Encoder::Instance().And(l, r);
 }
 
 IExpression* ParserInterface::andImmediate(IExpression* left, IExpression* right) {
@@ -256,7 +360,9 @@ IExpression* ParserInterface::andImmediate(IExpression* left, IExpression* right
 IExpression* ParserInterface::Or(IExpression* left, IExpression* right) {
     if (!areBoolean(left, right)) throw;
     if (areConstant(left, right)) return orImmediate(left, right);
-    return left;
+    auto l = getRegisterFor(left);
+    auto r = getRegisterFor(right);
+    return Encoder::Instance().Or(l, r);
 }
 
 IExpression* ParserInterface::orImmediate(IExpression* left, IExpression* right) {
@@ -274,6 +380,35 @@ bool ParserInterface::areConstant(IExpression* left, IExpression* right) const {
 
 bool ParserInterface::getBoolFrom(IExpression* expr) {
     return ((BooleanLiteral*)expr)->GetValue();
+}
+
+void ParserInterface::Assign(Symbol* variable, IExpression* rvalue) {
+    if (variable->IsConstant()) throw;
+    if (rvalue->IsConstant()) {
+        auto expr = new ExpressionInRegister((Literal*)rvalue);
+        Encoder::Instance().Assign(*((Variable*)variable), expr);
+    } else {
+        Encoder::Instance().Assign(*((Variable*)variable), (ExpressionInRegister*)rvalue);
+    }
+}
+
+ExpressionInRegister& ParserInterface::getRegisterFor(IExpression* expr) {
+    if (expr->IsConstant()) return *(new ExpressionInRegister((Literal*)expr));
+    return (ExpressionInRegister&)*expr;
+}
+
+void ParserInterface::Write(std::vector<IExpression*>* expressions) {
+    for (auto expr : *expressions) {
+        Encoder::Instance().Write(expr);
+    }
+}
+
+void ParserInterface::Read(std::vector<Symbol*>* symbols) {
+    for(auto symbol : *symbols) {
+        auto variable = (Variable*)symbol;
+        auto result = Encoder::Instance().Read(variable->GetType());
+        Assign(symbol, result);
+    }
 }
 
 #pragma clang diagnostic pop

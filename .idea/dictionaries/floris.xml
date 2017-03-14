@@ -6,6 +6,9 @@
       <w>downto</w>
       <w>endl</w>
       <w>iostream</w>
+      <w>lalr</w>
+      <w>mfhi</w>
+      <w>mflo</w>
       <w>nonassoc</w>
       <w>noyywrap</w>
       <w>pred</w>

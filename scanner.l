@@ -2,7 +2,8 @@
 
 %{
     #include <iostream>
-    #include <string.h>
+    #include <string>
+    #include <cstdlib>
     #include "parser.tab.hpp"
     typedef yy::parser::token Token;
     #undef YY_DECL
@@ -52,7 +53,7 @@ WRITE                           (write)|(WRITE)
 
 IDENTIFIER                      {LETTER}({UNDERSCORE}|{DIGIT}|{LETTER})*
 
-NUMERIC_LITERAL                "-"?(0|(0x))?({HEX_DIGIT})+
+NUMERIC_LITERAL                (0|(0x))?({HEX_DIGIT})+
 CHARACTER_LITERAL              "'"(.|(\\[[:print:]]))"'"
 STRING_LITERAL                 \"(\\.|[^\\"])*\"
 
@@ -97,10 +98,10 @@ CATCHALL                        .
 {WHILE}                         { return Token::WHILE_KEYWORD; }
 {WRITE}                         { return Token::WRITE_KEYWORD; }
 
-{IDENTIFIER}                    { yylval->build<char*>(yytext); return Token::IDENTIFIER; }
+{IDENTIFIER}                    { yylval->build<char*>(strdup(yytext)); return Token::IDENTIFIER; }
 {NUMERIC_LITERAL}              { yylval->build<int>(atoi(yytext)); return Token::NUMERIC_LITERAL; }
 {CHARACTER_LITERAL}            { yylval->build<char>(yytext[0]); return Token::CHARACTER_LITERAL; }
-{STRING_LITERAL}               { yylval->build<char*>(yytext); return Token::STRING_LITERAL; }
+{STRING_LITERAL}               { yylval->build<char*>(strdup(yytext)); return Token::STRING_LITERAL; }
 
 "."                             { return Token::DOT_OPERATOR; }
 ";"                             { return Token::STATEMENT_TERMINATOR; }

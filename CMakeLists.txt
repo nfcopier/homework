@@ -1,7 +1,8 @@
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.4.3)
 project(Compiler)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+SET_SOURCE_FILES_PROPERTIES(lex.yy.c PROPERTIES LANGUAGE CXX)
 
-set(SOURCE_FILES SymbolTable.cpp SymbolTable.h Symbol.h ParserInterface.cpp ParserInterface.h IdentifierList.h Literal.h IExpression.h NumericLiteral.h StringLiteral.h CharacterLiteral.h Variable.h ExpressionInRegister.h BooleanLiteral.h NumericLiteral.cpp CharacterLiteral.cpp Variable.cpp)
+set(SOURCE_FILES SymbolTable.cpp parser.tab.cpp SymbolTable.cpp ParserInterface.cpp NumericLiteral.cpp CharacterLiteral.cpp lex.yy.c Encoder.cpp Encoder.h ExpressionInRegister.cpp Variable.cpp)
 add_executable(Compiler ${SOURCE_FILES})

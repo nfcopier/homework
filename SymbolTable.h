@@ -8,23 +8,37 @@
 
 #include <map>
 #include <vector>
-#include "Symbol.h"
+#include "ExpressionInRegister.h"
+#include "Variable.h"
+#include "Constant.h"
+#include "Literal.h"
 
 class SymbolTable {
 
 private:
-    std::map<char*, Symbol*> predefined_;
-    std::map<char*, Symbol*> global_;
-    std::vector<std::map<char*, Symbol*>> localStack_;
+    std::map<std::string, Symbol*> predefined_;
+    std::map<std::string, Symbol*> global_;
+    std::vector<std::map<std::string, Symbol*>> localStack_;
     static SymbolTable* instance_;
+
+    bool inLocalScope();
+    void addToLocal(std::string* identifier, Variable* value);
+    void addToGlobal(std::string* identifier, Variable* value);
+    Symbol* find(std::string* identifier);
+    bool isInLocal(std::string* identifier);
+    Symbol* getFromLocal(std::string* identifier);
+    bool isInGlobal(std::string* identifier);
+    bool isInPredefined(std::string* identifier);
+
+protected:
     SymbolTable() {};
 
 public:
     static SymbolTable& Instance();
-    IExpression * GetFor(char* identifier);
-    void Add(std::string& typeName, std::string& identifier);
-    bool inLocalScope();
-    void addToLocal(std::string& typeName, std::string& identifier);
+    Symbol* GetFor(std::string* identifier);
+    void Add(std::string* identifier, Variable* value);
+    void EnterLocalScope();
+    void ExitLocalScope();
 };
 
 

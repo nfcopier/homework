@@ -11,9 +11,9 @@
 #include <ostream>
 
 struct IdentifierList {
-    std::string& TypeName;
-    std::vector<std::string*>& Identifiers;
-    IdentifierList(std::string& typeName, std::vector<std::string*>& identifiers) : TypeName(typeName), Identifiers(identifiers) {}
+    std::string* TypeName;
+    std::vector<std::string*>* Identifiers;
+    IdentifierList(std::string* typeName, std::vector<std::string*>* identifiers) : TypeName(typeName), Identifiers(identifiers) {}
 };
 
 
