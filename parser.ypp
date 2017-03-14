@@ -3,6 +3,7 @@
 %code requires {
     #include <string.h>
     #include "ParserInterface.h"
+    extern int yyleng;
 }
 
 %code {
@@ -87,7 +88,7 @@ void yy::parser::error(const std::string& error) {
 
 %type <int> NUMERIC_LITERAL
 %type <char*> STRING_LITERAL
-%type <char> CHARACTER_LITERAL
+%type <char*> CHARACTER_LITERAL
 
 %type <std::vector<std::string*>*> identifier_list
 %type <char*> IDENTIFIER
@@ -118,7 +119,7 @@ void yy::parser::error(const std::string& error) {
 %type <IExpression*> successor
 %type <Literal*> literal
 %type <Symbol*> l_value
-%type <std::vector<Symbol*>*> l_value_list;
+%type <std::vector<Symbol*>*> l_value_list
 %type <std::vector<IExpression*>*> parameters
 
 %%
@@ -567,12 +568,12 @@ modulo_division:
 not_expression:
     NOT_OPERATOR
     expression
-    { $$ = ParserInterface::Instance().Not($2); }
+    { $$ = ParserInterface::Instance().Not($2); delete $2; }
 ;
 negation:
     MINUS_SIGN %prec UNARY_MINUS
     expression
-    { $$ = ParserInterface::Instance().Negate($2); }
+    { $$ = ParserInterface::Instance().Negate($2); delete $2; }
 ;
 
 parenthetic_expression:
@@ -632,7 +633,7 @@ successor:
 
 literal:
     NUMERIC_LITERAL { $$ = new NumericLiteral($1); }
-|   CHARACTER_LITERAL { $$ = new CharacterLiteral($1); }
+|   CHARACTER_LITERAL { $$ = new CharacterLiteral($1, yyleng); }
 |   STRING_LITERAL {
         auto str = new std::string($1);
         $$ = new StringLiteral(*str);

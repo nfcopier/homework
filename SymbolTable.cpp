@@ -68,3 +68,8 @@ void SymbolTable::EnterLocalScope() {
 void SymbolTable::ExitLocalScope() {
     localStack_.pop_back();
 }
+
+SymbolTable::SymbolTable() {
+    predefined_["true"] = (Symbol*)new Constant(new BooleanLiteral(true));
+    predefined_["false"] = (Symbol*)new Constant(new BooleanLiteral(false));
+}

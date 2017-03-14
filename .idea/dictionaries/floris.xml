@@ -1,6 +1,7 @@
 <component name="ProjectDictionaryState">
   <dictionary name="floris">
     <words>
+      <w>asciiz</w>
       <w>cerr</w>
       <w>cout</w>
       <w>downto</w>
@@ -14,6 +15,7 @@
       <w>pred</w>
       <w>summand</w>
       <w>yyerror</w>
+      <w>yyleng</w>
       <w>yylex</w>
       <w>yylineno</w>
       <w>yylval</w>

@@ -11,7 +11,7 @@
 #include "ExpressionInRegister.h"
 #include "Variable.h"
 #include "Constant.h"
-#include "Literal.h"
+#include "BooleanLiteral.h"
 
 class SymbolTable {
 
@@ -31,7 +31,7 @@ private:
     bool isInPredefined(std::string* identifier);
 
 protected:
-    SymbolTable() {};
+    SymbolTable();
 
 public:
     static SymbolTable& Instance();

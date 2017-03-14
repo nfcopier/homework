@@ -54,7 +54,7 @@ WRITE                           (write)|(WRITE)
 IDENTIFIER                      {LETTER}({UNDERSCORE}|{DIGIT}|{LETTER})*
 
 NUMERIC_LITERAL                (0|(0x))?({HEX_DIGIT})+
-CHARACTER_LITERAL              "'"(.|(\\[[:print:]]))"'"
+CHARACTER_LITERAL              "'"([[:print:]]|\\[[:print:]]|\\NUMERIC_LITERAL)"'"
 STRING_LITERAL                 \"(\\.|[^\\"])*\"
 
 COMMENT                         \$.*\n
@@ -100,7 +100,7 @@ CATCHALL                        .
 
 {IDENTIFIER}                    { yylval->build<char*>(strdup(yytext)); return Token::IDENTIFIER; }
 {NUMERIC_LITERAL}              { yylval->build<int>(atoi(yytext)); return Token::NUMERIC_LITERAL; }
-{CHARACTER_LITERAL}            { yylval->build<char>(yytext[0]); return Token::CHARACTER_LITERAL; }
+{CHARACTER_LITERAL}            { yylval->build<char*>(strdup(yytext)); return Token::CHARACTER_LITERAL; }
 {STRING_LITERAL}               { yylval->build<char*>(strdup(yytext)); return Token::STRING_LITERAL; }
 
 "."                             { return Token::DOT_OPERATOR; }

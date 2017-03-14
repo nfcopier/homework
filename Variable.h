@@ -18,22 +18,21 @@ enum PointerType {
 
 class Variable : public Symbol {
 private:
-    static int currentAddress;
-    int offset;
-    std::string* typeName_;
+    static int currentOffset;
+    int offset_;
     PointerType pointerType_;
+    std::string* typeName_;
 public:
-    Variable(std::string* typeName) : typeName_(typeName), offset(currentAddress++) {
-        auto t = typeName;
+    void incrementOffset();
+
+    Variable(std::string* typeName, PointerType pointerType) : typeName_(typeName), pointerType_(pointerType), offset_(currentOffset) {
+        incrementOffset();
     }
     bool IsConstant() { return false; }
-    int GetAddress() { return offset; }
-    std::string* GetTypeName() { return typeName_; }
+    int GetOffset() { return offset_; }
+    PointerType GetPointerType() { return pointerType_; }
     ExpressionType GetType();
-    void Set(PointerType pointerType) {
-        pointerType_ = pointerType;
-    }
-    ~Variable() { currentAddress--; }
+    ~Variable() { currentOffset--; }
 };
 
 

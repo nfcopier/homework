@@ -13,6 +13,7 @@ class CharacterLiteral : public Literal {
 private:
     char value_;
 public:
+    CharacterLiteral(char* value, int length);
     CharacterLiteral(char value) : value_(value) {}
     ExpressionType GetType() { return ExpressionType::CHARACTER; }
     char GetValue() { return value_; }

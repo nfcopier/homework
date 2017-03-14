@@ -7,12 +7,16 @@
 
 
 #include <iostream>
+#include <sstream>
+#include <vector>
 #include "ExpressionInRegister.h"
 #include "Variable.h"
 
 class Encoder {
 private:
     std::ostream& out_;
+    std::stringstream instructionBuffer;
+    std::vector<std::string*> strings_;
     static Encoder* instance_;
 protected:
     Encoder() : out_(std::cout) {}
@@ -34,8 +38,8 @@ public:
     void Assign(Variable& variable, ExpressionInRegister* reg);
     void Write(IExpression* value);
     ExpressionInRegister* Read(ExpressionType type);
-
-    int GetSystemCallNumberFrom(ExpressionType type);
+    ExpressionInRegister* LoadImmediate(Literal* literal);
+    ExpressionInRegister* LoadFrom(Variable* variable);
 };
 
 

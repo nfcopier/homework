@@ -13,9 +13,11 @@ class ExpressionInRegister : public IExpression {
 private:
     static int addressCount;
     int address_;
+    bool isCopied_;
+    ExpressionType expressionType_;
 
 public:
-    ExpressionType GetType() { return NUMERIC; }
+    ExpressionType GetType() { return expressionType_; }
     bool IsConstant() { return false; }
     IExpression* Not() { return this; }
     IExpression* GetSuccessor() { return this; }
@@ -23,11 +25,12 @@ public:
     IExpression* CastToOrdinal() { return this; }
     IExpression* CastToCharacter() { return this; }
     IExpression* Negate() { return this; }
-    ExpressionInRegister(Variable& variable) : address_(addressCount++) {}
-    ExpressionInRegister(Literal* literal) : address_(addressCount++) {}
-    ExpressionInRegister(ExpressionType type) : address_(addressCount++) {}
+    ExpressionInRegister(ExpressionType expressionType) : isCopied_(false),  address_(addressCount++), expressionType_(expressionType) {}
+    ExpressionInRegister(ExpressionInRegister const& expr) : isCopied_(true), address_(expr.address_), expressionType_(expr.expressionType_) {}
     int GetAddress() { return address_; }
-    ~ExpressionInRegister() { addressCount--; }
+    ~ExpressionInRegister() {
+        if (!isCopied_) addressCount--;
+    }
 };
 
 

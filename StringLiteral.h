@@ -15,6 +15,7 @@ private:
 public:
     StringLiteral(std::string& value) : value_(value) {}
     ExpressionType GetType() { return ExpressionType::STRING; }
+    std::string* GetValue() { return &value_; }
 
     IExpression* GetSuccessor() { throw; }
     IExpression* GetPredecessor() { throw; }

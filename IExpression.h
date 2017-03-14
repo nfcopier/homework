@@ -26,6 +26,7 @@ public:
     virtual IExpression* CastToCharacter() = 0;
     virtual IExpression* Negate() = 0;
     virtual IExpression* Not() = 0;
+    virtual ~IExpression() {}
 };
 
 #endif //COMPILER_I_EXPRESSION_H

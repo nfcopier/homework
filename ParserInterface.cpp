@@ -17,7 +17,7 @@ void ParserInterface::AddVariables(std::vector<IdentifierList*>* identifiersByTy
     for (auto idList : *identifiersByType) {
         auto typeName = idList->TypeName;
         for (auto id : *(idList->Identifiers)) {
-            auto variable = new Variable(typeName);
+            auto variable = new Variable(typeName, PointerType::Global);
             SymbolTable::Instance().Add(id, variable);
         }
     }
@@ -43,8 +43,8 @@ Symbol* ParserInterface::GetSymbolFor(std::string* identifier) {
 }
 
 IExpression* ParserInterface::GetExpressionFrom(Symbol* symbol) {
-    if (symbol->IsConstant()) return (IExpression*)((Constant*)symbol)->GetLiteral();
-    return new ExpressionInRegister(*((Variable*)symbol));
+    if (symbol->IsConstant()) return Encoder::Instance().LoadImmediate(((Constant*)symbol)->GetLiteral());
+    return Encoder::Instance().LoadFrom((Variable*)symbol);
 }
 
 ParserInterface* ParserInterface::instance_ = nullptr;
@@ -82,7 +82,10 @@ IExpression* ParserInterface::Modulo(IExpression* left, IExpression* right) {
     if (areConstant(left, right)) return moduloImmediate(left, right);
     auto l = getRegisterFor(left);
     auto r = getRegisterFor(right);
-    return Encoder::Instance().Modulo(l,r);
+    auto result = Encoder::Instance().Modulo(l, r);
+    delete left;
+    delete right;
+    return result;
 }
 
 IExpression* ParserInterface::moduloImmediate(IExpression* left, IExpression* right) {
@@ -101,7 +104,10 @@ IExpression* ParserInterface::Divide(IExpression* left, IExpression* right) {
     if (areConstant(left, right)) return divideImmediate(left, right);
     auto l = getRegisterFor(left);
     auto r = getRegisterFor(right);
-    return Encoder::Instance().Divide(l,r);
+    auto result = Encoder::Instance().Divide(l, r);
+    delete left;
+    delete right;
+    return result;
 }
 
 IExpression* ParserInterface::divideImmediate(IExpression* left, IExpression* right) {
@@ -113,14 +119,15 @@ IExpression* ParserInterface::divideImmediate(IExpression* left, IExpression* ri
 
 IExpression* ParserInterface::Multiply(IExpression* left, IExpression* right) {
     if (!areNumeric(left, right)) {
-        delete left;
-        delete right;
         throw;
     }
     if (areConstant(left, right)) return multiplyImmediate(left, right);
     auto l = getRegisterFor(left);
     auto r = getRegisterFor(right);
-    return Encoder::Instance().Multiply(l,r);
+    auto result = Encoder::Instance().Multiply(l, r);
+    delete left;
+    delete right;
+    return result;
 }
 
 IExpression* ParserInterface::multiplyImmediate(IExpression* left, IExpression* right) {
@@ -139,7 +146,10 @@ IExpression* ParserInterface::Subtract(IExpression* left, IExpression* right) {
     if (areConstant(left, right)) return subtractImmediate(left, right);
     auto l = getRegisterFor(left);
     auto r = getRegisterFor(right);
-    return Encoder::Instance().Subtract(l,r);
+    auto result = Encoder::Instance().Subtract(l, r);
+    delete left;
+    delete right;
+    return result;
 }
 
 IExpression* ParserInterface::subtractImmediate(IExpression* left, IExpression* right) {
@@ -158,7 +168,10 @@ IExpression* ParserInterface::Add(IExpression* left, IExpression* right) {
     if (areConstant(left, right)) return addImmediate(left, right);
     auto l = getRegisterFor(left);
     auto r = getRegisterFor(right);
-    return Encoder::Instance().Add(l,r);
+    auto result = Encoder::Instance().Add(l, r);
+    delete left;
+    delete right;
+    return result;
 }
 
 IExpression* ParserInterface::addImmediate(IExpression* left, IExpression* right) {
@@ -177,7 +190,10 @@ IExpression* ParserInterface::CompareGreaterOrEqual(IExpression* left, IExpressi
     if (areConstant(left, right)) return compareGreaterEqualImmediate(left, right);
     auto l = getRegisterFor(left);
     auto r = getRegisterFor(right);
-    return Encoder::Instance().CompareGreaterOrEqual(l,r);
+    auto result = Encoder::Instance().CompareGreaterOrEqual(l, r);
+    delete left;
+    delete right;
+    return result;
 }
 
 IExpression* ParserInterface::compareGreaterEqualImmediate(IExpression* left, IExpression* right) {
@@ -217,7 +233,10 @@ IExpression* ParserInterface::CompareGreater(IExpression* left, IExpression* rig
     if (areConstant(left, right)) return compareGreaterImmediate(left, right);
     auto l = getRegisterFor(left);
     auto r = getRegisterFor(right);
-    return Encoder::Instance().CompareGreater(l,r);
+    auto result = Encoder::Instance().CompareGreater(l, r);
+    delete left;
+    delete right;
+    return result;
 }
 
 IExpression* ParserInterface::compareGreaterImmediate(IExpression* left, IExpression* right) {
@@ -257,7 +276,10 @@ IExpression* ParserInterface::CompareNotEqual(IExpression* left, IExpression* ri
     if (areConstant(left, right)) return compareNotEqualImmediate(left, right);
     auto l = getRegisterFor(left);
     auto r = getRegisterFor(right);
-    return Encoder::Instance().CompareNotEqual(l,r);
+    auto result = Encoder::Instance().CompareNotEqual(l, r);
+    delete left;
+    delete right;
+    return result;
 }
 
 IExpression* ParserInterface::compareNotEqualImmediate(IExpression* left, IExpression* right) {
@@ -297,7 +319,10 @@ IExpression* ParserInterface::CompareEqual(IExpression* left, IExpression* right
     if (areConstant(left, right)) return compareEqualImmediate(left, right);
     auto l = getRegisterFor(left);
     auto r = getRegisterFor(right);
-    return Encoder::Instance().CompareEqual(l,r);
+    auto result = Encoder::Instance().CompareEqual(l, r);
+    delete left;
+    delete right;
+    return result;
 }
 
 IExpression* ParserInterface::compareEqualImmediate(IExpression* left, IExpression* right) {
@@ -349,11 +374,16 @@ IExpression* ParserInterface::And(IExpression* left, IExpression* right) {
     if (areConstant(left, right)) return andImmediate(left, right);
     auto l = getRegisterFor(left);
     auto r = getRegisterFor(right);
-    return Encoder::Instance().And(l, r);
+    auto result = Encoder::Instance().And(l, r);
+    delete left;
+    delete right;
+    return result;
 }
 
 IExpression* ParserInterface::andImmediate(IExpression* left, IExpression* right) {
     auto value = getBoolFrom(left) && getBoolFrom(right);
+    delete left;
+    delete right;
     return new BooleanLiteral(value);
 }
 
@@ -362,11 +392,16 @@ IExpression* ParserInterface::Or(IExpression* left, IExpression* right) {
     if (areConstant(left, right)) return orImmediate(left, right);
     auto l = getRegisterFor(left);
     auto r = getRegisterFor(right);
-    return Encoder::Instance().Or(l, r);
+    auto result = Encoder::Instance().Or(l, r);
+    delete left;
+    delete right;
+    return result;
 }
 
 IExpression* ParserInterface::orImmediate(IExpression* left, IExpression* right) {
     auto value = getBoolFrom(left) || getBoolFrom(right);
+    delete left;
+    delete right;
     return new BooleanLiteral(value);
 }
 
@@ -384,23 +419,23 @@ bool ParserInterface::getBoolFrom(IExpression* expr) {
 
 void ParserInterface::Assign(Symbol* variable, IExpression* rvalue) {
     if (variable->IsConstant()) throw;
-    if (rvalue->IsConstant()) {
-        auto expr = new ExpressionInRegister((Literal*)rvalue);
-        Encoder::Instance().Assign(*((Variable*)variable), expr);
-    } else {
-        Encoder::Instance().Assign(*((Variable*)variable), (ExpressionInRegister*)rvalue);
-    }
+    auto& reg = getRegisterFor(rvalue);
+    Encoder::Instance().Assign(*((Variable*)variable), &reg);
+    delete rvalue;
 }
 
 ExpressionInRegister& ParserInterface::getRegisterFor(IExpression* expr) {
-    if (expr->IsConstant()) return *(new ExpressionInRegister((Literal*)expr));
-    return (ExpressionInRegister&)*expr;
+    if (!expr->IsConstant()) return (ExpressionInRegister&)*expr;
+    auto& result = *Encoder::Instance().LoadImmediate((Literal*)expr);
+    delete expr;
+    return result;
 }
 
 void ParserInterface::Write(std::vector<IExpression*>* expressions) {
     for (auto expr : *expressions) {
         Encoder::Instance().Write(expr);
     }
+    delete expressions;
 }
 
 void ParserInterface::Read(std::vector<Symbol*>* symbols) {
