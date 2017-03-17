@@ -45,7 +45,7 @@ private:
     bool areBoolean(IExpression* left, IExpression* right);
     char getCharFrom(IExpression* expr);
     bool getBoolFrom(IExpression* expr);
-    ExpressionInRegister& getRegisterFor(IExpression* expr);
+    ExpressionInRegister* getRegisterFor(IExpression* expr);
 
 public:
     static ParserInterface& Instance();

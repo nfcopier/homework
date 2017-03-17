@@ -11,12 +11,14 @@
 #include "WhileStatement.h"
 #include "Encoder.h"
 #include "RepeatStatement.h"
+#include "IfChain.h"
 
 
 class StatementController {
 private:
 
     static StatementController* instance_;
+    IfChain* currentIfChain;
 
 public:
 
@@ -25,7 +27,13 @@ public:
     void Test(WhileStatement* whileStatement, IExpression* condition);
     void End(WhileStatement* whileStatement);
     RepeatStatement* StartRepeat();
-    void Test(RepeatStatement*repeatStatement, IExpression* condition);
+    void Test(RepeatStatement* repeatStatement, IExpression* condition);
+    void Test(IfChain* ifChain, IExpression* condition);
+    void Set(IfChain* ifChain) { currentIfChain = ifChain; }
+    void AddElseTo(IfChain* ifChain);
+    IfChain* GetIfChain() { return currentIfChain; }
+    void EndElseIn(IfChain* ifChain);
+    void End(IfChain* ifChain);
 };
 
 

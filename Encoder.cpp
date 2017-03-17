@@ -229,9 +229,6 @@ void Encoder::End(WhileStatement& whileStatement) {
     instructionBuffer_ << "whileEnd" << whileStatement.GetNumber() << ':' << std::endl;
 }
 
-
-Encoder* Encoder::instance_ = nullptr;
-
 void Encoder::Start(RepeatStatement& repeatStatement) {
     instructionBuffer_ << "repeat" << repeatStatement.GetNumber() << ':' << std::endl;
 }
@@ -240,3 +237,28 @@ void Encoder::Test(RepeatStatement& repeatStatement, ExpressionInRegister& condi
     if (condition.GetType() != ExpressionType::BOOLEAN) throw;
     instructionBuffer_ << "bne \t$t" << condition.GetAddress() << ", $zero, repeat" << repeatStatement.GetNumber() << std::endl;
 }
+
+void Encoder::Test(IfChain& ifChain, ExpressionInRegister& condition) {
+    if (condition.GetType() != ExpressionType::BOOLEAN) throw;
+    instructionBuffer_ << "beq \t$t" << condition.GetAddress() << ", $zero, ";
+    instructionBuffer_ << "if" << ifChain.GetIfNumber() << "Else" << ifChain.GetElseNumber();
+    instructionBuffer_ << std::endl;
+}
+
+void Encoder::Exit(IfChain& ifChain) {
+    instructionBuffer_ << "j   \tifEnd" << ifChain.GetIfNumber() << std::endl;
+    instructionBuffer_ << "if" << ifChain.GetIfNumber() << "Else" << ifChain.GetElseNumber() << ':';
+    instructionBuffer_ << std::endl;
+}
+
+void Encoder::PrintElseLabelFor(IfChain& ifChain) {
+    instructionBuffer_ << "if" << ifChain.GetIfNumber() << "Else" << ifChain.GetElseNumber() << ':';
+    instructionBuffer_ << std::endl;
+}
+
+void Encoder::End(IfChain& ifChain) {
+    instructionBuffer_ << "\nifEnd" << ifChain.GetIfNumber() << ':' << std::endl;
+}
+
+
+Encoder* Encoder::instance_ = nullptr;

@@ -125,6 +125,7 @@ void yy::parser::error(const std::string& error) {
 
 %type <WhileStatement*> while_header
 %type <RepeatStatement*> repeat_header
+%type <IfChain*> if_variable
 
 %%
 
@@ -357,17 +358,17 @@ assignment:
 
 if_statement:
     IF_KEYWORD
+    { StatementController::Instance().Set(new IfChain()); }
+    if_variable
     expression
+    { StatementController::Instance().Test( $3, $4 ); }
     THEN_KEYWORD
     statement_sequence
-    else_sequence_maybe
+    { StatementController::Instance().Set( $3 ); }
+    else_if_sequence_maybe
+    else_declaration_maybe
+    { StatementController::Instance().End( $3 ); }
     END_KEYWORD
-;
-
-else_sequence_maybe:
-    %empty
-|   else_if_sequence_maybe
-    else_declaration
 ;
 
 else_if_sequence_maybe:
@@ -384,14 +385,27 @@ else_if_sequence:
 
 else_if_declaration:
     ELSEIF_KEYWORD
+    if_variable
+    { StatementController::Instance().AddElseTo( $2 ); }
     expression
+    { StatementController::Instance().Test( $2, $4 ); }
     THEN_KEYWORD
+    statement_sequence
+    { StatementController::Instance().Set( $2 ); }
+;
+
+else_declaration_maybe:
+    if_variable
+    { StatementController::Instance().EndElseIn( $1 ); }
+|   ELSE_KEYWORD
+    if_variable
+    { StatementController::Instance().AddElseTo( $2 ); }
     statement_sequence
 ;
 
-else_declaration:
-    ELSE_KEYWORD
-    statement_sequence
+if_variable:
+    %empty
+    { $$ = StatementController::Instance().GetIfChain(); }
 ;
 
 while_statement:

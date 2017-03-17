@@ -13,6 +13,7 @@
 #include "Variable.h"
 #include "WhileStatement.h"
 #include "RepeatStatement.h"
+#include "IfChain.h"
 
 class Encoder {
 private:
@@ -49,6 +50,11 @@ public:
 
     void Start(RepeatStatement& repeatStatement);
     void Test(RepeatStatement& repeatStatement, ExpressionInRegister& condition);
+
+    void Test(IfChain& ifChain, ExpressionInRegister& condition);
+    void Exit(IfChain& ifChain);
+    void PrintElseLabelFor(IfChain& ifChain);
+    void End(IfChain& ifChain);
 };
 
 

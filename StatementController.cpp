@@ -24,6 +24,7 @@ WhileStatement* StatementController::StartWhile() {
 void StatementController::Test(WhileStatement* whileStatement, IExpression* condition) {
     auto& reg = getRegisterFor(condition);
     Encoder::Instance().Test(*whileStatement, reg);
+    delete condition;
 }
 
 void StatementController::End(WhileStatement* whileStatement) {
@@ -41,12 +42,32 @@ void StatementController::Test(RepeatStatement* repeatStatement, IExpression* co
     auto& reg = getRegisterFor(condition);
     Encoder::Instance().Test(*repeatStatement, reg);
     delete repeatStatement;
+    delete condition;
+}
+
+void StatementController::Test(IfChain* ifChain, IExpression* condition) {
+    auto& reg = getRegisterFor(condition);
+    Encoder::Instance().Test(*ifChain, reg);
+    delete condition;
+}
+
+void StatementController::AddElseTo(IfChain* ifChain) {
+    Encoder::Instance().Exit(*ifChain);
+    ifChain->IncrementElse();
+}
+
+void StatementController::EndElseIn(IfChain* ifChain) {
+    Encoder::Instance().PrintElseLabelFor(*ifChain);
+}
+
+void StatementController::End(IfChain* ifChain) {
+    Encoder::Instance().End(*ifChain);
+    delete ifChain;
 }
 
 ExpressionInRegister& getRegisterFor(IExpression* expr) {
     if (!expr->IsConstant()) return (ExpressionInRegister&)*expr;
     auto& result = *Encoder::Instance().LoadImmediate((Literal*)expr);
-    delete expr;
     return result;
 }
 

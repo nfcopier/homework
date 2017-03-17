@@ -82,9 +82,9 @@ IExpression* ParserInterface::Modulo(IExpression* left, IExpression* right) {
     if (areConstant(left, right)) return moduloImmediate(left, right);
     auto l = getRegisterFor(left);
     auto r = getRegisterFor(right);
-    auto result = Encoder::Instance().Modulo(l, r);
-    delete left;
-    delete right;
+    auto result = Encoder::Instance().Modulo(*l, *r);
+    delete l;
+    delete r;
     return result;
 }
 
@@ -104,9 +104,9 @@ IExpression* ParserInterface::Divide(IExpression* left, IExpression* right) {
     if (areConstant(left, right)) return divideImmediate(left, right);
     auto l = getRegisterFor(left);
     auto r = getRegisterFor(right);
-    auto result = Encoder::Instance().Divide(l, r);
-    delete left;
-    delete right;
+    auto result = Encoder::Instance().Divide(*l, *r);
+    delete l;
+    delete r;
     return result;
 }
 
@@ -124,9 +124,9 @@ IExpression* ParserInterface::Multiply(IExpression* left, IExpression* right) {
     if (areConstant(left, right)) return multiplyImmediate(left, right);
     auto l = getRegisterFor(left);
     auto r = getRegisterFor(right);
-    auto result = Encoder::Instance().Multiply(l, r);
-    delete left;
-    delete right;
+    auto result = Encoder::Instance().Multiply(*l, *r);
+    delete l;
+    delete r;
     return result;
 }
 
@@ -146,9 +146,9 @@ IExpression* ParserInterface::Subtract(IExpression* left, IExpression* right) {
     if (areConstant(left, right)) return subtractImmediate(left, right);
     auto l = getRegisterFor(left);
     auto r = getRegisterFor(right);
-    auto result = Encoder::Instance().Subtract(l, r);
-    delete left;
-    delete right;
+    auto result = Encoder::Instance().Subtract(*l, *r);
+    delete l;
+    delete r;
     return result;
 }
 
@@ -168,9 +168,9 @@ IExpression* ParserInterface::Add(IExpression* left, IExpression* right) {
     if (areConstant(left, right)) return addImmediate(left, right);
     auto l = getRegisterFor(left);
     auto r = getRegisterFor(right);
-    auto result = Encoder::Instance().Add(l, r);
-    delete left;
-    delete right;
+    auto result = Encoder::Instance().Add(*l, *r);
+    delete l;
+    delete r;
     return result;
 }
 
@@ -190,9 +190,9 @@ IExpression* ParserInterface::CompareGreaterOrEqual(IExpression* left, IExpressi
     if (areConstant(left, right)) return compareGreaterEqualImmediate(left, right);
     auto l = getRegisterFor(left);
     auto r = getRegisterFor(right);
-    auto result = Encoder::Instance().CompareGreaterOrEqual(l, r);
-    delete left;
-    delete right;
+    auto result = Encoder::Instance().CompareGreaterOrEqual(*l, *r);
+    delete l;
+    delete r;
     return result;
 }
 
@@ -233,9 +233,9 @@ IExpression* ParserInterface::CompareGreater(IExpression* left, IExpression* rig
     if (areConstant(left, right)) return compareGreaterImmediate(left, right);
     auto l = getRegisterFor(left);
     auto r = getRegisterFor(right);
-    auto result = Encoder::Instance().CompareGreater(l, r);
-    delete left;
-    delete right;
+    auto result = Encoder::Instance().CompareGreater(*l, *r);
+    delete l;
+    delete r;
     return result;
 }
 
@@ -276,9 +276,9 @@ IExpression* ParserInterface::CompareNotEqual(IExpression* left, IExpression* ri
     if (areConstant(left, right)) return compareNotEqualImmediate(left, right);
     auto l = getRegisterFor(left);
     auto r = getRegisterFor(right);
-    auto result = Encoder::Instance().CompareNotEqual(l, r);
-    delete left;
-    delete right;
+    auto result = Encoder::Instance().CompareNotEqual(*l, *r);
+    delete l;
+    delete r;
     return result;
 }
 
@@ -319,9 +319,9 @@ IExpression* ParserInterface::CompareEqual(IExpression* left, IExpression* right
     if (areConstant(left, right)) return compareEqualImmediate(left, right);
     auto l = getRegisterFor(left);
     auto r = getRegisterFor(right);
-    auto result = Encoder::Instance().CompareEqual(l, r);
-    delete left;
-    delete right;
+    auto result = Encoder::Instance().CompareEqual(*l, *r);
+    delete l;
+    delete r;
     return result;
 }
 
@@ -374,9 +374,9 @@ IExpression* ParserInterface::And(IExpression* left, IExpression* right) {
     if (areConstant(left, right)) return andImmediate(left, right);
     auto l = getRegisterFor(left);
     auto r = getRegisterFor(right);
-    auto result = Encoder::Instance().And(l, r);
-    delete left;
-    delete right;
+    auto result = Encoder::Instance().And(*l, *r);
+    delete l;
+    delete r;
     return result;
 }
 
@@ -392,9 +392,9 @@ IExpression* ParserInterface::Or(IExpression* left, IExpression* right) {
     if (areConstant(left, right)) return orImmediate(left, right);
     auto l = getRegisterFor(left);
     auto r = getRegisterFor(right);
-    auto result = Encoder::Instance().Or(l, r);
-    delete left;
-    delete right;
+    auto result = Encoder::Instance().Or(*l, *r);
+    delete l;
+    delete r;
     return result;
 }
 
@@ -419,14 +419,15 @@ bool ParserInterface::getBoolFrom(IExpression* expr) {
 
 void ParserInterface::Assign(Symbol* variable, IExpression* rvalue) {
     if (variable->IsConstant()) throw;
-    auto& reg = getRegisterFor(rvalue);
-    Encoder::Instance().Assign(*((Variable*)variable), &reg);
-    delete rvalue;
+    auto reg = getRegisterFor(rvalue);
+    Encoder::Instance().Assign(*((Variable*)variable), reg);
+    delete reg;
 }
 
-ExpressionInRegister& ParserInterface::getRegisterFor(IExpression* expr) {
-    if (!expr->IsConstant()) return (ExpressionInRegister&)*expr;
-    auto& result = *Encoder::Instance().LoadImmediate((Literal*)expr);
+ExpressionInRegister* ParserInterface::getRegisterFor(IExpression* expr) {
+    if (!expr->IsConstant()) return (ExpressionInRegister*)expr;
+    auto result = Encoder::Instance().LoadImmediate((Literal*)expr);
+    delete expr;
     return result;
 }
 
