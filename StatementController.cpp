@@ -6,6 +6,7 @@
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "StatementController.h"
+#include "ParserInterface.h"
 
 
 ExpressionInRegister& getRegisterFor(IExpression* expr);
@@ -15,8 +16,7 @@ StatementController& StatementController::Instance() {
     return *instance_;
 }
 
-WhileStatement* StatementController::StartWhile() {
-    auto whileStatement = new WhileStatement();
+WhileStatement* StatementController::Start(WhileStatement* whileStatement) {
     Encoder::Instance().Start(*whileStatement);
     return whileStatement;
 }
@@ -29,7 +29,6 @@ void StatementController::Test(WhileStatement* whileStatement, IExpression* cond
 
 void StatementController::End(WhileStatement* whileStatement) {
     Encoder::Instance().End(*whileStatement);
-    delete whileStatement;
 }
 
 RepeatStatement* StatementController::StartRepeat() {
@@ -69,6 +68,37 @@ ExpressionInRegister& getRegisterFor(IExpression* expr) {
     if (!expr->IsConstant()) return (ExpressionInRegister&)*expr;
     auto& result = *Encoder::Instance().LoadImmediate((Literal*)expr);
     return result;
+}
+
+IExpression* StatementController::DoComparisonFor(ForLoop* forLoop) {
+    auto rangeVariable = forLoop->GetRangeVariable();
+    auto stopVariable = forLoop->GetStopVariable();
+
+    auto rangeExpr = ParserInterface::Instance().GetExpressionFrom(rangeVariable);
+    auto stopExpr = ParserInterface::Instance().GetExpressionFrom(stopVariable);
+
+    switch (forLoop->GetRangeType()) {
+        case To: return ParserInterface::Instance().CompareGreaterOrEqual( stopExpr, rangeExpr );
+        case DownTo: return ParserInterface::Instance().CompareGreaterOrEqual( rangeExpr, stopExpr );
+        default: throw;
+    }
+}
+
+IExpression* update(IExpression* rangeExpr, IExpression* numericLiteral, RangeType rangeType) {
+    switch (rangeType) {
+        case To: return ParserInterface::Instance().Add(rangeExpr, numericLiteral);
+        case DownTo: return ParserInterface::Instance().Subtract(rangeExpr, numericLiteral);
+        default: throw;
+    }
+}
+
+void StatementController::UpdateRangeVariableFor(ForLoop* forLoop) {
+    auto rangeVariable = forLoop->GetRangeVariable();
+    auto rangeExpr = ParserInterface::Instance().GetExpressionFrom(rangeVariable);
+    auto numericLiteral = new NumericLiteral(1);
+    auto result = update(rangeExpr, numericLiteral, forLoop->GetRangeType());
+    ParserInterface::Instance().Assign(rangeVariable, result);
+
 }
 
 

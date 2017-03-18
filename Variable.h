@@ -25,14 +25,17 @@ private:
 public:
     void incrementOffset();
 
-    Variable(std::string* typeName, PointerType pointerType) : typeName_(typeName), pointerType_(pointerType), offset_(currentOffset) {
+    Variable(std::string* typeName, PointerType pointerType) : pointerType_(pointerType), offset_(currentOffset) {
+        if (*typeName == "INTEGER") typeName_ = new std::string("integer");
+        else if (*typeName == "BOOLEAN") typeName_ = new std::string("boolean");
+        else if (*typeName == "CHAR") typeName_ = new std::string("char");
+        else typeName_ = typeName;
         incrementOffset();
     }
     bool IsConstant() { return false; }
     int GetOffset() { return offset_; }
     PointerType GetPointerType() { return pointerType_; }
     ExpressionType GetType();
-    ~Variable() { currentOffset--; }
 };
 
 

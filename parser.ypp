@@ -126,6 +126,8 @@ void yy::parser::error(const std::string& error) {
 %type <WhileStatement*> while_header
 %type <RepeatStatement*> repeat_header
 %type <IfChain*> if_variable
+%type <RangeType> to_or_downto
+%type <ForLoop*> for_variable
 
 %%
 
@@ -409,18 +411,23 @@ if_variable:
 ;
 
 while_statement:
+    WHILE_KEYWORD
     while_header
+    { StatementController::Instance().Start( $2 ); }
     expression
-    { StatementController::Instance().Test( $1, $2 ); }
+    { StatementController::Instance().Test( $2, $4 ); }
     DO_KEYWORD
     statement_sequence
-    { StatementController::Instance().End( $1 ); }
+    {
+        StatementController::Instance().End( $2 );
+        delete $2;
+    }
     END_KEYWORD
 ;
 
 while_header:
-    WHILE_KEYWORD
-    { $$ = StatementController::Instance().StartWhile(); }
+    %empty
+    { $$ = new WhileStatement(); }
 ;
 
 repeat_statement:
@@ -438,17 +445,47 @@ repeat_header:
 
 for_statement:
     FOR_KEYWORD
-    assignment
+    for_variable
+    IDENTIFIER
+    ASSIGNMENT_OPERATOR
+    expression
+    {
+        auto rangeVariable = ParserInterface::Instance().GetSymbolFor( new std::string($3) );
+        ParserInterface::Instance().Assign( rangeVariable, $5 );
+        $2->Set( (Variable*)rangeVariable );
+    }
     to_or_downto
     expression
+    {
+        auto stopVariable = $2->GetStopVariable();
+        ParserInterface::Instance().Assign( stopVariable, $8 );
+    }
     DO_KEYWORD
+    {
+        StatementController::Instance().Start( $2 );
+        $2->Set( $7 );
+        auto condition = StatementController::Instance().DoComparisonFor( $2 );
+        StatementController::Instance().Test( $2, condition );
+    }
     statement_sequence
+    {
+        StatementController::Instance().UpdateRangeVariableFor( $2 );
+        StatementController::Instance().End( $2 );
+        delete $2;
+    }
     END_KEYWORD
+;
+
+for_variable:
+    %empty
+    { $$ = new ForLoop(); }
 ;
 
 to_or_downto:
     TO_KEYWORD
+    { $$ = RangeType::To; }
 |   DOWNTO_KEYWORD
+    { $$ = RangeType::DownTo; }
 ;
 
 stop_statement:

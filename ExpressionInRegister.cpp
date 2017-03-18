@@ -5,4 +5,4 @@
 
 #include "ExpressionInRegister.h"
 
-int ExpressionInRegister::addressCount = 0;
+bool ExpressionInRegister::addresses_[10] = {true,true,true,true,true,true,true,true,true,true};

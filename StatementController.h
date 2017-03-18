@@ -8,7 +8,7 @@
 #ifndef COMPILER_STATEMENT_CONTROLLER_H
 #define COMPILER_STATEMENT_CONTROLLER_H
 
-#include "WhileStatement.h"
+#include "ForLoop.h"
 #include "Encoder.h"
 #include "RepeatStatement.h"
 #include "IfChain.h"
@@ -23,7 +23,7 @@ private:
 public:
 
     static StatementController& Instance();
-    WhileStatement* StartWhile();
+    WhileStatement* Start(WhileStatement* whileStatement);
     void Test(WhileStatement* whileStatement, IExpression* condition);
     void End(WhileStatement* whileStatement);
     RepeatStatement* StartRepeat();
@@ -34,6 +34,8 @@ public:
     IfChain* GetIfChain() { return currentIfChain; }
     void EndElseIn(IfChain* ifChain);
     void End(IfChain* ifChain);
+    IExpression* DoComparisonFor(ForLoop* forLoop);
+    void UpdateRangeVariableFor(ForLoop* forLoop);
 };
 
 

@@ -11,10 +11,9 @@ private:
     static int labelCount_;
     int whileNumber;
 public:
-    WhileStatement() : whileNumber(labelCount_++) {
-
-    }
+    WhileStatement() : whileNumber(labelCount_++) {}
     int GetNumber() { return whileNumber; }
+    virtual ~WhileStatement() {}
 };
 
 
