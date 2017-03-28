@@ -139,6 +139,5 @@ CATCHALL                        .
 int main() {
     yy::parser parser;
     parser.parse();
-    std::cout << "Line Count:\t" << yylineno << std::endl;
     return 0;
 }
