@@ -17,10 +17,15 @@ void ParserInterface::AddVariables(std::vector<IdentifierList*>* identifiersByTy
     for (auto idList : *identifiersByType) {
         auto typeName = idList->TypeName;
         for (auto id : *(idList->Identifiers)) {
-            auto variable = new Variable(typeName, PointerType::Global);
+            auto variable = new Variable(typeName, getPointerType());
             SymbolTable::Instance().Add(id, variable);
+            if (currentFunction_ != nullptr) currentFunction_->IncrementStackSizeBy(variable->GetSize());
         }
     }
+}
+
+PointerType ParserInterface::getPointerType() {
+    return currentFunction_ == nullptr ? Global : Frame;
 }
 
 void ParserInterface::StartProgram() {
@@ -47,30 +52,28 @@ IExpression* ParserInterface::GetExpressionFrom(Symbol* symbol) {
     return Encoder::Instance().LoadFrom((Variable*)symbol);
 }
 
-ParserInterface* ParserInterface::instance_ = nullptr;
-
 IExpression* ParserInterface::GetSuccessorFor(IExpression* expression) {
-    return expression->GetSuccessor();
+    return nullptr;
 }
 
 IExpression* ParserInterface::GetPredecessorFor(IExpression* expression) {
-    return expression->GetPredecessor();
+    return nullptr;
 }
 
 IExpression* ParserInterface::CastToOrdinal(IExpression* expression) {
-    return expression->CastToOrdinal();
+    return nullptr;
 }
 
 IExpression* ParserInterface::CastToCharacter(IExpression* expression) {
-    return expression->CastToCharacter();
+    return nullptr;
 }
 
 IExpression* ParserInterface::Negate(IExpression* expression) {
-    return expression->Negate();
+    return nullptr;
 }
 
 IExpression* ParserInterface::Not(IExpression* expression) {
-    return expression->Not();
+    return nullptr;
 }
 
 IExpression* ParserInterface::Modulo(IExpression* left, IExpression* right) {
@@ -424,18 +427,11 @@ void ParserInterface::Assign(Symbol* variable, IExpression* rvalue) {
     delete reg;
 }
 
-ExpressionInRegister* ParserInterface::getRegisterFor(IExpression* expr) {
-    if (!expr->IsConstant()) return (ExpressionInRegister*)expr;
-    auto result = Encoder::Instance().LoadImmediate((Literal*)expr);
-    delete expr;
-    return result;
-}
-
-void ParserInterface::Write(std::vector<IExpression*>* expressions) {
-    for (auto expr : *expressions) {
-        Encoder::Instance().Write(expr);
+void ParserInterface::Write(std::vector<IParameter*>* parameters) {
+    for (auto param : *parameters) {
+        Encoder::Instance().Write(param);
     }
-    delete expressions;
+    delete parameters;
 }
 
 void ParserInterface::Read(std::vector<Symbol*>* symbols) {
@@ -445,5 +441,31 @@ void ParserInterface::Read(std::vector<Symbol*>* symbols) {
         Assign(symbol, result);
     }
 }
+
+IParameter* ParserInterface::GetParameterFrom(Symbol* symbol) {
+    if (!symbol->IsConstant()) return (Variable*)symbol;
+    auto variable = new Variable(symbol->GetType(), getPointerType());
+    auto reg = Encoder::Instance().LoadImmediate(((Constant*)symbol)->GetLiteral());
+    Encoder::Instance().Assign(*variable, reg);
+    delete reg;
+    return variable;
+}
+
+IParameter* ParserInterface::GetParameterFrom(IExpression* expression) {
+    auto var = new Variable(expression->GetType(), getPointerType());
+    auto reg = getRegisterFor(expression);
+    Encoder::Instance().Assign(*var, reg);
+    delete reg;
+    return var;
+}
+
+ExpressionInRegister* ParserInterface::getRegisterFor(IExpression* expr) {
+    if (!expr->IsConstant()) return (ExpressionInRegister*)expr;
+    auto result = Encoder::Instance().LoadImmediate((Literal*)expr);
+    delete expr;
+    return result;
+}
+
+ParserInterface* ParserInterface::instance_ = nullptr;
 
 #pragma clang diagnostic pop

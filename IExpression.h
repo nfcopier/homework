@@ -20,12 +20,6 @@ protected:
 public:
     virtual bool IsConstant() = 0;
     virtual ExpressionType GetType() = 0;
-    virtual IExpression* GetSuccessor() = 0;
-    virtual IExpression* GetPredecessor() = 0;
-    virtual IExpression* CastToOrdinal() = 0;
-    virtual IExpression* CastToCharacter() = 0;
-    virtual IExpression* Negate() = 0;
-    virtual IExpression* Not() = 0;
     virtual ~IExpression() {}
 };
 

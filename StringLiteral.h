@@ -7,22 +7,15 @@
 
 
 #include <string>
-#include "Literal.h"
+#include "IParameter.h"
 
-class StringLiteral : public Literal {
+class StringLiteral : public IParameter {
 private:
     std::string& value_;
 public:
     StringLiteral(std::string& value) : value_(value) {}
-    ExpressionType GetType() { return ExpressionType::STRING; }
     std::string* GetValue() { return &value_; }
-
-    IExpression* GetSuccessor() { throw; }
-    IExpression* GetPredecessor() { throw; }
-    IExpression* CastToOrdinal() { throw; }
-    IExpression* CastToCharacter() { throw; }
-    IExpression* Negate() { throw; }
-    IExpression* Not() { throw; }
+    bool IsString() { return true; }
 };
 
 

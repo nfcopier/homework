@@ -92,6 +92,10 @@ ExpressionInRegister* Encoder::And(ExpressionInRegister& left, ExpressionInRegis
     return outExpr;
 }
 
+void Encoder::StartMain() {
+    instructionBuffer_ << "main:" << std::endl;
+}
+
 void Encoder::EndProgram() {
     printOutStrings(out_, strings_);
     printOutInstructions(instructionBuffer_, out_);
@@ -99,28 +103,29 @@ void Encoder::EndProgram() {
     out_ << "syscall" << std::endl;
 }
 
+void Encoder::SaveRegisterToStack(unsigned int registerNumber, unsigned int variableOffset) {
+    instructionBuffer_ << "sw  \t$t" << registerNumber << ", " << variableOffset << "($sp)" << std::endl;
+}
+
+void Encoder::RestoreRegisterFromStack(unsigned int registerNumber, unsigned int variableOffset) {
+    instructionBuffer_ << "lw  \t$t" << registerNumber << ", " << variableOffset << "($sp)" << std::endl;
+}
+
 void Encoder::Assign(Variable& variable, ExpressionInRegister* reg) {
     instructionBuffer_ << "sw  \t$t" << reg->GetAddress() << ", " << getAddressFrom(variable) << std::endl;
 }
 
-void Encoder::Write(IExpression* value) {
-    if (value->GetType() == STRING) {
+void Encoder::Write(IParameter* value) {
+    if (value->IsString()) {
         instructionBuffer_ << "li  \t$v0, 4" << std::endl;
         instructionBuffer_ << "la  \t$a0, str" << strings_.size() << std::endl;
         strings_.push_back(((StringLiteral*)value)->GetValue());
-        delete value;
     }
     else {
-        ExpressionInRegister* v;
-        if (value->IsConstant()) {
-            v = LoadImmediate((Literal*)value);
-        } else {
-            v = (ExpressionInRegister*)value;
-        }
+        auto v = (Variable*)value;
         auto sysCallNumber = getWriteCallNumberFrom(v->GetType());
         instructionBuffer_ << "li  \t$v0, " << sysCallNumber << std::endl;
-        instructionBuffer_ << "move  \t$a0, $t" << v->GetAddress() << std::endl;
-        delete v;
+        instructionBuffer_ << "lw  \t$a0, " << v->GetOffset() << '(' << getPointerFrom(v->GetPointerType()) << ')' << std::endl;
     }
     instructionBuffer_ << "syscall" << std::endl;
 }
@@ -131,7 +136,9 @@ int getWriteCallNumberFrom(ExpressionType type) {
         case CHARACTER: return 11;
         case STRING: return 4;
         case BOOLEAN: return 1;
-        default: throw;
+        default: {
+            throw;
+        }
     }
 }
 
@@ -210,7 +217,7 @@ void printOutStrings(std::ostream& out, std::vector<std::string*>& strings) {
 
 void printOutInstructions(std::stringstream& instructions, std::ostream& out) {
     out << ".text" << std::endl;
-    out << ".global main\nmain:" << std::endl;
+    out << ".global main" << std::endl;
     out << instructions.str();
     std::flush(out);
 }
@@ -257,7 +264,24 @@ void Encoder::PrintElseLabelFor(IfChain& ifChain) {
 }
 
 void Encoder::End(IfChain& ifChain) {
-    instructionBuffer_ << "\nifEnd" << ifChain.GetIfNumber() << ':' << std::endl;
+    instructionBuffer_ << "ifEnd" << ifChain.GetIfNumber() << ':' << std::endl;
+}
+
+void Encoder::Start(FunctionDefinition* function) {
+    instructionBuffer_ << function->GetFunctionName() << "Body:" << std::endl;
+}
+
+void Encoder::StartPrologueFor(FunctionDefinition* function) {
+    instructionBuffer_ << "jr  \t$ra" << std::endl;
+    instructionBuffer_ << function->GetFunctionName() << ':' << std::endl;
+}
+
+void Encoder::EndPrologueFor(FunctionDefinition* function) {
+    instructionBuffer_ << "j   \t" << function->GetFunctionName() << "Body" << std::endl;
+}
+
+void Encoder::IncrementStackPointerBy(int offset) {
+    instructionBuffer_ << "addi\t$sp, $sp, " << offset << std::endl;
 }
 
 

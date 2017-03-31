@@ -14,6 +14,7 @@
 #include "WhileStatement.h"
 #include "RepeatStatement.h"
 #include "IfChain.h"
+#include "FunctionDefinition.h"
 
 class Encoder {
 private:
@@ -37,9 +38,10 @@ public:
     ExpressionInRegister* Or(ExpressionInRegister& left, ExpressionInRegister& right);
     ExpressionInRegister* And(ExpressionInRegister& left, ExpressionInRegister& right);
 
+    void StartMain();
     void EndProgram();
     void Assign(Variable& variable, ExpressionInRegister* reg);
-    void Write(IExpression* value);
+    void Write(IParameter* value);
     ExpressionInRegister* Read(ExpressionType type);
     ExpressionInRegister* LoadImmediate(Literal* literal);
     ExpressionInRegister* LoadFrom(Variable* variable);
@@ -55,6 +57,15 @@ public:
     void Exit(IfChain& ifChain);
     void PrintElseLabelFor(IfChain& ifChain);
     void End(IfChain& ifChain);
+
+    void Start(FunctionDefinition* function);
+    void StartPrologueFor(FunctionDefinition* function);
+    void EndPrologueFor(FunctionDefinition* function);
+    void IncrementStackPointerBy(int offset);
+
+    void SaveRegisterToStack(unsigned int registerNumber, unsigned int variableOffset);
+
+    void RestoreRegisterFromStack(unsigned int registerNumber, unsigned int variableOffset);
 };
 
 

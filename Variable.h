@@ -8,7 +8,7 @@
 
 #include <string>
 #include "Symbol.h"
-#include "IExpression.h"
+#include "IParameter.h"
 
 enum PointerType {
     Global,
@@ -16,26 +16,32 @@ enum PointerType {
     Stack
 };
 
-class Variable : public Symbol {
+class Variable : public IParameter, public Symbol {
 private:
-    static int currentOffset;
+    static int currentGlobalOffset_;
+    static int currentStackOffset_;
+    static int currentFrameOffset_;
     int offset_;
     PointerType pointerType_;
-    std::string* typeName_;
+    ExpressionType type_;
+    ExpressionType getTypeFrom(std::string* typeName);
 public:
-    void incrementOffset();
-
-    Variable(std::string* typeName, PointerType pointerType) : pointerType_(pointerType), offset_(currentOffset) {
-        if (*typeName == "INTEGER") typeName_ = new std::string("integer");
-        else if (*typeName == "BOOLEAN") typeName_ = new std::string("boolean");
-        else if (*typeName == "CHAR") typeName_ = new std::string("char");
-        else typeName_ = typeName;
-        incrementOffset();
+    void doOffset();
+    Variable(ExpressionType type, PointerType pointerType) : type_(type), pointerType_(pointerType) {
+        doOffset();
+    }
+    Variable(std::string* typeName, PointerType pointerType) : pointerType_(pointerType) {
+        type_ = getTypeFrom(typeName);
+        doOffset();
     }
     bool IsConstant() { return false; }
     int GetOffset() { return offset_; }
     PointerType GetPointerType() { return pointerType_; }
-    ExpressionType GetType();
+    ExpressionType GetType() { return type_; }
+    unsigned GetSize() { return 4; }
+    bool IsString() { return false; }
+    void ClearFrame() { currentFrameOffset_ = 0; }
+    void ClearStackBy(int memorySize) {currentStackOffset_ -= memorySize; }
 };
 
 

@@ -15,13 +15,6 @@ public:
     BooleanLiteral(bool value) : value_(value) {}
     bool GetValue() { return value_; }
     ExpressionType GetType() { return ExpressionType::BOOLEAN; }
-
-    IExpression* GetSuccessor() { return Not(); }
-    IExpression* GetPredecessor() { return Not(); }
-    IExpression* CastToOrdinal() { throw; }
-    IExpression* CastToCharacter() { throw; }
-    IExpression* Negate() { return Not(); }
-    IExpression* Not() { return new BooleanLiteral(!value_); }
 };
 
 

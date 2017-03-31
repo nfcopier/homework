@@ -5,12 +5,15 @@
 #ifndef COMPILER_SYMBOL_H
 #define COMPILER_SYMBOL_H
 
+#include "IExpression.h"
+
 
 class Symbol {
 protected:
     Symbol() {}
 public:
     virtual bool IsConstant() = 0;
+    virtual ExpressionType GetType() = 0;
 };
 
 

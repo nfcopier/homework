@@ -34,7 +34,3 @@ char convertToEscaped(char value) {
 char convertToEscaped(char* value) {
     return char(atoi(value));
 }
-
-IExpression* CharacterLiteral::CastToOrdinal() {
-    return new NumericLiteral( (int)value_ );
-}

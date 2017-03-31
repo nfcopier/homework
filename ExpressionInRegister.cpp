@@ -5,4 +5,17 @@
 
 #include "ExpressionInRegister.h"
 
-bool ExpressionInRegister::addresses_[10] = {true,true,true,true,true,true,true,true,true,true};
+bool ExpressionInRegister::registersInUse_[] = {
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+};
+
+unsigned int ExpressionInRegister::registersUsed_ = 0u;

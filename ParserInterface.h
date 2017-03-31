@@ -17,12 +17,16 @@
 #include "Constant.h"
 #include "ExpressionInRegister.h"
 #include "Encoder.h"
+#include "FunctionDefinition.h"
 
 
 class ParserInterface {
 private:
     ParserInterface() {};
     static ParserInterface* instance_;
+
+    FunctionDefinition* currentFunction_ = nullptr;
+    PointerType getPointerType();
 
     IExpression* moduloImmediate(IExpression* left, IExpression* right);
     IExpression* divideImmediate(IExpression* left, IExpression* right);
@@ -51,9 +55,12 @@ public:
     static ParserInterface& Instance();
     void AddVariables(std::vector<IdentifierList*>* identifiersByType);
     void StartProgram();
+    void StartMain() { Encoder::Instance().StartMain(); }
     void EndProgram();
     void StartBlock();
     void EndBlock();
+    void Set(FunctionDefinition* functionDefinition) { currentFunction_ = functionDefinition; }
+    void ClearFunction() { currentFunction_ = nullptr; }
 
     Symbol* GetSymbolFor(std::string* identifier);
     IExpression* GetExpressionFrom(Symbol* symbol);
@@ -80,8 +87,10 @@ public:
     IExpression* Or(IExpression* left, IExpression* right);
 
     void Assign(Symbol* variable, IExpression* rvalue);
-    void Write(std::vector<IExpression*>* expressions);
+    void Write(std::vector<IParameter*>* parameters);
     void Read(std::vector<Symbol*>* symbols);
+    IParameter* GetParameterFrom(Symbol* symbol);
+    IParameter* GetParameterFrom(IExpression* expression);
 };
 
 

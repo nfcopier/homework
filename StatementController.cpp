@@ -9,7 +9,7 @@
 #include "ParserInterface.h"
 
 
-ExpressionInRegister& getRegisterFor(IExpression* expr);
+ExpressionInRegister& getRegisterFor(IExpression* expression);
 
 StatementController& StatementController::Instance() {
     if (instance_ == nullptr) instance_ = new StatementController();

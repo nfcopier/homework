@@ -17,13 +17,6 @@ public:
     CharacterLiteral(char value) : value_(value) {}
     ExpressionType GetType() { return ExpressionType::CHARACTER; }
     char GetValue() { return value_; }
-
-    IExpression* GetSuccessor() { return new CharacterLiteral(value_ + (char)1); }
-    IExpression* GetPredecessor() { return new CharacterLiteral(value_ - (char)1); }
-    IExpression* CastToOrdinal();
-    IExpression* CastToCharacter() { return this; }
-    IExpression* Negate() { throw; }
-    IExpression* Not() { throw; }
 };
 
 

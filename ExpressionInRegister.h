@@ -12,13 +12,14 @@
 
 class ExpressionInRegister : public IExpression {
 private:
-    static bool addresses_[ADDRESS_COUNT];
-    int address_;
+    static bool registersInUse_[ADDRESS_COUNT];
+    static unsigned int registersUsed_;
+    unsigned int address_;
     bool isCopied_;
     ExpressionType expressionType_;
-    int getNextAvailableAddress() {
-        for (auto address = 0; address < ADDRESS_COUNT; address++) {
-            if (addresses_[address]) return address;
+    unsigned int getNextAvailableAddress() {
+        for (auto address = 0u; address < ADDRESS_COUNT; address++) {
+            if (registersInUse_[address]) return address;
         }
         throw;
     }
@@ -26,20 +27,17 @@ private:
 public:
     ExpressionType GetType() { return expressionType_; }
     bool IsConstant() { return false; }
-    IExpression* Not() { return this; }
-    IExpression* GetSuccessor() { return this; }
-    IExpression* GetPredecessor() { return this; }
-    IExpression* CastToOrdinal() { return this; }
-    IExpression* CastToCharacter() { return this; }
-    IExpression* Negate() { return this; }
     ExpressionInRegister(ExpressionType expressionType) : isCopied_(false), expressionType_(expressionType) {
         address_ = getNextAvailableAddress();
-        addresses_[address_] = false;
+        registersInUse_[address_] = false;
+        if (address_ + 1u > registersUsed_) registersUsed_ = address_ + 1u;
     }
     ExpressionInRegister(ExpressionInRegister const& expr) : isCopied_(true), address_(expr.address_), expressionType_(expr.expressionType_) {}
     int GetAddress() { return address_; }
+    static unsigned int GetRegistersUsed() { return registersUsed_; }
+    static void ClearRegistersUsed() { registersUsed_ = 0u; }
     ~ExpressionInRegister() {
-        if (!isCopied_) addresses_[address_] = true;
+        if (!isCopied_) registersInUse_[address_] = true;
     }
 };
 

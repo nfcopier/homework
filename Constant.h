@@ -16,6 +16,7 @@ public:
     Constant(Literal* literal) : literal_(literal) {}
     bool IsConstant() { return true; }
     Literal* GetLiteral() { return literal_; }
+    ExpressionType GetType() { return literal_->GetType(); }
 };
 
 

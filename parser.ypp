@@ -3,6 +3,7 @@
 %code requires {
     #include <string.h>
     #include "StatementController.h"
+    #include "FunctionController.h"
     #include "ParserInterface.h"
     extern int yyleng;
 }
@@ -96,6 +97,7 @@ void yy::parser::error(const std::string& error) {
 %type <std::string*> type
 %type <IdentifierList*> identifiers_by_type
 %type <std::vector<IdentifierList*>*> identifiers_by_type_list
+%type <IExpression*> no_l_expression
 %type <IExpression*> expression
 
 %type <IExpression*> or_expression
@@ -118,16 +120,20 @@ void yy::parser::error(const std::string& error) {
 %type <IExpression*> ordinal_cast
 %type <IExpression*> predecessor
 %type <IExpression*> successor
+%type <ExpressionInRegister*> function_call
 %type <Literal*> literal
 %type <Symbol*> l_value
 %type <std::vector<Symbol*>*> l_value_list
-%type <std::vector<IExpression*>*> parameters
+%type <std::vector<IParameter*>*> parameters_maybe
+%type <std::vector<IParameter*>*> parameters
+%type <IParameter*> parameter
 
 %type <WhileStatement*> while_header
 %type <RepeatStatement*> repeat_header
 %type <IfChain*> if_variable
 %type <RangeType> to_or_downto
 %type <ForLoop*> for_variable
+%type <FunctionDefinition*> function_definition
 
 %%
 
@@ -137,6 +143,7 @@ program:
     type_declaration_list_maybe
     variable_declaration_list_maybe
     call_definition_list_maybe
+    { ParserInterface::Instance().StartMain(); }
     block
     DOT_OPERATOR
     { ParserInterface::Instance().EndProgram(); }
@@ -260,20 +267,19 @@ call_definition:
 procedure_declaration:
     PROCEDURE_KEYWORD
     IDENTIFIER
-    { ParserInterface::Instance().StartBlock(); }
     OPENING_PARENTHESIS
     parameter_list_maybe
     CLOSING_PARENTHESIS
     STATEMENT_TERMINATOR
     function_body
     STATEMENT_TERMINATOR
-    { ParserInterface::Instance().EndBlock(); }
 ;
 
 function_declaration:
     FUNCTION_KEYWORD
-    IDENTIFIER
-    { ParserInterface::Instance().StartBlock(); }
+    function_definition
+    { ParserInterface::Instance().Set( $2 ); }
+    { FunctionController::Instance().Start( $2 ); }
     OPENING_PARENTHESIS
     parameter_list_maybe
     CLOSING_PARENTHESIS
@@ -282,7 +288,14 @@ function_declaration:
     STATEMENT_TERMINATOR
     function_body
     STATEMENT_TERMINATOR
-    { ParserInterface::Instance().EndBlock(); }
+    { FunctionController::Instance().CreateEpilogueFor( $2 ); }
+    { FunctionController::Instance().CreatePrologueFor( $2 ); }
+    { ParserInterface::Instance().ClearFunction(); }
+;
+
+function_definition:
+    IDENTIFIER
+    { $$ = new FunctionDefinition(new std::string($1)); }
 ;
 
 parameter_list_maybe:
@@ -524,7 +537,7 @@ write_statement:
     OPENING_PARENTHESIS
     parameters
     CLOSING_PARENTHESIS
-    { ParserInterface::Instance().Write($3); }
+    { ParserInterface::Instance().Write( $3 ); }
 ;
 
 null_statement:
@@ -532,6 +545,13 @@ null_statement:
 ;
 
 expression:
+    no_l_expression
+    { $$ = $1; }
+|   l_value
+    { $$ = ParserInterface::Instance().GetExpressionFrom( $1 ); }
+;
+
+no_l_expression:
     or_expression { $$ = $1; }
 |   and_expression { $$ = $1; }
 |   equivalence { $$ = $1; }
@@ -553,7 +573,7 @@ expression:
 |   predecessor { $$ = $1; }
 |   successor { $$ = $1; }
 |   literal { $$ = $1; }
-|   l_value { $$ = ParserInterface::Instance().GetExpressionFrom($1); }
+|   function_call { $$ = $1; }
 
 or_expression:
     expression
@@ -651,20 +671,45 @@ parenthetic_expression:
     { $$ = $2; }
 ;
 
+function_call:
+    IDENTIFIER
+    OPENING_PARENTHESIS
+    parameters_maybe
+    CLOSING_PARENTHESIS
+    { $$ = FunctionController::Instance().CallFunction( new std::string($1), $3 ); }
+;
+
 procedure_call:
     IDENTIFIER
     OPENING_PARENTHESIS
-    parameters
+    parameters_maybe
     CLOSING_PARENTHESIS
+    { FunctionController::Instance().CallProcedure( new std::string($1), $3 ); }
+;
+
+parameters_maybe:
+    %empty
+    { $$ = new std::vector<IParameter*>(); }
+|   parameters
+    { $$ = $1; }
 ;
 
 parameters:
-    expression
-    { $$ = new std::vector<IExpression*>(); $$->push_back($1); }
+    parameter
+    { $$ = new std::vector<IParameter*>(); $$->push_back( $1 ); }
 |   parameters
     COMMA
-    expression
-    { $$ = $1; $$->push_back($3); }
+    parameter
+    { $$ = $1; $$->push_back( $3 ); }
+;
+
+parameter:
+    l_value
+    { $$ = ParserInterface::Instance().GetParameterFrom( $1 ); }
+|   no_l_expression
+    { $$ = ParserInterface::Instance().GetParameterFrom( $1 ); }
+|   STRING_LITERAL
+    { $$ = new StringLiteral( *(new std::string($1)) ); }
 ;
 
 character_cast:
@@ -702,10 +747,6 @@ successor:
 literal:
     NUMERIC_LITERAL { $$ = new NumericLiteral($1); }
 |   CHARACTER_LITERAL { $$ = new CharacterLiteral($1, yyleng); }
-|   STRING_LITERAL {
-        auto str = new std::string($1);
-        $$ = new StringLiteral(*str);
-    }
 ;
 
 l_value:
