@@ -81,6 +81,9 @@ void FunctionController::CreateEpilogue() {
     currentFunction_->IncrementStackSizeBy(ExpressionInRegister::GetRegistersUsed() << 2);
     currentFunction_->SetRegistersUsed(ExpressionInRegister::GetRegistersUsed());
     ExpressionInRegister::ClearRegistersUsed();
+    Variable::ClearFrame();
+    Parameter::ClearOffset();
+    Encoder::Instance().StartEpilogueFor(currentFunction_);
     RestoreRegistersFrom(currentFunction_);
     Encoder::Instance().IncrementStackPointerBy(currentFunction_->GetStackSize());
 }
@@ -108,12 +111,12 @@ FunctionDefinition* FunctionController::getFunctionFor(std::string& functionName
 }
 
 void FunctionController::Return(IExpression* expression) {
-    Encoder::Instance().Return(*expression);
+    Encoder::Instance().Return(*expression, currentFunction_);
     delete expression;
 }
 
 void FunctionController::Return() {
-    Encoder::Instance().Return();
+    Encoder::Instance().Return(currentFunction_);
 }
 
 

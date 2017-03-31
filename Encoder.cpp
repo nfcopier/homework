@@ -278,10 +278,15 @@ void Encoder::Start(FunctionDefinition* function) {
     instructionBuffer_ << function->GetFunctionName() << "Body:" << std::endl;
 }
 
+void Encoder::StartEpilogueFor(FunctionDefinition* functionDefinition) {
+    instructionBuffer_ << functionDefinition->GetFunctionName() << "Epilogue:" << std::endl;
+}
+
 void Encoder::StartPrologueFor(FunctionDefinition* function) {
     instructionBuffer_<< "lw  \t$ra, 0($sp)" << std::endl;
     instructionBuffer_ << "jr  \t$ra" << std::endl;
-    instructionBuffer_ << function->GetFunctionName() << ':' << std::endl;
+    instructionBuffer_ << function->GetFunctionName() << "Entry:" << std::endl;
+    instructionBuffer_ << "sw  \t$ra, 0$(sp)" << std::endl;
 }
 
 void Encoder::EndPrologueFor(FunctionDefinition* function) {
@@ -292,20 +297,18 @@ void Encoder::IncrementStackPointerBy(int offset) {
     instructionBuffer_ << "addi\t$sp, $sp, " << offset << std::endl;
 }
 
-void Encoder::Return() {
-    instructionBuffer_<< "lw  \t$ra, 0($sp)" << std::endl;
-    instructionBuffer_ << "jr  \t$ra" << std::endl;
+void Encoder::Return(FunctionDefinition* functionDefinition) {
+    instructionBuffer_ << "j   " << functionDefinition->GetFunctionName() << "Epilogue" << std::endl;
 }
 
-void Encoder::Return(IExpression& expression) {
+void Encoder::Return(IExpression& expression, FunctionDefinition* functionDefinition) {
     if (expression.IsConstant()) {
         returnConstant((Literal&)expression);
     }
     else {
         returnExpression((ExpressionInRegister&)expression);
     }
-    instructionBuffer_<< "lw  \t$ra, 0($sp)" << std::endl;
-    instructionBuffer_ << "jr  \t$ra" << std::endl;
+    Return(functionDefinition);
 }
 
 void Encoder::returnExpression(ExpressionInRegister& expression) {

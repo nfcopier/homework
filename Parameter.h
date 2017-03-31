@@ -16,7 +16,7 @@ private:
     bool isReference_;
 public:
     bool IsReference() { return isReference_; }
-    void ClearOffset() { currentOffset_ = 0u; }
+    static void ClearOffset() { currentOffset_ = 0u; }
     Parameter(ExpressionType type, bool isReference) : isReference_(isReference), Variable(type, Frame, currentOffset_) {
         currentOffset_ += isReference ? WORD_SIZE : 4;
     }

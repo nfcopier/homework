@@ -61,13 +61,14 @@ public:
     void End(IfChain& ifChain);
 
     void Start(FunctionDefinition* function);
+    void StartEpilogueFor(FunctionDefinition* functionDefinition);
     void StartPrologueFor(FunctionDefinition* function);
     void EndPrologueFor(FunctionDefinition* function);
     void IncrementStackPointerBy(int offset);
     void SaveRegisterToStack(unsigned int registerNumber, unsigned int variableOffset);
     void RestoreRegisterFromStack(unsigned int registerNumber, unsigned int variableOffset);
-    void Return();
-    void Return(IExpression& expression);
+    void Return(FunctionDefinition* definition);
+    void Return(IExpression& expression, FunctionDefinition* definition);
 };
 
 
