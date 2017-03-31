@@ -16,7 +16,7 @@ ParserInterface& ParserInterface::Instance() {
 void ParserInterface::AddVariables(std::vector<IdentifierList*>* identifiersByType) {
     for (auto idList : *identifiersByType) {
         auto typeName = idList->TypeName;
-        for (auto id : *(idList->Identifiers)) {
+        for (auto id : idList->Identifiers) {
             auto variable = new Variable(typeName, getPointerType());
             SymbolTable::Instance().Add(id, variable);
             if (currentFunction_ != nullptr) currentFunction_->IncrementStackSizeBy(variable->GetSize());

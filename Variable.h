@@ -27,6 +27,8 @@ private:
     ExpressionType getTypeFrom(std::string* typeName);
 public:
     void doOffset();
+    Variable(ExpressionType type, PointerType pointerType, int offset) :
+            type_(type), pointerType_(pointerType), offset_(offset) {}
     Variable(ExpressionType type, PointerType pointerType) : type_(type), pointerType_(pointerType) {
         doOffset();
     }
@@ -41,7 +43,7 @@ public:
     unsigned GetSize() { return 4; }
     bool IsString() { return false; }
     void ClearFrame() { currentFrameOffset_ = 0; }
-    void ClearStackBy(int memorySize) {currentStackOffset_ -= memorySize; }
+    virtual bool IsReference() { return false; }
 };
 
 

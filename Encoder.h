@@ -22,6 +22,8 @@ private:
     std::stringstream instructionBuffer_;
     std::vector<std::string*> strings_;
     static Encoder* instance_;
+    void returnConstant(Literal& literal);
+    void returnExpression(ExpressionInRegister& expression);
 protected:
     Encoder() : out_(std::cout) {}
 public:
@@ -62,10 +64,10 @@ public:
     void StartPrologueFor(FunctionDefinition* function);
     void EndPrologueFor(FunctionDefinition* function);
     void IncrementStackPointerBy(int offset);
-
     void SaveRegisterToStack(unsigned int registerNumber, unsigned int variableOffset);
-
     void RestoreRegisterFromStack(unsigned int registerNumber, unsigned int variableOffset);
+    void Return();
+    void Return(IExpression& expression);
 };
 
 

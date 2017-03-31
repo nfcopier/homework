@@ -7,6 +7,7 @@
 #include "CharacterLiteral.h"
 #include "BooleanLiteral.h"
 #include "StringLiteral.h"
+#include "Parameter.h"
 
 std::string getAddressFrom(Variable&);
 std::string getPointerFrom(PointerType);
@@ -16,7 +17,6 @@ int getReadCallNumberFrom(ExpressionType type);
 
 void printOutStrings(std::ostream& out, std::vector<std::string*>& strings);
 void printOutInstructions(std::stringstream& instructions, std::ostream& out);
-
 
 Encoder& Encoder::Instance() {
     if (instance_ == nullptr) instance_ = new Encoder();
@@ -188,7 +188,14 @@ ExpressionInRegister* Encoder::LoadImmediate(Literal* literal) {
 
 ExpressionInRegister* Encoder::LoadFrom(Variable* variable) {
     auto reg = new ExpressionInRegister(variable->GetType());
-    instructionBuffer_ << "lw  \t$t" << reg->GetAddress() << ", " << getAddressFrom(*variable) << std::endl;
+    if (variable->IsReference()) {
+        auto param = (Parameter*)variable;
+        instructionBuffer_ << "la  \t, $t" << reg->GetAddress() << ", " << param->GetOffset() << "($fp)" << std::endl;
+        instructionBuffer_ << "lw  \t, $t" << reg->GetAddress() << "0($t" << reg->GetAddress() << ')' << std::endl;
+    }
+    else {
+        instructionBuffer_ << "lw  \t$t" << reg->GetAddress() << ", " << getAddressFrom(*variable) << std::endl;
+    }
     return reg;
 }
 
@@ -272,6 +279,7 @@ void Encoder::Start(FunctionDefinition* function) {
 }
 
 void Encoder::StartPrologueFor(FunctionDefinition* function) {
+    instructionBuffer_<< "lw  \t$ra, 0($sp)" << std::endl;
     instructionBuffer_ << "jr  \t$ra" << std::endl;
     instructionBuffer_ << function->GetFunctionName() << ':' << std::endl;
 }
@@ -282,6 +290,44 @@ void Encoder::EndPrologueFor(FunctionDefinition* function) {
 
 void Encoder::IncrementStackPointerBy(int offset) {
     instructionBuffer_ << "addi\t$sp, $sp, " << offset << std::endl;
+}
+
+void Encoder::Return() {
+    instructionBuffer_<< "lw  \t$ra, 0($sp)" << std::endl;
+    instructionBuffer_ << "jr  \t$ra" << std::endl;
+}
+
+void Encoder::Return(IExpression& expression) {
+    if (expression.IsConstant()) {
+        returnConstant((Literal&)expression);
+    }
+    else {
+        returnExpression((ExpressionInRegister&)expression);
+    }
+    instructionBuffer_<< "lw  \t$ra, 0($sp)" << std::endl;
+    instructionBuffer_ << "jr  \t$ra" << std::endl;
+}
+
+void Encoder::returnExpression(ExpressionInRegister& expression) {
+    instructionBuffer_ << "lw  \t$v0, $t" << expression.GetAddress() << std::endl;
+}
+
+void Encoder::returnConstant(Literal& literal) {
+    switch (literal.GetType()) {
+        case NUMERIC: {
+            instructionBuffer_ << "li  \t$v0, " << ((NumericLiteral&)literal).GetValue() << std::endl;
+            break;
+        }
+        case CHARACTER:{
+            instructionBuffer_ << "li  \t$v0, " << ((CharacterLiteral&)literal).GetValue() << std::endl;
+            break;
+        }
+        case BOOLEAN:{
+            instructionBuffer_ << "li  \t$v0, " << ((BooleanLiteral&)literal).GetValue() << std::endl;
+            break;
+        }
+        default: throw;
+    }
 }
 
 

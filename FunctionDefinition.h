@@ -8,20 +8,29 @@
 
 #include <string>
 #include <vector>
+#include "ParameterDeclaration.h"
 
 class FunctionDefinition {
 private:
     int stackSize_;
     std::string* functionName_;
-    static std::vector<std::string*> functionNames_;
     unsigned int registersUsed_;
+    std::vector<ParameterDeclaration*>* parameterDeclarations_;
+    bool isForward_;
+    ExpressionType returnType_;
 public:
-    FunctionDefinition(std::string* functionName);
+    FunctionDefinition(std::string* functionName, std::vector<ParameterDeclaration*>* parameters);
     void IncrementStackSizeBy(unsigned int variableSize);
     std::string& GetFunctionName() { return *functionName_; }
     void SetRegistersUsed(unsigned int registersUsed) { registersUsed_ = registersUsed; }
     unsigned int GetRegistersUsed() { return registersUsed_; }
     int GetStackSize();
+    void SetIsForward() { isForward_ = true; }
+    void ClearIsForward() { isForward_ = false; }
+    bool IsForward() { return isForward_; }
+    std::vector<ParameterDeclaration*>& GetDeclarations() { return *parameterDeclarations_; }
+    void SetReturnTypeAs(ExpressionType type) { returnType_ = type; };
+    ExpressionType GetReturnType() { return returnType_; }
 };
 
 

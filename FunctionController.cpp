@@ -3,12 +3,12 @@
 //
 
 #include "FunctionController.h"
-#include "Encoder.h"
-#include "Constant.h"
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
+
+void declareParametersFor(std::vector<ParameterDeclaration*>& declarations);
 void CacheRegistersFor(FunctionDefinition* function);
 void RestoreRegistersFrom(FunctionDefinition* function);
 
@@ -17,15 +17,57 @@ FunctionController& FunctionController::Instance() {
     return *instance_;
 }
 
-void FunctionController::Start(FunctionDefinition* function) {
-    Encoder::Instance().Start(function);
+ExpressionType getTypeFrom(std::string* typeName) {
+    if (*typeName == "integer" or *typeName == "INTEGER") {
+        return NUMERIC ;
+    } else if (*typeName == "char" or *typeName == "CHAR") {
+        return CHARACTER;
+    } else if (*typeName == "boolean" or *typeName == "BOOLEAN") {
+        return BOOLEAN;
+    } else throw;
 }
 
-void FunctionController::CreatePrologueFor(FunctionDefinition* function) {
-    Encoder::Instance().StartPrologueFor(function);
-    Encoder::Instance().IncrementStackPointerBy(-function->GetStackSize());
-    CacheRegistersFor(function);
-    Encoder::Instance().EndPrologueFor(function);
+void FunctionController::SetReturnTypeAs(std::string* typeName) {
+    auto type = getTypeFrom(typeName);
+    currentFunction_->SetReturnTypeAs(type);
+}
+
+void FunctionController::Declare() {
+    auto existing = getFunctionFor(currentFunction_->GetFunctionName());
+    if (existing != nullptr) throw;
+    currentFunction_->SetIsForward();
+    functions_.push_back(currentFunction_);
+}
+
+void FunctionController::Start() {
+    auto existing = getFunctionFor(currentFunction_->GetFunctionName());
+    if (existing == nullptr) functions_.push_back(currentFunction_);
+    else if (existing->IsForward()) existing->ClearIsForward();
+    else throw;
+    SymbolTable::Instance().EnterLocalScope();
+    declareParametersFor(currentFunction_->GetDeclarations());
+    currentFunction_->IncrementStackSizeBy(Parameter::GetCurrentOffset());
+    Encoder::Instance().Start(currentFunction_);
+}
+
+void declareParametersFor(std::vector<ParameterDeclaration*>& declarations) {
+    for (auto declaration : declarations) {
+        auto identifierList = declaration->GetIdentifiers();
+        auto type = getTypeFrom(identifierList.TypeName);
+        for (auto identifier : identifierList.Identifiers) {
+            auto variable = new Parameter(type, declaration->IsReference());
+            SymbolTable::Instance().Add(identifier, variable);
+        }
+    }
+}
+
+void FunctionController::CreatePrologue() {
+    if (currentFunction_->IsForward()) return;
+    Encoder::Instance().StartPrologueFor(currentFunction_);
+    Encoder::Instance().IncrementStackPointerBy(-currentFunction_->GetStackSize());
+    CacheRegistersFor(currentFunction_);
+    Encoder::Instance().EndPrologueFor(currentFunction_);
+    SymbolTable::Instance().ExitLocalScope();
 }
 
 void CacheRegistersFor(FunctionDefinition* function) {
@@ -34,12 +76,13 @@ void CacheRegistersFor(FunctionDefinition* function) {
     }
 }
 
-void FunctionController::CreateEpilogueFor(FunctionDefinition* function) {
-    function->IncrementStackSizeBy(ExpressionInRegister::GetRegistersUsed() << 2);
-    function->SetRegistersUsed(ExpressionInRegister::GetRegistersUsed());
+void FunctionController::CreateEpilogue() {
+    if (currentFunction_->IsForward()) return;
+    currentFunction_->IncrementStackSizeBy(ExpressionInRegister::GetRegistersUsed() << 2);
+    currentFunction_->SetRegistersUsed(ExpressionInRegister::GetRegistersUsed());
     ExpressionInRegister::ClearRegistersUsed();
-    RestoreRegistersFrom(function);
-    Encoder::Instance().IncrementStackPointerBy(function->GetStackSize());
+    RestoreRegistersFrom(currentFunction_);
+    Encoder::Instance().IncrementStackPointerBy(currentFunction_->GetStackSize());
 }
 
 void RestoreRegistersFrom(FunctionDefinition* function) {
@@ -49,11 +92,28 @@ void RestoreRegistersFrom(FunctionDefinition* function) {
 }
 
 ExpressionInRegister* FunctionController::CallFunction(std::string* functionName, std::vector<IParameter*>* parameters) {
-    return new ExpressionInRegister(NUMERIC);
+    auto function = getFunctionFor(*functionName);
+    return new ExpressionInRegister(function->GetReturnType());
 }
 
 void FunctionController::CallProcedure(std::string* functionName, std::vector<IParameter*>* parameters) {
 
+}
+
+FunctionDefinition* FunctionController::getFunctionFor(std::string& functionName) {
+    for (auto function : functions_) {
+        if (function->GetFunctionName() == functionName) return function;
+    }
+    return nullptr;
+}
+
+void FunctionController::Return(IExpression* expression) {
+    Encoder::Instance().Return(*expression);
+    delete expression;
+}
+
+void FunctionController::Return() {
+    Encoder::Instance().Return();
 }
 
 
