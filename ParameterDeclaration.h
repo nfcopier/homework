@@ -17,6 +17,7 @@ public:
     IdentifierList& GetIdentifiers() { return *identifiers_; }
     bool IsReference() { return isReference_; }
     ParameterDeclaration( bool isReference, IdentifierList* identifierList ) : isReference_(isReference), identifiers_(identifierList) {}
+    ExpressionType GetType();
 };
 
 

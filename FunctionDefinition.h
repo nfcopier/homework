@@ -31,6 +31,7 @@ public:
     std::vector<ParameterDeclaration*>& GetDeclarations() { return *parameterDeclarations_; }
     void SetReturnTypeAs(ExpressionType type) { returnType_ = type; };
     ExpressionType GetReturnType() { return returnType_; }
+    unsigned int GetParameterSize();
 };
 
 

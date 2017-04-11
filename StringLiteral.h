@@ -16,6 +16,9 @@ public:
     StringLiteral(std::string& value) : value_(value) {}
     std::string* GetValue() { return &value_; }
     bool IsString() { return true; }
+    bool IsVariable() { return false; }
+    unsigned int GetSize() { return value_.size(); }
+    ExpressionType GetType() { return STRING; }
 };
 
 

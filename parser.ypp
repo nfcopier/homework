@@ -5,6 +5,7 @@
     #include "StatementController.h"
     #include "FunctionController.h"
     #include "ParserInterface.h"
+    #include "ConstantController.h"
     extern int yyleng;
 }
 
@@ -133,7 +134,7 @@ void yy::parser::error(const std::string& error) {
 %type <IfChain*> if_variable
 %type <RangeType> to_or_downto
 %type <ForLoop*> for_variable
-%type <FunctionDefinition*> function_declaration
+%type <FunctionDefinition*> function_header
 %type <ParameterDeclaration*> parameter_declaration
 %type <std::vector<ParameterDeclaration*>*> parameter_declaration_list
 %type <std::vector<ParameterDeclaration*>*> parameter_list_maybe
@@ -170,6 +171,7 @@ constant_declaration:
     EQUALS_SIGN
     expression
     STATEMENT_TERMINATOR
+    { ConstantController::Instance().Add( new std::string($1), $3 ); }
 ;
 
 type_declaration_list_maybe:
@@ -270,30 +272,32 @@ call_definition:
 
 procedure_declaration:
     PROCEDURE_KEYWORD
-    IDENTIFIER
-    OPENING_PARENTHESIS
-    parameter_list_maybe
-    CLOSING_PARENTHESIS
+    function_header
+    { ParserInterface::Instance().Set( $2 ); }
+    { FunctionController::Instance().Set( $2 ); }
     STATEMENT_TERMINATOR
     function_body
     STATEMENT_TERMINATOR
+    { FunctionController::Instance().ClearFunction(); }
+    { ParserInterface::Instance().ClearFunction(); }
 ;
 
 function_declaration:
     FUNCTION_KEYWORD
-    function_declaration
-    { ParserInterface::Instance().Set( $2 ); }
+    function_header
     { FunctionController::Instance().Set( $2 ); }
+    { ParserInterface::Instance().Set( $2 ); }
     COLON
     IDENTIFIER
     { FunctionController::Instance().SetReturnTypeAs( new std::string($6) ); }
     STATEMENT_TERMINATOR
     function_body
     STATEMENT_TERMINATOR
+    { FunctionController::Instance().ClearFunction(); }
     { ParserInterface::Instance().ClearFunction(); }
 ;
 
-function_declaration:
+function_header:
     IDENTIFIER
     OPENING_PARENTHESIS
     parameter_list_maybe
@@ -716,7 +720,7 @@ parameter:
     l_value
     { $$ = ParserInterface::Instance().GetParameterFrom( $1 ); }
 |   no_l_expression
-    { $$ = ParserInterface::Instance().GetParameterFrom( $1 ); }
+    { $$ = $1; }
 |   STRING_LITERAL
     { $$ = new StringLiteral( *(new std::string($1)) ); }
 ;

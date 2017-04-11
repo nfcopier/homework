@@ -41,7 +41,7 @@ bool SymbolTable::isInPredefined(std::string* identifier) {
 
 SymbolTable* SymbolTable::instance_ = nullptr;
 
-void SymbolTable::Add(std::string* identifier, Variable* value) {
+void SymbolTable::Add(std::string* identifier, Symbol* value) {
     if (inLocalScope()) addToLocal(identifier, value);
     else addToGlobal(identifier, value);
 }
@@ -50,13 +50,13 @@ bool SymbolTable::inLocalScope() {
     return localStack_.size() > 0;
 }
 
-void SymbolTable::addToLocal(std::string* identifier, Variable* value) {
+void SymbolTable::addToLocal(std::string* identifier, Symbol* value) {
     auto& table = localStack_.back();
     if (table.count(*identifier)) throw;
     table[*identifier] = value;
 }
 
-void SymbolTable::addToGlobal(std::string* identifier, Variable* value) {
+void SymbolTable::addToGlobal(std::string* identifier, Symbol* value) {
     if (global_.count(*identifier)) throw;
     global_[*identifier] = value;
 }

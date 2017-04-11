@@ -67,47 +67,31 @@ void FunctionController::CreatePrologue() {
     Encoder::Instance().IncrementStackPointerBy(-currentFunction_->GetStackSize());
     CacheRegistersFor(currentFunction_);
     Encoder::Instance().EndPrologueFor(currentFunction_);
+    ExpressionInRegister::ClearRegistersUsed();
+    Variable::ClearFrame();
+    Parameter::ClearOffset();
     SymbolTable::Instance().ExitLocalScope();
+    currentFunction_ = nullptr;
 }
 
 void CacheRegistersFor(FunctionDefinition* function) {
-    for (auto i = 0u; i < function->GetRegistersUsed(); ++i) {
+    for (auto i = 0u; i < 5; ++i) {
         Encoder::Instance().SaveRegisterToStack(i, i << 2);
     }
 }
 
 void FunctionController::CreateEpilogue() {
     if (currentFunction_->IsForward()) return;
-    currentFunction_->IncrementStackSizeBy(ExpressionInRegister::GetRegistersUsed() << 2);
     currentFunction_->SetRegistersUsed(ExpressionInRegister::GetRegistersUsed());
-    ExpressionInRegister::ClearRegistersUsed();
-    Variable::ClearFrame();
-    Parameter::ClearOffset();
     Encoder::Instance().StartEpilogueFor(currentFunction_);
     RestoreRegistersFrom(currentFunction_);
     Encoder::Instance().IncrementStackPointerBy(currentFunction_->GetStackSize());
 }
 
 void RestoreRegistersFrom(FunctionDefinition* function) {
-    for (auto i = 0u; i < function->GetRegistersUsed(); ++i) {
+    for (auto i = 0u; i < 5; ++i) {
         Encoder::Instance().RestoreRegisterFromStack(i, i << 2);
     }
-}
-
-ExpressionInRegister* FunctionController::CallFunction(std::string* functionName, std::vector<IParameter*>* parameters) {
-    auto function = getFunctionFor(*functionName);
-    return new ExpressionInRegister(function->GetReturnType());
-}
-
-void FunctionController::CallProcedure(std::string* functionName, std::vector<IParameter*>* parameters) {
-
-}
-
-FunctionDefinition* FunctionController::getFunctionFor(std::string& functionName) {
-    for (auto function : functions_) {
-        if (function->GetFunctionName() == functionName) return function;
-    }
-    return nullptr;
 }
 
 void FunctionController::Return(IExpression* expression) {
@@ -117,6 +101,72 @@ void FunctionController::Return(IExpression* expression) {
 
 void FunctionController::Return() {
     Encoder::Instance().Return(currentFunction_);
+}
+
+ExpressionInRegister* FunctionController::CallFunction(std::string* functionName, std::vector<IParameter*>* parameters) {
+    auto function = getFunctionFor(*functionName);
+    if (function == nullptr) throw;
+    call(*function, *parameters);
+    auto returnRegister = new ExpressionInRegister(function->GetReturnType());
+    Encoder::Instance().LoadReturnValueInto(*returnRegister);
+    return returnRegister;
+}
+
+void FunctionController::CallProcedure(std::string* functionName, std::vector<IParameter*>* parameters) {
+    auto function = getFunctionFor(*functionName);
+    if (function == nullptr) throw;
+    call(*function, *parameters);
+}
+
+void FunctionController::call(FunctionDefinition& function, std::vector<IParameter*>& parameters) {
+    auto functionName = function.GetFunctionName();
+    auto neededParameters = function.GetDeclarations();
+    auto frameOffset = function.GetParameterSize();
+    load(neededParameters, parameters, frameOffset);
+    Encoder::Instance().MoveFramePointerBy(-frameOffset);
+    Encoder::Instance().Call(functionName);
+    if (currentFunction_ != nullptr) {
+        auto offset = currentFunction_->GetStackSize() - currentFunction_->GetParameterSize();
+        Encoder::Instance().MoveFramePointerBy(offset);
+    }
+}
+
+void FunctionController::load(std::vector<ParameterDeclaration*> neededParameters, std::vector<IParameter*> parameters,
+                              unsigned int paramSize) {
+    auto paramIndex = 0u;
+    for (auto neededParameter : neededParameters) {
+        for (auto id : neededParameter->GetIdentifiers().Identifiers) {
+            if (neededParameter->GetType() != parameters[paramIndex]->GetType()) throw;
+            auto destoffset = paramIndex * parameters[paramIndex]->GetSize() - paramSize;
+            if (parameters[paramIndex]->IsVariable())
+                copyVariable(neededParameter, (Variable*) parameters[paramIndex], destoffset);
+            else
+                copyExpression(neededParameter, (IExpression*) parameters[paramIndex], destoffset);
+            paramIndex++;
+        }
+    }
+}
+
+void FunctionController::copyVariable(ParameterDeclaration* neededParameter, Variable* providedParam, unsigned int destoffset) {
+    if (neededParameter->IsReference())
+        Encoder::Instance().CopyAddress(*providedParam, destoffset);
+    else
+        Encoder::Instance().CopyValue(*providedParam, destoffset);
+}
+
+void FunctionController::copyExpression(ParameterDeclaration* neededParameter, IExpression* providedParam, unsigned int destoffset) {
+    if (neededParameter->IsReference()) throw;
+    if (providedParam->IsConstant())
+        providedParam = Encoder::Instance().LoadImmediate(((Literal*)providedParam));
+    Encoder::Instance().CopyExpression(*((ExpressionInRegister*)providedParam), destoffset);
+    delete providedParam;
+}
+
+FunctionDefinition* FunctionController::getFunctionFor(std::string& functionName) {
+    for (auto function : functions_) {
+        if (function->GetFunctionName() == functionName) return function;
+    }
+    return nullptr;
 }
 
 

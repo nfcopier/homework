@@ -22,10 +22,15 @@ private:
     FunctionController() {};
     static FunctionController* instance_;
     FunctionDefinition* getFunctionFor(std::string& functionName);
+    void load(std::vector<ParameterDeclaration*> neededParameters, std::vector<IParameter*> parameters, unsigned int paramSize);
+    void call(FunctionDefinition& function, std::vector<IParameter*>& parameters);
+    void copyVariable(ParameterDeclaration* neededParameter, Variable* providedParam, unsigned int destoffset);
+    void copyExpression(ParameterDeclaration* neededParameter, IExpression* providedParam, unsigned int destoffset);
     FunctionDefinition* currentFunction_ = nullptr;
 public:
     static FunctionController& Instance();
     void Set(FunctionDefinition* functionDefinition) { currentFunction_ = functionDefinition; }
+    void ClearFunction() { currentFunction_ = nullptr; }
     void Declare();
     void Start();
     void CreatePrologue();

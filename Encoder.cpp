@@ -9,9 +9,6 @@
 #include "StringLiteral.h"
 #include "Parameter.h"
 
-std::string getAddressFrom(Variable&);
-std::string getPointerFrom(PointerType);
-
 int getWriteCallNumberFrom(ExpressionType type);
 int getReadCallNumberFrom(ExpressionType type);
 
@@ -112,20 +109,34 @@ void Encoder::RestoreRegisterFromStack(unsigned int registerNumber, unsigned int
 }
 
 void Encoder::Assign(Variable& variable, ExpressionInRegister* reg) {
-    instructionBuffer_ << "sw  \t$t" << reg->GetAddress() << ", " << getAddressFrom(variable) << std::endl;
+    if (variable.IsReference()) {
+        auto tempReg = ExpressionInRegister(NUMERIC);
+        instructionBuffer_ << "la  \t$t" << tempReg.GetAddress() << ", " << getAddressFrom(variable) << std::endl;
+        instructionBuffer_ << "sw \t$t" << reg->GetAddress() << ", 0($t" << tempReg.GetAddress() << ')' << std::endl;
+    } else {
+        instructionBuffer_ << "sw  \t$t" << reg->GetAddress() << ", " << getAddressFrom(variable) << std::endl;
+    }
 }
 
 void Encoder::Write(IParameter* value) {
+    auto sysCallNumber = getWriteCallNumberFrom(value->GetType());
+    instructionBuffer_ << "li  \t$v0, " << sysCallNumber << std::endl;
     if (value->IsString()) {
-        instructionBuffer_ << "li  \t$v0, 4" << std::endl;
         instructionBuffer_ << "la  \t$a0, str" << strings_.size() << std::endl;
         strings_.push_back(((StringLiteral*)value)->GetValue());
     }
+    else if (value->IsVariable()) {
+        instructionBuffer_ << "lw  \t$a0, " << ((Variable*)value)->GetOffset() << '(' << getPointerFrom(*(Variable*)value) << ')' << std::endl;
+    }
     else {
-        auto v = (Variable*)value;
-        auto sysCallNumber = getWriteCallNumberFrom(v->GetType());
-        instructionBuffer_ << "li  \t$v0, " << sysCallNumber << std::endl;
-        instructionBuffer_ << "lw  \t$a0, " << v->GetOffset() << '(' << getPointerFrom(v->GetPointerType()) << ')' << std::endl;
+        auto expr = (IExpression*)value;
+        if (expr->IsConstant()) {
+            expr = LoadImmediate((Literal*) expr);
+            instructionBuffer_ << "move\t$a0, $t" << ((ExpressionInRegister*) expr)->GetAddress() << std::endl;
+            delete expr;
+        } else {
+            instructionBuffer_ << "move\t$a0, $t" << ((ExpressionInRegister*) expr)->GetAddress() << std::endl;
+        }
     }
     instructionBuffer_ << "syscall" << std::endl;
 }
@@ -180,7 +191,7 @@ ExpressionInRegister* Encoder::LoadImmediate(Literal* literal) {
             instructionBuffer_ << ((BooleanLiteral*)literal)->GetValue();
             break;
         }
-        case USER_DEFINED:throw;
+        case USER_DEFINED: throw;
     }
     instructionBuffer_ << std::endl;
     return expression;
@@ -190,28 +201,14 @@ ExpressionInRegister* Encoder::LoadFrom(Variable* variable) {
     auto reg = new ExpressionInRegister(variable->GetType());
     if (variable->IsReference()) {
         auto param = (Parameter*)variable;
-        instructionBuffer_ << "la  \t, $t" << reg->GetAddress() << ", " << param->GetOffset() << "($fp)" << std::endl;
-        instructionBuffer_ << "lw  \t, $t" << reg->GetAddress() << "0($t" << reg->GetAddress() << ')' << std::endl;
+        instructionBuffer_ << "lw  \t$t" << reg->GetAddress() << ", " << param->GetOffset() << "($fp)" << std::endl;
+        instructionBuffer_ << "lw  \t$t" << reg->GetAddress() << ", 0($t" << reg->GetAddress() << ')' << std::endl;
     }
     else {
-        instructionBuffer_ << "lw  \t$t" << reg->GetAddress() << ", " << getAddressFrom(*variable) << std::endl;
+        auto address = getAddressFrom(*variable);
+        instructionBuffer_ << "lw  \t$t" << reg->GetAddress() << ", " << address << std::endl;
     }
     return reg;
-}
-
-std::string getAddressFrom(Variable& variable) {
-    std::stringstream ss;
-    ss << variable.GetOffset() << '(' << getPointerFrom(variable.GetPointerType()) << ')';
-    return ss.str();
-}
-
-std::string getPointerFrom(PointerType pointerType) {
-    switch (pointerType) {
-        case Global: return "$gp";
-        case Frame: return "$fp";
-        case Stack: return "$sp";
-        default: throw;
-    }
 }
 
 void printOutStrings(std::ostream& out, std::vector<std::string*>& strings) {
@@ -225,6 +222,7 @@ void printOutStrings(std::ostream& out, std::vector<std::string*>& strings) {
 void printOutInstructions(std::stringstream& instructions, std::ostream& out) {
     out << ".text" << std::endl;
     out << ".global main" << std::endl;
+    out << "j   \tmain" << std::endl;
     out << instructions.str();
     std::flush(out);
 }
@@ -283,10 +281,10 @@ void Encoder::StartEpilogueFor(FunctionDefinition* functionDefinition) {
 }
 
 void Encoder::StartPrologueFor(FunctionDefinition* function) {
-    instructionBuffer_<< "lw  \t$ra, 0($sp)" << std::endl;
+    instructionBuffer_<< "lw  \t$ra, -4($sp)" << std::endl;
     instructionBuffer_ << "jr  \t$ra" << std::endl;
     instructionBuffer_ << function->GetFunctionName() << "Entry:" << std::endl;
-    instructionBuffer_ << "sw  \t$ra, 0$(sp)" << std::endl;
+    instructionBuffer_ << "sw  \t$ra, -4($sp)" << std::endl;
 }
 
 void Encoder::EndPrologueFor(FunctionDefinition* function) {
@@ -297,8 +295,12 @@ void Encoder::IncrementStackPointerBy(int offset) {
     instructionBuffer_ << "addi\t$sp, $sp, " << offset << std::endl;
 }
 
+void Encoder::MoveFramePointerBy(int offset) {
+    instructionBuffer_ << "addi\t$fp, $sp, " << offset << std::endl;
+}
+
 void Encoder::Return(FunctionDefinition* functionDefinition) {
-    instructionBuffer_ << "j   " << functionDefinition->GetFunctionName() << "Epilogue" << std::endl;
+    instructionBuffer_ << "j   \t" << functionDefinition->GetFunctionName() << "Epilogue" << std::endl;
 }
 
 void Encoder::Return(IExpression& expression, FunctionDefinition* functionDefinition) {
@@ -312,7 +314,7 @@ void Encoder::Return(IExpression& expression, FunctionDefinition* functionDefini
 }
 
 void Encoder::returnExpression(ExpressionInRegister& expression) {
-    instructionBuffer_ << "lw  \t$v0, $t" << expression.GetAddress() << std::endl;
+    instructionBuffer_ << "move\t$v0, $t" << expression.GetAddress() << std::endl;
 }
 
 void Encoder::returnConstant(Literal& literal) {
@@ -331,6 +333,69 @@ void Encoder::returnConstant(Literal& literal) {
         }
         default: throw;
     }
+}
+
+void Encoder::CopyAddress(Variable& source, int destOffset) {
+    auto reg = ExpressionInRegister(NUMERIC);
+    if (source.IsReference()) {
+        instructionBuffer_ << "lw  \t$t" << reg.GetAddress() << ", " << source.GetOffset() << '(' << getPointerFrom(source) << ')' << std::endl;
+    } else {
+        instructionBuffer_ << "la  \t$t" << reg.GetAddress() << ", " << source.GetOffset() << '(' << getPointerFrom(source) << ')' << std::endl;
+    }
+    instructionBuffer_ << "sw  \t$t" << reg.GetAddress() << ", " << destOffset << "($sp)" << std::endl;
+}
+
+void Encoder::CopyValue(Variable& source, int destOffset) {
+    auto reg = ExpressionInRegister(NUMERIC);
+    int baseOffset;
+    std::string pointer;
+    if (source.IsReference()) {
+        instructionBuffer_ << "lw  \t$t" << reg.GetAddress() << ", " << source.GetOffset() << "($fp)" << std::endl;
+        std::stringstream ss;
+        ss << "$t" << reg.GetAddress();
+        pointer = ss.str();
+        baseOffset = 0;
+    } else {
+        pointer = getPointerFrom(source);
+        baseOffset = source.GetOffset();
+    }
+    for (auto offset = 0; offset < source.GetSize(); offset += 4) {
+        instructionBuffer_ << "lw  \t$t" << reg.GetAddress() << ", " << baseOffset + offset << '(' << pointer << ')' << std::endl;
+        instructionBuffer_ << "sw  \t$t" << reg.GetAddress() << ", " << destOffset + offset << "($sp)" << std::endl;
+    }
+}
+
+void Encoder::CopyExpression(ExpressionInRegister& providedParam, int destOffset) {
+    instructionBuffer_ << "sw  \t$t" << providedParam.GetAddress() << ", " << destOffset << "($sp)" << std::endl;
+}
+
+std::string Encoder::getAddressFrom(Variable& variable) {
+    std::stringstream ss;
+    if (variable.IsReference()) {
+        auto reg = ExpressionInRegister(NUMERIC);
+        instructionBuffer_ << "lw  \t$t" << reg.GetAddress() << ", " << variable.GetOffset() << "($fp)" << std::endl;
+        ss << "0($t" << reg.GetAddress() << ')';
+    } else {
+        ss << variable.GetOffset() << '(' << getPointerFrom(variable) << ')';
+    }
+    return ss.str();
+}
+
+std::string Encoder::getPointerFrom(Variable& variable) {
+    switch (variable.GetPointerType()) {
+        case Global: return "$gp";
+        case Frame: return "$fp";
+        case Stack: return "$sp";
+        default: throw;
+    }
+}
+
+void Encoder::Call(std::string& functionName) {
+    instructionBuffer_ << "jal \t" << functionName << "Entry" << std::endl;
+}
+
+void Encoder::LoadReturnValueInto(ExpressionInRegister& reg) {
+    instructionBuffer_ << "move\t$t" << reg.GetAddress() << ", $v0" << std::endl;
 }
 
 

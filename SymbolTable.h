@@ -9,9 +9,8 @@
 #include <map>
 #include <vector>
 #include "ExpressionInRegister.h"
-#include "Variable.h"
-#include "Constant.h"
 #include "BooleanLiteral.h"
+#include "Constant.h"
 
 class SymbolTable {
 
@@ -22,8 +21,8 @@ private:
     static SymbolTable* instance_;
 
     bool inLocalScope();
-    void addToLocal(std::string* identifier, Variable* value);
-    void addToGlobal(std::string* identifier, Variable* value);
+    void addToLocal(std::string* identifier, Symbol* value);
+    void addToGlobal(std::string* identifier, Symbol* value);
     Symbol* find(std::string* identifier);
     bool isInLocal(std::string* identifier);
     Symbol* getFromLocal(std::string* identifier);
@@ -36,7 +35,7 @@ protected:
 public:
     static SymbolTable& Instance();
     Symbol* GetFor(std::string* identifier);
-    void Add(std::string* identifier, Variable* value);
+    void Add(std::string* identifier, Symbol* value);
     void EnterLocalScope();
     void ExitLocalScope();
 };

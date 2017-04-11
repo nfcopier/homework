@@ -40,10 +40,11 @@ public:
     int GetOffset() { return offset_; }
     PointerType GetPointerType() { return pointerType_; }
     ExpressionType GetType() { return type_; }
-    unsigned GetSize() { return 4; }
+    unsigned int GetSize() { return 4; }
     bool IsString() { return false; }
     static void ClearFrame() { currentFrameOffset_ = 0; }
     virtual bool IsReference() { return false; }
+    bool IsVariable() { return true; }
 };
 
 

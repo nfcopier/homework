@@ -5,21 +5,16 @@
 #ifndef COMPILER_I_EXPRESSION_H
 #define COMPILER_I_EXPRESSION_H
 
+#include "IParameter.h"
 
-enum ExpressionType {
-    NUMERIC,
-    CHARACTER,
-    STRING,
-    BOOLEAN,
-    USER_DEFINED
-};
-
-class IExpression {
+class IExpression : public IParameter {
 protected:
     IExpression() {}
 public:
+    bool IsString() { return false; }
+    bool IsVariable() { return false; }
     virtual bool IsConstant() = 0;
-    virtual ExpressionType GetType() = 0;
+    unsigned int GetSize() { return 4; }
     virtual ~IExpression() {}
 };
 

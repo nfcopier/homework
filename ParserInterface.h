@@ -90,7 +90,6 @@ public:
     void Write(std::vector<IParameter*>* parameters);
     void Read(std::vector<Symbol*>* symbols);
     IParameter* GetParameterFrom(Symbol* symbol);
-    IParameter* GetParameterFrom(IExpression* expression);
 };
 
 

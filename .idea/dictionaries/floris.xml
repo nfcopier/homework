@@ -4,6 +4,7 @@
       <w>asciiz</w>
       <w>cerr</w>
       <w>cout</w>
+      <w>destoffset</w>
       <w>downto</w>
       <w>endl</w>
       <w>iostream</w>

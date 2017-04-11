@@ -22,6 +22,8 @@ private:
     std::stringstream instructionBuffer_;
     std::vector<std::string*> strings_;
     static Encoder* instance_;
+    std::string getAddressFrom(Variable&);
+    std::string getPointerFrom(Variable&);
     void returnConstant(Literal& literal);
     void returnExpression(ExpressionInRegister& expression);
 protected:
@@ -67,8 +69,14 @@ public:
     void IncrementStackPointerBy(int offset);
     void SaveRegisterToStack(unsigned int registerNumber, unsigned int variableOffset);
     void RestoreRegisterFromStack(unsigned int registerNumber, unsigned int variableOffset);
+    void MoveFramePointerBy(int offset);
     void Return(FunctionDefinition* definition);
     void Return(IExpression& expression, FunctionDefinition* definition);
+    void CopyAddress(Variable& source, int destOffset);
+    void CopyValue(Variable& source, int destOffset);
+    void CopyExpression(ExpressionInRegister& providedParam, int destOffset);
+    void Call(std::string& functionName);
+    void LoadReturnValueInto(ExpressionInRegister& reg);
 };
 
 

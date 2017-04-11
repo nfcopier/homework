@@ -444,19 +444,7 @@ void ParserInterface::Read(std::vector<Symbol*>* symbols) {
 
 IParameter* ParserInterface::GetParameterFrom(Symbol* symbol) {
     if (!symbol->IsConstant()) return (Variable*)symbol;
-    auto variable = new Variable(symbol->GetType(), getPointerType());
-    auto reg = Encoder::Instance().LoadImmediate(((Constant*)symbol)->GetLiteral());
-    Encoder::Instance().Assign(*variable, reg);
-    delete reg;
-    return variable;
-}
-
-IParameter* ParserInterface::GetParameterFrom(IExpression* expression) {
-    auto var = new Variable(expression->GetType(), getPointerType());
-    auto reg = getRegisterFor(expression);
-    Encoder::Instance().Assign(*var, reg);
-    delete reg;
-    return var;
+    return ((Constant*)symbol)->GetLiteral();
 }
 
 ExpressionInRegister* ParserInterface::getRegisterFor(IExpression* expr) {

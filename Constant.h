@@ -9,7 +9,7 @@
 #include "Symbol.h"
 #include "Literal.h"
 
-class Constant : Symbol {
+class Constant : public Symbol {
 private:
     Literal* literal_;
 public:
