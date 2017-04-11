@@ -77,6 +77,10 @@ public:
     void CopyExpression(ExpressionInRegister& providedParam, int destOffset);
     void Call(std::string& functionName);
     void LoadReturnValueInto(ExpressionInRegister& reg);
+
+    void Succeed(ExpressionInRegister& expression);
+    void Precede(ExpressionInRegister& expression);
+    void Negate(ExpressionInRegister& expression);
 };
 
 

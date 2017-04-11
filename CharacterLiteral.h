@@ -7,7 +7,6 @@
 
 
 #include "Literal.h"
-#include "NumericLiteral.h"
 
 class CharacterLiteral : public Literal {
 private:
@@ -16,6 +15,10 @@ public:
     CharacterLiteral(char* value, int length);
     CharacterLiteral(char value) : value_(value) {}
     ExpressionType GetType() { return ExpressionType::CHARACTER; }
+    void Succeed() { value_++; };
+    void Precede() { value_--; };
+    IExpression* ToOrdinal();
+    IExpression* ToCharacter() { throw; }
     char GetValue() { return value_; }
 };
 

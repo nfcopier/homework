@@ -14,7 +14,8 @@ public:
     bool IsString() { return false; }
     bool IsVariable() { return false; }
     virtual bool IsConstant() = 0;
-    unsigned int GetSize() { return 4; }
+    virtual IExpression* ToOrdinal() = 0;
+    virtual IExpression* ToCharacter() = 0;
     virtual ~IExpression() {}
 };
 

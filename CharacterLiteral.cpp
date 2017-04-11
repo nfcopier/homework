@@ -5,12 +5,17 @@
 
 #include <cstdlib>
 #include "CharacterLiteral.h"
+#include "NumericLiteral.h"
 
 char getValueFrom(char* value, int length);
 char convertToEscaped(char value);
 char convertToEscaped(char* value);
 
 CharacterLiteral::CharacterLiteral(char* value, int length) : value_(getValueFrom(value, length)) {}
+
+IExpression* CharacterLiteral::ToOrdinal() {
+    return new NumericLiteral(value_);
+}
 
 char getValueFrom(char* value, int length) {
     switch (length) {

@@ -53,27 +53,48 @@ IExpression* ParserInterface::GetExpressionFrom(Symbol* symbol) {
 }
 
 IExpression* ParserInterface::GetSuccessorFor(IExpression* expression) {
-    return nullptr;
+    if (expression->IsConstant()) {
+        ((Literal*)expression)->Succeed();
+        return expression;
+    }
+    Encoder::Instance().Succeed(*(ExpressionInRegister*) expression);
+    return expression;
 }
 
 IExpression* ParserInterface::GetPredecessorFor(IExpression* expression) {
-    return nullptr;
+    if (expression->IsConstant()) {
+        ((Literal*)expression)->Precede();
+        return expression;
+    }
+    Encoder::Instance().Precede(*(ExpressionInRegister*) expression);
+    return expression;
 }
 
 IExpression* ParserInterface::CastToOrdinal(IExpression* expression) {
-    return nullptr;
+    auto ordinal = expression->ToOrdinal();
+    delete expression;
+    return ordinal;
 }
 
 IExpression* ParserInterface::CastToCharacter(IExpression* expression) {
-    return nullptr;
+    auto character = expression->ToCharacter();
+    delete expression;
+    return character;
 }
 
 IExpression* ParserInterface::Negate(IExpression* expression) {
-    return nullptr;
+    if (expression->GetType() != NUMERIC) throw;
+    if (expression->IsConstant()) {
+        ((NumericLiteral*)expression)->Negate();
+        return expression;
+    }
+    Encoder::Instance().Negate(*(ExpressionInRegister*) expression);
+    return expression;
 }
 
 IExpression* ParserInterface::Not(IExpression* expression) {
-    return nullptr;
+    if (expression->GetType() != BOOLEAN) throw;
+    return GetPredecessorFor(expression);
 }
 
 IExpression* ParserInterface::Modulo(IExpression* left, IExpression* right) {

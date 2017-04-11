@@ -36,6 +36,9 @@ public:
     int GetAddress() { return address_; }
     static unsigned int GetRegistersUsed() { return registersUsed_; }
     static void ClearRegistersUsed() { registersUsed_ = 0u; }
+    virtual IExpression* ToOrdinal();
+    virtual IExpression* ToCharacter();
+    unsigned int GetSize() { return 4; }
     ~ExpressionInRegister() {
         if (!isCopied_) registersInUse_[address_] = true;
     }

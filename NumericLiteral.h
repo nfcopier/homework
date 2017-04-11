@@ -14,6 +14,11 @@ private:
 public:
     NumericLiteral(int value) : value_(value) {}
     ExpressionType GetType() { return ExpressionType::NUMERIC; }
+    void Succeed() { value_++; };
+    void Precede() { value_--; };
+    IExpression* ToOrdinal() { throw; }
+    IExpression* ToCharacter();
+    void Negate() { value_ = -value_; }
     int GetValue() { return value_; }
 };
 

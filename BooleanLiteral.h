@@ -14,6 +14,10 @@ private:
 public:
     BooleanLiteral(bool value) : value_(value) {}
     bool GetValue() { return value_; }
+    void Succeed() { value_ = !value_; }
+    void Precede() { Succeed(); }
+    IExpression* ToOrdinal() { throw; }
+    IExpression* ToCharacter() { throw; }
     ExpressionType GetType() { return ExpressionType::BOOLEAN; }
 };
 

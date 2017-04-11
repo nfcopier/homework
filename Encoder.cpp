@@ -221,7 +221,6 @@ void printOutStrings(std::ostream& out, std::vector<std::string*>& strings) {
 
 void printOutInstructions(std::stringstream& instructions, std::ostream& out) {
     out << ".text" << std::endl;
-    out << ".global main" << std::endl;
     out << "j   \tmain" << std::endl;
     out << instructions.str();
     std::flush(out);
@@ -247,7 +246,7 @@ void Encoder::Start(RepeatStatement& repeatStatement) {
 
 void Encoder::Test(RepeatStatement& repeatStatement, ExpressionInRegister& condition) {
     if (condition.GetType() != ExpressionType::BOOLEAN) throw;
-    instructionBuffer_ << "bne \t$t" << condition.GetAddress() << ", $zero, repeat" << repeatStatement.GetNumber() << std::endl;
+    instructionBuffer_ << "beq \t$t" << condition.GetAddress() << ", $zero, repeat" << repeatStatement.GetNumber() << std::endl;
 }
 
 void Encoder::Test(IfChain& ifChain, ExpressionInRegister& condition) {
@@ -396,6 +395,28 @@ void Encoder::Call(std::string& functionName) {
 
 void Encoder::LoadReturnValueInto(ExpressionInRegister& reg) {
     instructionBuffer_ << "move\t$t" << reg.GetAddress() << ", $v0" << std::endl;
+}
+
+void Encoder::Succeed(ExpressionInRegister& expression) {
+    if (expression.GetType() == BOOLEAN) {
+        instructionBuffer_ << "seq \t$t" << expression.GetAddress() << ", $zero, $t" << expression.GetAddress() << std::endl;
+    } else {
+        instructionBuffer_ << "addi\t$t" << expression.GetAddress() << ", $t" << expression.GetAddress() << ", 1" << std::endl;
+    }
+
+}
+
+void Encoder::Precede(ExpressionInRegister& expression) {
+    if (expression.GetType() == BOOLEAN) {
+        instructionBuffer_ << "seq \t$t" << expression.GetAddress() << ", $zero, $t" << expression.GetAddress() << std::endl;
+    } else {
+        instructionBuffer_ << "addi\t$t" << expression.GetAddress() << ", $t" << expression.GetAddress() << ", -1" << std::endl;
+    }
+
+}
+
+void Encoder::Negate(ExpressionInRegister& expression) {
+    instructionBuffer_ << "neg \t$t" << expression.GetAddress() << ", $t" << expression.GetAddress() << std::endl;
 }
 
 
