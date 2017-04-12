@@ -42,7 +42,7 @@ public:
     ExpressionType GetType() { return type_; }
     unsigned int GetSize() { return 4; }
     bool IsString() { return false; }
-    static void ClearFrame() { currentFrameOffset_ = 0; }
+    static void ClearFrame() { currentFrameOffset_ = -4; }
     virtual bool IsReference() { return false; }
     bool IsVariable() { return true; }
 };
