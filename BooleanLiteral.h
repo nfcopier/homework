@@ -18,7 +18,7 @@ public:
     void Precede() { Succeed(); }
     IExpression* ToOrdinal() { throw; }
     IExpression* ToCharacter() { throw; }
-    ExpressionType GetType() { return ExpressionType::BOOLEAN; }
+    Type& GetType() { return Type::BOOLEAN; }
 };
 
 

@@ -13,7 +13,7 @@ private:
     int value_;
 public:
     NumericLiteral(int value) : value_(value) {}
-    ExpressionType GetType() { return ExpressionType::NUMERIC; }
+    Type& GetType() { return Type::NUMERIC; }
     void Succeed() { value_++; };
     void Precede() { value_--; };
     IExpression* ToOrdinal() { throw; }

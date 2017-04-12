@@ -23,26 +23,20 @@ private:
     static int currentFrameOffset_;
     int offset_;
     PointerType pointerType_;
-    ExpressionType type_;
-    ExpressionType getTypeFrom(std::string* typeName);
+    Type& type_;
 public:
     void doOffset();
-    Variable(ExpressionType type, PointerType pointerType, int offset) :
+    Variable(Type& type, PointerType pointerType, int offset) :
             type_(type), pointerType_(pointerType), offset_(offset) {}
-    Variable(ExpressionType type, PointerType pointerType) : type_(type), pointerType_(pointerType) {
-        doOffset();
-    }
-    Variable(std::string* typeName, PointerType pointerType) : pointerType_(pointerType) {
-        type_ = getTypeFrom(typeName);
+    Variable(Type& type, PointerType pointerType) : type_(type), pointerType_(pointerType) {
         doOffset();
     }
     bool IsConstant() { return false; }
     int GetOffset() { return offset_; }
     PointerType GetPointerType() { return pointerType_; }
-    ExpressionType GetType() { return type_; }
-    unsigned int GetSize() { return 4; }
-    bool IsString() { return false; }
-    static void ClearFrame() { currentFrameOffset_ = -4; }
+    Type& GetType() { return type_; }
+    unsigned int GetSize() { return type_.GetSize(); }
+    static void ClearFrame() { currentFrameOffset_ = 0; }
     virtual bool IsReference() { return false; }
     bool IsVariable() { return true; }
 };

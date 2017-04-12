@@ -11,7 +11,6 @@ class IExpression : public IParameter {
 protected:
     IExpression() {}
 public:
-    bool IsString() { return false; }
     bool IsVariable() { return false; }
     virtual bool IsConstant() = 0;
     virtual IExpression* ToOrdinal() = 0;

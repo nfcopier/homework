@@ -24,6 +24,7 @@ private:
     static Encoder* instance_;
     std::string getAddressFrom(Variable&);
     std::string getPointerFrom(Variable&);
+    void returnVariable(Variable& variable);
     void returnConstant(Literal& literal);
     void returnExpression(ExpressionInRegister& expression);
 protected:
@@ -46,7 +47,7 @@ public:
     void EndProgram();
     void Assign(Variable& variable, ExpressionInRegister* reg);
     void Write(IParameter* value);
-    ExpressionInRegister* Read(ExpressionType type);
+    ExpressionInRegister* Read(Type& type);
     ExpressionInRegister* LoadImmediate(Literal* literal);
     ExpressionInRegister* LoadFrom(Variable* variable);
 
@@ -70,8 +71,8 @@ public:
     void SaveRegisterToStack(unsigned int registerNumber, unsigned int variableOffset);
     void RestoreRegisterFromStack(unsigned int registerNumber, unsigned int variableOffset);
     void MoveFramePointerBy(int offset);
-    void Return(FunctionDefinition* definition);
-    void Return(IExpression& expression, FunctionDefinition* definition);
+    void ReturnFrom(FunctionDefinition* definition);
+    void Return(IParameter& returnValue, FunctionDefinition* definition);
     void CopyAddress(Variable& source, int destOffset);
     void CopyValue(Variable& source, int destOffset);
     void CopyExpression(ExpressionInRegister& providedParam, int destOffset);
@@ -81,6 +82,8 @@ public:
     void Succeed(ExpressionInRegister& expression);
     void Precede(ExpressionInRegister& expression);
     void Negate(ExpressionInRegister& expression);
+
+    void Copy(Variable& destination, Variable& source);
 };
 
 

@@ -5,6 +5,8 @@
 #ifndef COMPILER_I_PARAMETER_H
 #define COMPILER_I_PARAMETER_H
 
+#include "Type.h"
+
 
 enum ExpressionType {
     NUMERIC,
@@ -18,10 +20,9 @@ class IParameter {
 protected:
     IParameter() {}
 public:
-    virtual bool IsString() = 0;
     virtual bool IsVariable() = 0;
     virtual unsigned int GetSize() = 0;
-    virtual ExpressionType GetType() = 0;
+    virtual Type& GetType() = 0;
 };
 
 #endif //COMPILER_I_PARAMETER_H

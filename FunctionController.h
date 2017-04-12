@@ -37,7 +37,7 @@ public:
     void CreateEpilogue();
     ExpressionInRegister* CallFunction(std::string* functionName, std::vector<IParameter*>* parameters);
     void CallProcedure(std::string* functionName, std::vector<IParameter*>* parameters);
-    void SetReturnTypeAs(std::string* typeName);
+    void SetReturnTypeAs(Type& type);
     void Return(IExpression* expression);
     void Return();
 };

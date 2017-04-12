@@ -6,14 +6,14 @@
 #include "ExpressionInRegister.h"
 
 IExpression* ExpressionInRegister::ToOrdinal() {
-    if (expressionType_ != CHARACTER) throw;
-    expressionType_ = NUMERIC;
+    if (type_ != Type::CHARACTER) throw;
+    type_ = Type::NUMERIC;
     return this;
 }
 
 IExpression* ExpressionInRegister::ToCharacter() {
-    if (expressionType_ != NUMERIC) throw;
-    expressionType_ = CHARACTER;
+    if (type_ != Type::NUMERIC) throw;
+    type_ = Type::CHARACTER;
     return this;
 }
 

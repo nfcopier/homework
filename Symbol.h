@@ -13,7 +13,7 @@ protected:
     Symbol() {}
 public:
     virtual bool IsConstant() = 0;
-    virtual ExpressionType GetType() = 0;
+    virtual Type& GetType() = 0;
 };
 
 

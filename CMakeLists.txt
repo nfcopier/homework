@@ -15,5 +15,5 @@ SET_SOURCE_FILES_PROPERTIES(${CMAKE_SOURCE_DIR}/lex.yy.c GENERATED)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 SET_SOURCE_FILES_PROPERTIES(${CMAKE_SOURCE_DIR}/lex.yy.c PROPERTIES LANGUAGE CXX)
 
-set(SOURCE_FILES SymbolTable.cpp lex.yy.c parser.tab.cpp SymbolTable.cpp ParserInterface.cpp NumericLiteral.cpp CharacterLiteral.cpp Encoder.cpp ExpressionInRegister.cpp Variable.cpp WhileStatement.cpp StatementController.cpp RepeatStatement.cpp IfChain.cpp FunctionDefinition.cpp FunctionDefinition.h FunctionController.cpp FunctionController.h ParameterDeclaration.cpp ParameterDeclaration.h Parameter.cpp Parameter.h ConstantController.cpp ConstantController.h)
+set(SOURCE_FILES SymbolTable.cpp lex.yy.c parser.tab.cpp SymbolTable.cpp ParserInterface.cpp NumericLiteral.cpp CharacterLiteral.cpp Encoder.cpp ExpressionInRegister.cpp Variable.cpp WhileStatement.cpp StatementController.cpp RepeatStatement.cpp IfChain.cpp FunctionDefinition.cpp FunctionDefinition.h FunctionController.cpp FunctionController.h ParameterDeclaration.h Parameter.cpp Parameter.h ConstantController.cpp ConstantController.h Type.h ArrayType.cpp ArrayType.h RecordType.cpp RecordType.h Type.cpp TypeController.cpp TypeController.h)
 add_executable(Compiler ${SOURCE_FILES})

@@ -17,7 +17,7 @@ private:
     unsigned int registersUsed_;
     std::vector<ParameterDeclaration*>* parameterDeclarations_;
     bool isForward_;
-    ExpressionType returnType_;
+    Type* returnType_;
 public:
     FunctionDefinition(std::string* functionName, std::vector<ParameterDeclaration*>* parameters);
     void IncrementStackSizeBy(unsigned int variableSize);
@@ -29,8 +29,8 @@ public:
     void ClearIsForward() { isForward_ = false; }
     bool IsForward() { return isForward_; }
     std::vector<ParameterDeclaration*>& GetDeclarations() { return *parameterDeclarations_; }
-    void SetReturnTypeAs(ExpressionType type) { returnType_ = type; };
-    ExpressionType GetReturnType() { return returnType_; }
+    void SetReturnTypeAs(Type& type) { returnType_ = &type; };
+    Type& GetReturnType() { return *returnType_; }
     unsigned int GetParameterSize();
 };
 

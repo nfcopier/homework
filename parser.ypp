@@ -6,6 +6,7 @@
     #include "FunctionController.h"
     #include "ParserInterface.h"
     #include "ConstantController.h"
+    #include "TypeController.h"
     extern int yyleng;
 }
 
@@ -95,9 +96,9 @@ void yy::parser::error(const std::string& error) {
 
 %type <std::vector<std::string*>*> identifier_list
 %type <char*> IDENTIFIER
-%type <std::string*> type
 %type <IdentifierList*> identifiers_by_type
 %type <std::vector<IdentifierList*>*> identifiers_by_type_list
+%type <std::vector<IdentifierList*>*> identifiers_by_type_list_maybe
 %type <IExpression*> no_l_expression
 %type <IExpression*> expression
 
@@ -139,6 +140,10 @@ void yy::parser::error(const std::string& error) {
 %type <std::vector<ParameterDeclaration*>*> parameter_declaration_list
 %type <std::vector<ParameterDeclaration*>*> parameter_list_maybe
 %type <bool> var_or_ref_keyword
+
+%type <Type*> type
+%type <ArrayType*> array_type
+%type <RecordType*> record_type
 
 %%
 
@@ -191,23 +196,27 @@ type_declaration:
     EQUALS_SIGN
     type
     STATEMENT_TERMINATOR
+    { TypeController::Instance().Add( new std::string($1), *$3 ); }
 ;
 
 type:
-    IDENTIFIER  { $$ = new std::string($1); }
-|   record_type { $$ = new std::string("record"); }
-|   array_type  { $$ = new std::string("array"); }
+    IDENTIFIER  { $$ = &TypeController::Instance().GetTypeFrom( new std::string($1) ); }
+|   record_type { $$ = $1; }
+|   array_type  { $$ = $1; }
 ;
 
 record_type:
     RECORD_KEYWORD
     identifiers_by_type_list_maybe
     END_KEYWORD
+    { $$ = TypeController::Instance().CreateRecordTypeFrom( *$2 ); }
 ;
 
 identifiers_by_type_list_maybe:
     %empty
+    { $$ = new std::vector<IdentifierList*>(); }
 |   identifiers_by_type_list
+    { $$ = $1; }
 ;
 
 array_type:
@@ -219,6 +228,7 @@ array_type:
     CLOSING_BRACKET
     OF_KEYWORD
     type
+    { $$ = TypeController::Instance().CreateArrayTypeFrom( $3, $5, *$8); }
 ;
 
 variable_declaration_list_maybe:
@@ -241,8 +251,8 @@ identifiers_by_type_list:
 identifiers_by_type:
     identifier_list
     COLON
-    IDENTIFIER
-    { $$ = new IdentifierList( new std::string($3), $1 ); }
+    type
+    { $$ = new IdentifierList( *$3, $1 ); }
 ;
 
 identifier_list:
@@ -288,8 +298,8 @@ function_declaration:
     { FunctionController::Instance().Set( $2 ); }
     { ParserInterface::Instance().Set( $2 ); }
     COLON
-    IDENTIFIER
-    { FunctionController::Instance().SetReturnTypeAs( new std::string($6) ); }
+    type
+    { FunctionController::Instance().SetReturnTypeAs( *$6 ); }
     STATEMENT_TERMINATOR
     function_body
     STATEMENT_TERMINATOR
@@ -378,7 +388,7 @@ statement:
 assignment:
     l_value
     ASSIGNMENT_OPERATOR
-    expression
+    parameter
     { ParserInterface::Instance().Assign($1, $3); }
 ;
 

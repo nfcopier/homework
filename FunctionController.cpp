@@ -17,18 +17,7 @@ FunctionController& FunctionController::Instance() {
     return *instance_;
 }
 
-ExpressionType getTypeFrom(std::string* typeName) {
-    if (*typeName == "integer" or *typeName == "INTEGER") {
-        return NUMERIC ;
-    } else if (*typeName == "char" or *typeName == "CHAR") {
-        return CHARACTER;
-    } else if (*typeName == "boolean" or *typeName == "BOOLEAN") {
-        return BOOLEAN;
-    } else throw;
-}
-
-void FunctionController::SetReturnTypeAs(std::string* typeName) {
-    auto type = getTypeFrom(typeName);
+void FunctionController::SetReturnTypeAs(Type& type) {
     currentFunction_->SetReturnTypeAs(type);
 }
 
@@ -53,9 +42,8 @@ void FunctionController::Start() {
 void declareParametersFor(std::vector<ParameterDeclaration*>& declarations) {
     for (auto declaration : declarations) {
         auto identifierList = declaration->GetIdentifiers();
-        auto type = getTypeFrom(identifierList.TypeName);
         for (auto identifier : identifierList.Identifiers) {
-            auto variable = new Parameter(type, declaration->IsReference());
+            auto variable = new Parameter(identifierList.TheType, declaration->IsReference());
             SymbolTable::Instance().Add(identifier, variable);
         }
     }
@@ -94,13 +82,14 @@ void RestoreRegistersFrom(FunctionDefinition* function) {
     }
 }
 
-void FunctionController::Return(IExpression* expression) {
-    Encoder::Instance().Return(*expression, currentFunction_);
-    delete expression;
+void FunctionController::Return(IExpression* returnValue) {
+    if (returnValue->GetType() == Type::STRING) throw;
+    Encoder::Instance().Return(*returnValue, currentFunction_);
+    delete returnValue;
 }
 
 void FunctionController::Return() {
-    Encoder::Instance().Return(currentFunction_);
+    Encoder::Instance().ReturnFrom(currentFunction_);
 }
 
 ExpressionInRegister* FunctionController::CallFunction(std::string* functionName, std::vector<IParameter*>* parameters) {
@@ -140,7 +129,7 @@ void FunctionController::load(std::vector<ParameterDeclaration*> neededParameter
             auto destoffset = paramIndex * parameters[paramIndex]->GetSize() - paramSize;
             if (parameters[paramIndex]->IsVariable())
                 copyVariable(neededParameter, (Variable*) parameters[paramIndex], destoffset);
-            else
+            else // TODO: This could be a returned user type
                 copyExpression(neededParameter, (IExpression*) parameters[paramIndex], destoffset);
             paramIndex++;
         }

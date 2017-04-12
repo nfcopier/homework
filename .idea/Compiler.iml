@@ -7,34 +7,41 @@
       <sourceFolder url="file://$MODULE_DIR$/Encoder.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ParserInterface.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ConstantController.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/RepeatStatement.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/IfChain.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/IfChain.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Type.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ParserInterface.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/SymbolTable.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/ExpressionInRegister.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ArrayType.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TypeController.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/parser.tab.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/FunctionDefinition.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TypeController.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/NumericLiteral.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ParameterDeclaration.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ConstantController.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Encoder.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/FunctionDefinition.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ExpressionInRegister.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/IfChain.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/FunctionController.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/FunctionDefinition.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Type.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/StatementController.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/lex.yy.c" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/NumericLiteral.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/StatementController.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Parameter.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ArrayType.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Parameter.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/CharacterLiteral.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/RepeatStatement.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ExpressionInRegister.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/NumericLiteral.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/RecordType.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/CharacterLiteral.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/ParameterDeclaration.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/ParserInterface.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Parameter.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/RepeatStatement.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/WhileStatement.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/WhileStatement.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/IfChain.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Encoder.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/RecordType.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/SymbolTable.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Variable.cpp" isTestSource="false" />
     </content>

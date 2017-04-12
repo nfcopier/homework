@@ -15,9 +15,8 @@ ParserInterface& ParserInterface::Instance() {
 
 void ParserInterface::AddVariables(std::vector<IdentifierList*>* identifiersByType) {
     for (auto idList : *identifiersByType) {
-        auto typeName = idList->TypeName;
         for (auto id : idList->Identifiers) {
-            auto variable = new Variable(typeName, getPointerType());
+            auto variable = new Variable(idList->TheType, getPointerType());
             SymbolTable::Instance().Add(id, variable);
             if (currentFunction_ != nullptr) currentFunction_->IncrementStackSizeBy(variable->GetSize());
         }
@@ -83,7 +82,7 @@ IExpression* ParserInterface::CastToCharacter(IExpression* expression) {
 }
 
 IExpression* ParserInterface::Negate(IExpression* expression) {
-    if (expression->GetType() != NUMERIC) throw;
+    if (expression->GetType() != Type::NUMERIC) throw;
     if (expression->IsConstant()) {
         ((NumericLiteral*)expression)->Negate();
         return expression;
@@ -93,7 +92,7 @@ IExpression* ParserInterface::Negate(IExpression* expression) {
 }
 
 IExpression* ParserInterface::Not(IExpression* expression) {
-    if (expression->GetType() != BOOLEAN) throw;
+    if (expression->GetType() != Type::BOOLEAN) throw;
     return GetPredecessorFor(expression);
 }
 
@@ -221,30 +220,25 @@ IExpression* ParserInterface::CompareGreaterOrEqual(IExpression* left, IExpressi
 }
 
 IExpression* ParserInterface::compareGreaterEqualImmediate(IExpression* left, IExpression* right) {
-    switch (left->GetType()) {
-        case NUMERIC: {
-            auto value = getIntFrom(left) >= getIntFrom(right);
-            delete left;
-            delete right;
-            return new BooleanLiteral(value);
-        };
-        case CHARACTER: {
-            auto value = getCharFrom(left) >= getCharFrom(right);
-            delete left;
-            delete right;
-            return new BooleanLiteral(value);
-        }
-        case BOOLEAN: {
-            auto value = getBoolFrom(left) >= getBoolFrom(right);
-            delete left;
-            delete right;
-            return new BooleanLiteral(value);
-        };
-        default: {
-            delete left;
-            delete right;
-            throw;
-        }
+    if (left->GetType() == Type::NUMERIC) {
+        auto value = getIntFrom(left) >= getIntFrom(right);
+        delete left;
+        delete right;
+        return new BooleanLiteral(value);
+    } else if (left->GetType() == Type::CHARACTER) {
+        auto value = getCharFrom(left) >= getCharFrom(right);
+        delete left;
+        delete right;
+        return new BooleanLiteral(value);
+    } else if (left->GetType() == Type::BOOLEAN) {
+        auto value = getBoolFrom(left) >= getBoolFrom(right);
+        delete left;
+        delete right;
+        return new BooleanLiteral(value);
+    } else{
+        delete left;
+        delete right;
+        throw;
     }
 }
 
@@ -264,30 +258,25 @@ IExpression* ParserInterface::CompareGreater(IExpression* left, IExpression* rig
 }
 
 IExpression* ParserInterface::compareGreaterImmediate(IExpression* left, IExpression* right) {
-    switch (left->GetType()) {
-        case NUMERIC: {
-            auto value = getIntFrom(left) > getIntFrom(right);
-            delete left;
-            delete right;
-            return new BooleanLiteral(value);
-        };
-        case CHARACTER: {
-            auto value = getCharFrom(left) > getCharFrom(right);
-            delete left;
-            delete right;
-            return new BooleanLiteral(value);
-        }
-        case BOOLEAN: {
-            auto value = getBoolFrom(left) > getBoolFrom(right);
-            delete left;
-            delete right;
-            return new BooleanLiteral(value);
-        };
-        default: {
-            delete left;
-            delete right;
-            throw;
-        }
+    if (left->GetType() == Type::NUMERIC) {
+        auto value = getIntFrom(left) > getIntFrom(right);
+        delete left;
+        delete right;
+        return new BooleanLiteral(value);
+    } else if (left->GetType() == Type::CHARACTER) {
+        auto value = getCharFrom(left) > getCharFrom(right);
+        delete left;
+        delete right;
+        return new BooleanLiteral(value);
+    } else if (left->GetType() == Type::BOOLEAN) {
+        auto value = getBoolFrom(left) > getBoolFrom(right);
+        delete left;
+        delete right;
+        return new BooleanLiteral(value);
+    } else {
+        delete left;
+        delete right;
+        throw;
     }
 }
 
@@ -307,30 +296,25 @@ IExpression* ParserInterface::CompareNotEqual(IExpression* left, IExpression* ri
 }
 
 IExpression* ParserInterface::compareNotEqualImmediate(IExpression* left, IExpression* right) {
-    switch (left->GetType()) {
-        case NUMERIC: {
-            auto value = getIntFrom(left) != getIntFrom(right);
-            delete left;
-            delete right;
-            return new BooleanLiteral(value);
-        };
-        case CHARACTER: {
-            auto value = getCharFrom(left) != getCharFrom(right);
-            delete left;
-            delete right;
-            return new BooleanLiteral(value);
-        }
-        case BOOLEAN: {
-            auto value = getBoolFrom(left) != getBoolFrom(right);
-            delete left;
-            delete right;
-            return new BooleanLiteral(value);
-        };
-        default: {
-            delete left;
-            delete right;
-            throw;
-        }
+    if (left->GetType() == Type:: NUMERIC) {
+        auto value = getIntFrom(left) != getIntFrom(right);
+        delete left;
+        delete right;
+        return new BooleanLiteral(value);
+    } else if (left->GetType() == Type::CHARACTER) {
+        auto value = getCharFrom(left) != getCharFrom(right);
+        delete left;
+        delete right;
+        return new BooleanLiteral(value);
+    } else if (left->GetType() == Type::BOOLEAN) {
+        auto value = getBoolFrom(left) != getBoolFrom(right);
+        delete left;
+        delete right;
+        return new BooleanLiteral(value);
+    } else {
+        delete left;
+        delete right;
+        throw;
     }
 }
 
@@ -350,35 +334,30 @@ IExpression* ParserInterface::CompareEqual(IExpression* left, IExpression* right
 }
 
 IExpression* ParserInterface::compareEqualImmediate(IExpression* left, IExpression* right) {
-    switch (left->GetType()) {
-        case NUMERIC: {
-            auto value = getIntFrom(left) == getIntFrom(right);
-            delete left;
-            delete right;
-            return new BooleanLiteral(value);
-        };
-        case CHARACTER: {
-            auto value = getCharFrom(left) == getCharFrom(right);
-            delete left;
-            delete right;
-            return new BooleanLiteral(value);
-        }
-        case BOOLEAN: {
-            auto value = getBoolFrom(left) == getBoolFrom(right);
-            delete left;
-            delete right;
-            return new BooleanLiteral(value);
-        };
-        default: {
-            delete left;
-            delete right;
-            throw;
-        }
+    if (left->GetType() == Type::NUMERIC) {
+        auto value = getIntFrom(left) == getIntFrom(right);
+        delete left;
+        delete right;
+        return new BooleanLiteral(value);
+    } else if (left->GetType() == Type::CHARACTER) {
+        auto value = getCharFrom(left) == getCharFrom(right);
+        delete left;
+        delete right;
+        return new BooleanLiteral(value);
+    } else if (left->GetType() ==  Type::BOOLEAN) {
+        auto value = getBoolFrom(left) == getBoolFrom(right);
+        delete left;
+        delete right;
+        return new BooleanLiteral(value);
+    } else {
+        delete left;
+        delete right;
+        throw;
     }
 }
 
 bool ParserInterface::areNumeric(IExpression* left, IExpression* right) const {
-    return left->GetType() == ExpressionType::NUMERIC and right->GetType() == ExpressionType::NUMERIC;
+    return left->GetType() == Type::NUMERIC and right->GetType() == Type::NUMERIC;
 }
 
 int ParserInterface::getIntFrom(const IExpression* expr) const {
@@ -430,7 +409,7 @@ IExpression* ParserInterface::orImmediate(IExpression* left, IExpression* right)
 }
 
 bool ParserInterface::areBoolean(IExpression* left, IExpression* right) {
-    return left->GetType() == ExpressionType::BOOLEAN && right->GetType() == ExpressionType::BOOLEAN;
+    return left->GetType() == Type::BOOLEAN && right->GetType() == Type::BOOLEAN;
 }
 
 bool ParserInterface::areConstant(IExpression* left, IExpression* right) const {
@@ -441,11 +420,21 @@ bool ParserInterface::getBoolFrom(IExpression* expr) {
     return ((BooleanLiteral*)expr)->GetValue();
 }
 
-void ParserInterface::Assign(Symbol* variable, IExpression* rvalue) {
-    if (variable->IsConstant()) throw;
-    auto reg = getRegisterFor(rvalue);
-    Encoder::Instance().Assign(*((Variable*)variable), reg);
-    delete reg;
+void ParserInterface::Assign(Symbol* symbol, IParameter* rvalue) {
+    if (rvalue->GetType() == Type::STRING) throw;
+    if (symbol->IsConstant()) throw;
+    auto& lValue = *(Variable*)symbol;
+    if (lValue.GetType() != (rvalue->GetType())) throw;
+    if (rvalue->IsVariable()) {
+        Encoder::Instance().Copy(lValue, *(Variable*)rvalue);
+        return;
+    }
+    auto expr = (IExpression*)rvalue;
+    if (expr->IsConstant()) {
+        expr = Encoder::Instance().LoadImmediate((Literal*)expr);
+    }
+    Encoder::Instance().Assign(lValue, (ExpressionInRegister*)expr);
+    delete expr;
 }
 
 void ParserInterface::Write(std::vector<IParameter*>* parameters) {

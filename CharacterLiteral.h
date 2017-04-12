@@ -14,7 +14,7 @@ private:
 public:
     CharacterLiteral(char* value, int length);
     CharacterLiteral(char value) : value_(value) {}
-    ExpressionType GetType() { return ExpressionType::CHARACTER; }
+    Type& GetType() { return Type::CHARACTER; }
     void Succeed() { value_++; };
     void Precede() { value_--; };
     IExpression* ToOrdinal();

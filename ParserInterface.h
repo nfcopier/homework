@@ -86,7 +86,7 @@ public:
     IExpression* And(IExpression* left, IExpression* right);
     IExpression* Or(IExpression* left, IExpression* right);
 
-    void Assign(Symbol* variable, IExpression* rvalue);
+    void Assign(Symbol* variable, IParameter* rvalue);
     void Write(std::vector<IParameter*>* parameters);
     void Read(std::vector<Symbol*>* symbols);
     IParameter* GetParameterFrom(Symbol* symbol);

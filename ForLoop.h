@@ -22,7 +22,7 @@ private:
 public:
     ForLoop() :
             WhileStatement(),
-            stopVariable_(new Variable(new std::string("integer"), PointerType::Global))
+            stopVariable_(new Variable(Type::NUMERIC, PointerType::Global))
     {}
     Variable* GetStopVariable() { return stopVariable_; }
     void Set(RangeType rangeType) { rangeType_ = rangeType; }

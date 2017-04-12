@@ -9,11 +9,12 @@
 #include <vector>
 #include <string>
 #include <ostream>
+#include "Type.h"
 
 struct IdentifierList {
-    std::string* TypeName;
+    Type& TheType;
     std::vector<std::string*>& Identifiers;
-    IdentifierList(std::string* typeName, std::vector<std::string*>* identifiers) : TypeName(typeName), Identifiers(*identifiers) {}
+    IdentifierList(Type& type, std::vector<std::string*>* identifiers) : TheType(type), Identifiers(*identifiers) {}
 };
 
 

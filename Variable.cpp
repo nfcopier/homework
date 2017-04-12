@@ -7,28 +7,17 @@
 
 int Variable::currentGlobalOffset_ = 0;
 int Variable::currentStackOffset_ = 0;
-int Variable::currentFrameOffset_ = -4;
-
-ExpressionType Variable::getTypeFrom(std::string* typeName) {
-    if (*typeName == "integer") return ExpressionType::NUMERIC;
-    if (*typeName == "INTEGER") return ExpressionType::NUMERIC;
-    if (*typeName == "boolean") return ExpressionType::BOOLEAN;
-    if (*typeName == "BOOLEAN") return ExpressionType::BOOLEAN;
-    if (*typeName == "string") return ExpressionType::STRING;
-    if (*typeName == "char") return ExpressionType::CHARACTER;
-    if (*typeName == "CHAR") return ExpressionType::CHARACTER;
-    return ExpressionType::USER_DEFINED;
-}
+int Variable::currentFrameOffset_ = 0;
 
 void Variable::doOffset() {
     if (pointerType_ == Global) {
         offset_ = currentGlobalOffset_;
         currentGlobalOffset_ += GetSize();
     } else if (pointerType_ == Stack){
-        offset_ = currentStackOffset_;
         currentStackOffset_ -= GetSize();
+        offset_ = currentStackOffset_;
     } else {
-        offset_ = currentFrameOffset_;
         currentFrameOffset_ -= GetSize();
+        offset_ = currentFrameOffset_;
     }
 }
