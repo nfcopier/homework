@@ -10,22 +10,21 @@
 #include "Type.h"
 #include "IdentifierList.h"
 
-struct Property {
-    unsigned int Offset;
-    Type* TheType;
-};
-
 class RecordType : public Type {
 private:
-    std::map<std::string, Type*> subTypes_;
+    std::map<std::string, Field*> subTypes_;
+    std::vector<Type*> subTypesInOrder_;
+    unsigned int size_;
+    void addIdentifier(Type& type, std::string& id);
+    void addIdentifiersByType(IdentifierList& identifiers);
 protected:
     TypeType GetType() { return RECORD; }
     bool haveSameStructure(Type& otherType);
 public:
     RecordType(std::vector<IdentifierList*>& identifierList);
-    unsigned int GetSize() { throw; }
+    unsigned int GetSize() { return size_; }
     bool IsPrimitive() { return false; }
-
+    Field& GetFieldFor(std::string& fieldName);
 };
 
 

@@ -84,6 +84,7 @@ public:
     void Negate(ExpressionInRegister& expression);
 
     void Copy(Variable& destination, Variable& source);
+    void MoveAddressToRegister(Variable destination, Variable& source, ExpressionInRegister& expression);
 };
 
 

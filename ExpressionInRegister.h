@@ -33,7 +33,7 @@ public:
         if (address_ + 1u > registersUsed_) registersUsed_ = address_ + 1u;
     }
     ExpressionInRegister(ExpressionInRegister const& expr) : isCopied_(true), address_(expr.address_), type_(expr.type_) {}
-    int GetAddress() { return address_; }
+    unsigned int GetAddress() { return address_; }
     static unsigned int GetRegistersUsed() { return registersUsed_; }
     static void ClearRegistersUsed() { registersUsed_ = 0u; }
     virtual IExpression* ToOrdinal();

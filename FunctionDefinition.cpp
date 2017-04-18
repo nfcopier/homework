@@ -27,3 +27,11 @@ unsigned int getSizeOf(unsigned int currentValue, ParameterDeclaration* paramete
 unsigned int FunctionDefinition::GetParameterSize() {
     return std::accumulate(parameterDeclarations_->begin(), parameterDeclarations_->end(), 0u, getSizeOf) + 4u;
 }
+
+Type& FunctionDefinition::GetTypeFor(std::string& typeName) {
+    return *types_[typeName];
+}
+
+void FunctionDefinition::Add(std::string& typeName, Type& type) {
+    types_[typeName] = &type;
+}

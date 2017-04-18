@@ -5,6 +5,7 @@
 #include <iostream>
 #include "ParserInterface.h"
 #include "SymbolTable.h"
+extern int yylineno;
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
@@ -423,17 +424,17 @@ bool ParserInterface::getBoolFrom(IExpression* expr) {
 void ParserInterface::Assign(Symbol* symbol, IParameter* rvalue) {
     if (rvalue->GetType() == Type::STRING) throw;
     if (symbol->IsConstant()) throw;
-    auto& lValue = *(Variable*)symbol;
-    if (lValue.GetType() != (rvalue->GetType())) throw;
+    auto lValue = (Variable*)symbol;
+    if (lValue->GetType() != rvalue->GetType()) throw;
     if (rvalue->IsVariable()) {
-        Encoder::Instance().Copy(lValue, *(Variable*)rvalue);
+        Encoder::Instance().Copy(*lValue, *(Variable*)rvalue);
         return;
     }
     auto expr = (IExpression*)rvalue;
     if (expr->IsConstant()) {
         expr = Encoder::Instance().LoadImmediate((Literal*)expr);
     }
-    Encoder::Instance().Assign(lValue, (ExpressionInRegister*)expr);
+    Encoder::Instance().Assign(*lValue, (ExpressionInRegister*)expr);
     delete expr;
 }
 

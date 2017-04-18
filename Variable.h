@@ -13,7 +13,8 @@
 enum PointerType {
     Global,
     Frame,
-    Stack
+    Stack,
+    Register
 };
 
 class Variable : public IParameter, public Symbol {
@@ -24,6 +25,7 @@ private:
     int offset_;
     PointerType pointerType_;
     Type& type_;
+    unsigned int registerNumber_;
 public:
     void doOffset();
     Variable(Type& type, PointerType pointerType, int offset) :
@@ -31,6 +33,8 @@ public:
     Variable(Type& type, PointerType pointerType) : type_(type), pointerType_(pointerType) {
         doOffset();
     }
+    Variable(Type& type, int offset, unsigned int registerNumber, bool removeAmbiguity) :
+            type_(type), pointerType_(Register), offset_(offset), registerNumber_(registerNumber) {}
     bool IsConstant() { return false; }
     int GetOffset() { return offset_; }
     PointerType GetPointerType() { return pointerType_; }
@@ -39,6 +43,9 @@ public:
     static void ClearFrame() { currentFrameOffset_ = 0; }
     virtual bool IsReference() { return false; }
     bool IsVariable() { return true; }
+    unsigned int GetRegisterNumber() { if (pointerType_ != Register) throw;
+        return registerNumber_;
+    }
 };
 
 

@@ -144,6 +144,10 @@ void yy::parser::error(const std::string& error) {
 %type <Type*> type
 %type <ArrayType*> array_type
 %type <RecordType*> record_type
+%type <Variable*> l_value_access_list
+%type <Variable*> variable_access
+%type <std::string*> field_access
+%type <IExpression*> index_access
 
 %%
 
@@ -285,9 +289,11 @@ procedure_declaration:
     function_header
     { ParserInterface::Instance().Set( $2 ); }
     { FunctionController::Instance().Set( $2 ); }
+    { TypeController::Instance().Set( *$2 ); }
     STATEMENT_TERMINATOR
     function_body
     STATEMENT_TERMINATOR
+    { TypeController::Instance().ClearFunction(); }
     { FunctionController::Instance().ClearFunction(); }
     { ParserInterface::Instance().ClearFunction(); }
 ;
@@ -297,12 +303,14 @@ function_declaration:
     function_header
     { FunctionController::Instance().Set( $2 ); }
     { ParserInterface::Instance().Set( $2 ); }
+    { TypeController::Instance().Set( *$2 ); }
     COLON
     type
-    { FunctionController::Instance().SetReturnTypeAs( *$6 ); }
+    { FunctionController::Instance().SetReturnTypeAs( *$7 ); }
     STATEMENT_TERMINATOR
     function_body
     STATEMENT_TERMINATOR
+    { TypeController::Instance().ClearFunction(); }
     { FunctionController::Instance().ClearFunction(); }
     { ParserInterface::Instance().ClearFunction(); }
 ;
@@ -679,12 +687,12 @@ modulo_division:
 not_expression:
     NOT_OPERATOR
     expression
-    { $$ = ParserInterface::Instance().Not($2); delete $2; }
+    { $$ = ParserInterface::Instance().Not($2); }
 ;
 negation:
     MINUS_SIGN %prec UNARY_MINUS
     expression
-    { $$ = ParserInterface::Instance().Negate($2); delete $2; }
+    { $$ = ParserInterface::Instance().Negate($2); }
 ;
 
 parenthetic_expression:
@@ -777,33 +785,39 @@ l_value:
         auto str = new std::string($1);
         $$ = ParserInterface::Instance().GetSymbolFor(str);
     }
-|   IDENTIFIER
-    l_value_access_list {
-        auto str = new std::string($1);
-        $$ = ParserInterface::Instance().GetSymbolFor(str);
+|   l_value_access_list
+    {
+        $$ = $1;
     }
 ;
 
 l_value_access_list:
-    l_value_access
+    variable_access
+    field_access
+    { $$ = &TypeController::Instance().GetFieldFor( *$1, $2 ); }
+|   variable_access
+    index_access
+    { $$ = &TypeController::Instance().GetIndexFor( *$1, $2 ); }
+;
+
+variable_access:
+    IDENTIFIER
+    { $$ = &TypeController::Instance().GetVariableFor( new std::string($1) ); }
 |   l_value_access_list
-    l_value_access
+    { $$ = $1; }
 ;
 
-l_value_access:
-    property_access
-|   index_access
-;
-
-property_access:
+field_access:
     DOT_OPERATOR
     IDENTIFIER
+    { $$ = new std::string($2); }
 ;
 
 index_access:
     OPENING_BRACKET
     expression
     CLOSING_BRACKET
+    { $$ = $2; }
 ;
 
 %%

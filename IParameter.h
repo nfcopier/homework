@@ -7,15 +7,6 @@
 
 #include "Type.h"
 
-
-enum ExpressionType {
-    NUMERIC,
-    CHARACTER,
-    STRING,
-    BOOLEAN,
-    USER_DEFINED
-};
-
 class IParameter {
 protected:
     IParameter() {}

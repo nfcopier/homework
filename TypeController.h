@@ -14,6 +14,8 @@
 #include "ArrayType.h"
 #include "RecordType.h"
 #include "FunctionDefinition.h"
+#include "SymbolTable.h"
+#include "Encoder.h"
 
 class TypeController {
 private:
@@ -27,6 +29,13 @@ public:
     ArrayType* CreateArrayTypeFrom(IExpression* lowerIndex, IExpression* upperIndex, Type& type);
     RecordType* CreateRecordTypeFrom(std::vector<IdentifierList*>& identifierList);
     void Add(std::string* typeName, Type& type);
+    void Set(FunctionDefinition& function) { currentFunction_ = &function; }
+    void ClearFunction() { currentFunction_ = nullptr; }
+    Variable& GetFieldFor(Variable& variable, std::string* typeName);
+    Variable& GetIndexFor(Variable& variable, IExpression* index);
+    Variable& GetVariableFor( std::string* typeName );
+
+    Variable& getVariableFor(Variable& variable, NumericLiteral& numericLiteral) const;
 };
 
 

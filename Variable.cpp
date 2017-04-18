@@ -4,6 +4,7 @@
 
 
 #include "Variable.h"
+#include "ArrayType.h"
 
 int Variable::currentGlobalOffset_ = 0;
 int Variable::currentStackOffset_ = 0;
@@ -20,4 +21,6 @@ void Variable::doOffset() {
         currentFrameOffset_ -= GetSize();
         offset_ = currentFrameOffset_;
     }
+    if (type_.GetType() == ARRAY)
+        offset_ -= ((ArrayType&)type_).GetField().Offset;
 }

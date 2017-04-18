@@ -10,16 +10,17 @@
 
 class ArrayType : public Type {
 private:
-    int lowerIndex_;
-    int upperIndex_;
+    unsigned int lowerIndex_;
+    unsigned int upperIndex_;
     Type& elementType_;
 protected:
     TypeType GetType() { return ARRAY; }
     bool haveSameStructure(Type& otherType);
 public:
-    ArrayType(int lowerIndex, int upperIndex, Type& elementType);
+    ArrayType(unsigned int lowerIndex, unsigned int upperIndex, Type& elementType);
     unsigned int GetSize();
     bool IsPrimitive() { return false; }
+    Field& GetField() { return *(new Field(lowerIndex_, elementType_)); }
 };
 
 

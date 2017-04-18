@@ -144,7 +144,7 @@ void Encoder::Write(IParameter* value) {
 
 ExpressionInRegister* Encoder::Read(Type& type) {
     if (!type.IsPrimitive()) throw;
-    auto primitiveType = (PrimitiveType&)type;
+    auto& primitiveType = (PrimitiveType&)type;
     auto expr = new ExpressionInRegister(primitiveType);
     instructionBuffer_ << "li  \t$v0, ";
     auto sysCallNumber = primitiveType.GetReadCallNumber();
@@ -361,6 +361,7 @@ std::string Encoder::getPointerFrom(Variable& variable) {
         case Global: return "$gp";
         case Frame: return "$fp";
         case Stack: return "$sp";
+        case Register: return "$t" + std::to_string(variable.GetRegisterNumber());
         default: throw;
     }
 }
@@ -401,6 +402,12 @@ void Encoder::Copy(Variable& destination, Variable& source) {
         instructionBuffer_ << "lw  \t$t" << reg.GetAddress() << ", " << source.GetOffset() + offset << '(' << getPointerFrom(source) << ')' << std::endl;
         instructionBuffer_ << "sw  \t$t" << reg.GetAddress() << ", " << destination.GetOffset() + offset << '(' << getPointerFrom(destination) << ')' << std::endl;
     }
+}
+
+void Encoder::MoveAddressToRegister(Variable destination, Variable& source, ExpressionInRegister& expression) {
+    instructionBuffer_ << "la  \t$t" << destination.GetRegisterNumber() << ", " << getAddressFrom( source ) << std::endl;
+    instructionBuffer_ << "sll \t$t" << expression.GetAddress() << ", $t" << expression.GetAddress() << ", 2" << std::endl;
+    instructionBuffer_ << "add \t$t" << destination.GetRegisterNumber() << ", $t" << destination.GetRegisterNumber() << ", $t" << expression.GetAddress() << std::endl;
 }
 
 

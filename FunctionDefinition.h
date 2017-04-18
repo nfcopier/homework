@@ -8,6 +8,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include "ParameterDeclaration.h"
 
 class FunctionDefinition {
@@ -32,6 +33,12 @@ public:
     void SetReturnTypeAs(Type& type) { returnType_ = &type; };
     Type& GetReturnType() { return *returnType_; }
     unsigned int GetParameterSize();
+
+    Type& GetTypeFor(std::string& typeName);
+
+    std::map<std::string, Type*> types_;
+
+    void Add(std::string& typeName, Type& type);
 };
 
 

@@ -49,5 +49,11 @@ public:
     unsigned int GetWriteCallNumber() { return writeCallNumber_; }
 };
 
+struct Field {
+    Field(unsigned int offset, Type& type) : Offset(offset), TheType(type) {}
+    unsigned int Offset;
+    Type& TheType;
+};
+
 
 #endif //COMPILER_TYPE_H

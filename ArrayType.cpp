@@ -13,12 +13,10 @@ bool ArrayType::haveSameStructure(Type& otherType) {
             elementType_ == otherArray.elementType_;
 }
 
-ArrayType::ArrayType(int lowerIndex, int upperIndex, Type& elementType) :
+ArrayType::ArrayType(unsigned int lowerIndex, unsigned int upperIndex, Type& elementType) :
         lowerIndex_(lowerIndex),
         upperIndex_(upperIndex),
-        elementType_(elementType) {
-    if (lowerIndex > upperIndex) throw;
-}
+        elementType_(elementType) {}
 
 unsigned int ArrayType::GetSize() {
     return elementType_.GetSize() * (upperIndex_ - lowerIndex_);
