@@ -6,8 +6,8 @@ export default function (
 ) {
 
     function GameRenderer(simulator) {
+        this._isRendered = false;
         this._parent = $(`<${this._tagName}>`).addClass(this._className);
-        $("body").append(this._parent);
         this._header = new HeaderRenderer();
         this._content = new ContentRenderer( simulator );
         this._footer = new FooterRenderer();

@@ -5,7 +5,7 @@ export default function ($) {
     }
 
     HeaderRenderer.prototype._tagName = "div";
-    HeaderRenderer.prototype._className = "tile is-parent box";
+    HeaderRenderer.prototype._className = "tile is-parent";
 
     HeaderRenderer.prototype.render = function () {
         this._parent.empty();
@@ -14,7 +14,7 @@ export default function ($) {
     };
 
     HeaderRenderer.prototype._template = function () { return `
-        <div class="is-child">
+        <div class="tile is-child notification is-primary">
             Browser Game Loop
         </div>
     `};

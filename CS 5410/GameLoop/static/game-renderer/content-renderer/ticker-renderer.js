@@ -6,15 +6,16 @@ export default function ($) {
     }
 
     TickerRenderer.prototype._tagName = "div";
-    TickerRenderer.prototype.className = "tile is-child box";
+    TickerRenderer.prototype._className = "tile is-8 is-parent";
 
     TickerRenderer.prototype.render = function () {
-        this._parent.empty();
+        const container = $("<div>").addClass("tile is-child notification is-warning");
         const ticks = this._simulator.getTriggeredTicks().slice(-10);
         for (let tick in ticks) {
             if (!ticks.hasOwnProperty(tick)) continue;
-            this._parent.append(this._renderTick(tick));
+            container.append(this._renderTick(tick));
         }
+        this._parent.empty().append(container);
         return this._parent;
     };
 

@@ -12,7 +12,7 @@ export default function (
     }
 
     ContentRenderer.prototype._tagName = "div";
-    ContentRenderer.prototype._className = "tile is-parent";
+    ContentRenderer.prototype._className = "tile";
 
     ContentRenderer.prototype.render = function () {
         if (!this._isRendered) {

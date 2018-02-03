@@ -5,7 +5,7 @@ export default function ($) {
     }
 
     FooterRenderer.prototype._tagName = "div";
-    FooterRenderer.prototype._className = "tile is-parent box";
+    FooterRenderer.prototype._className = "tile is-parent is-12";
 
     FooterRenderer.prototype.render = function () {
         this._parent.empty();
@@ -14,7 +14,7 @@ export default function ($) {
     };
 
     FooterRenderer.prototype._template = function () { return `
-        <div class="is-child">
+        <div class="tile is-child notification is-danger">
             This is a test footer
         </div>
     `};

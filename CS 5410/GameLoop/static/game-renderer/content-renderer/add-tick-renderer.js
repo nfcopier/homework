@@ -6,7 +6,7 @@ export default function ($) {
     }
 
     AddTickRenderer.prototype._tagName = "div";
-    AddTickRenderer.prototype._className = "tile is-child box";
+    AddTickRenderer.prototype._className = "tile is-4 is-parent";
 
     AddTickRenderer.prototype.render = function () {
         this._parent.empty();
@@ -16,6 +16,7 @@ export default function ($) {
     };
 
     AddTickRenderer.prototype._template = function () { return `
+        <div class="tile is-child notification is-success"></div>
     `};
 
     AddTickRenderer.prototype._addTick = function () {
