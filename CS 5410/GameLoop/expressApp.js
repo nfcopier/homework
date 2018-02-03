@@ -8,4 +8,6 @@ app.get("/", function (require, response) {
 
 app.use(ExpressApp.static("static"));
 
-app.listen(3000);
+app.listen(3000, function () {
+    console.log("Listening on port 3000");
+});
