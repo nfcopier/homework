@@ -15,7 +15,17 @@ export default function ($) {
 
     FooterRenderer.prototype._template = function () { return `
         <div class="tile is-child notification is-danger">
-            This is a test footer
+            <div class="level">
+                <span class="level-left">Created For CS 5410</span>
+                <span class="level-right">
+                    <p>
+                        Built Using
+                        <a href="http://jquery.com/" target="_blank">jQuery</a>
+                        And
+                        <a href="https://bulma.io/" target="_blank">Bulma</a>
+                    </p>
+                </span>
+            </div>
         </div>
     `};
 
