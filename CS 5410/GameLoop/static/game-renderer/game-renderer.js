@@ -17,10 +17,16 @@ export default function (
     GameRenderer.prototype._className = "tile is-ancestor is-vertical";
 
     GameRenderer.prototype.render = function () {
-        this._parent.empty();
-        this._parent.append( this._header.render() );
-        this._parent.append( this._content.render() );
-        this._parent.append( this._footer.render() );
+        if (!this._isRendered) {
+            this._isRendered = true;
+            this._parent.empty();
+            this._parent.append(this._header.render());
+            this._parent.append(this._content.render());
+            this._parent.append(this._footer.render());
+        } else {
+            this._content.render();
+        }
+        return this._parent;
     };
 
     return GameRenderer;

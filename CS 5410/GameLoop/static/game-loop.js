@@ -12,6 +12,7 @@ export default function (
 
     GameLoop.prototype.start = function () {
         this._lastTime = performance.now();
+        $(".main-content").append(this._renderer.render());
         this._doLoop(this._lastTime);
     };
 
