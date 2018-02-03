@@ -12,6 +12,7 @@ export default function ($) {
         Simulation,
         $
         );
+
     const gameLoop = new GameLoop();
     gameLoop.start();
 

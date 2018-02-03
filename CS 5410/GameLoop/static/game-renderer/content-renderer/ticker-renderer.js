@@ -11,16 +11,16 @@ export default function ($) {
     TickerRenderer.prototype.render = function () {
         const container = $("<div>").addClass("tile is-child notification is-warning");
         const ticks = this._simulator.getTriggeredTicks().slice(-10);
-        for (let tick in ticks) {
-            if (!ticks.hasOwnProperty(tick)) continue;
+        for (let tick of ticks) {
             container.append(this._renderTick(tick));
         }
-        this._parent.empty().append(container);
+        this._parent.empty();
+        this._parent.append(container);
         return this._parent;
     };
 
     TickerRenderer.prototype._renderTick = function (tick) {
-      const el = $("div");
+      const el = $("<div>").addClass("box");
       el.html(`
         Event: ${tick.name} (${tick.remaining} remaining)
       `);

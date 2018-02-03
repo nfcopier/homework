@@ -13,7 +13,6 @@ export default function () {
 
     Simulation.prototype.updateTick = function (index, timeElapsed) {
         const tick = this._ticks[index];
-        if (!this._ticks.hasOwnProperty(tick)) return;
         tick.timeElapsed += timeElapsed;
         if (tick.timeElapsed < tick.interval) return;
         tick.timeElapsed = 0;
