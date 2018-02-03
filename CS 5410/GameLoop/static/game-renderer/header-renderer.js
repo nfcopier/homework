@@ -14,8 +14,8 @@ export default function ($) {
     };
 
     HeaderRenderer.prototype._template = function () { return `
-        <div class="tile is-child notification is-primary">
-            Browser Game Loop
+        <div class="tile is-child notification is-primary level">
+            <h1 class="title is-1 level-item">Browser Game Loop</h1>
         </div>
     `};
 
