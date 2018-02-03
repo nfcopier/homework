@@ -1,7 +1,7 @@
 export default function ($) {
 
     function TickerRenderer(simulator) {
-        this._simulator = ticks;
+        this._simulator = simulator;
         this._parent = $(`<${this._tagName}>`).addClass(this._className);
     }
 
@@ -19,7 +19,7 @@ export default function ($) {
     };
 
     TickerRenderer.prototype._renderTick = function (tick) {
-      const el = $(div);
+      const el = $("div");
       el.html(`
         Event: ${tick.name} (${tick.remaining} remaining)
       `);

@@ -11,7 +11,7 @@ export default function ($) {
     AddTickRenderer.prototype.render = function () {
         this._parent.empty();
         this._parent.html( this._template() );
-        this._parent.find(".submit").click(this._addNewTick.bind(this));
+        this._parent.find(".submit").click(this._addTick.bind(this));
         return this._parent;
     };
 

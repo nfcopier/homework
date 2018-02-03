@@ -9,7 +9,8 @@ export default function ($) {
 
     const GameLoop = gameLoopModule(
         GameRenderer,
-        Simulation
+        Simulation,
+        $
         );
     const gameLoop = new GameLoop();
     gameLoop.start();

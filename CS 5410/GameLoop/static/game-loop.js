@@ -1,12 +1,13 @@
 export default function (
     GameRenderer,
-    Simulation
+    Simulation,
+    $
 ) {
 
     function GameLoop() {
         this._gameStart = Date.now();
-        this._renderer = new GameRenderer();
         this._simulation = new Simulation();
+        this._renderer = new GameRenderer( this._simulation );
     }
 
     GameLoop.prototype.start = function () {
@@ -15,7 +16,9 @@ export default function (
     };
 
     GameLoop.prototype._doLoop = function (currentTime) {
-        this._simulation.update();
+        const elapsedTime = currentTime - this._lastTime;
+        this._lastTime = currentTime;
+        this._simulation.update( elapsedTime );
         this._renderer.render();
         requestAnimationFrame(this._doLoop.bind(this));
     };

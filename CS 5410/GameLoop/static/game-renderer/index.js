@@ -8,7 +8,7 @@ export default function ($) {
 
     const HeaderRenderer = headerRenderer( $ );
 
-    const ContentRenderer = contentRenderer( $ )
+    const ContentRenderer = contentRenderer( $ );
 
     const FooterRenderer = footerRenderer( $ );
 
