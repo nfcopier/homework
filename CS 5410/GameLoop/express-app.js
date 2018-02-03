@@ -1,5 +1,7 @@
 const ExpressApp = require("express");
 
+const port = process.argv.length > 2 ? process.argv[1] : 3000;
+
 const app = ExpressApp();
 
 app.get("/", function (require, response) {
@@ -8,6 +10,6 @@ app.get("/", function (require, response) {
 
 app.use(ExpressApp.static("static"));
 
-app.listen(3000, function () {
-    console.log("Listening on port 3000");
+app.listen(port, function () {
+    console.log(`Listening on port ${port}`);
 });
