@@ -8,7 +8,7 @@ class UniformLocationGenerator:
         self._bottom = bottom
         self._right = right
 
-    def do_update(self):
+    def do_update(self, elapsed_time):
         pass
 
     def generate(self):
