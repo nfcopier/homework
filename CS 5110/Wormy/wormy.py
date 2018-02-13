@@ -3,9 +3,11 @@
 # http://inventwithpython.com/pygame
 # Released under a "Simplified BSD" license
 
-import random, pygame, sys
+import pygame
+import sys
 from pygame.locals import *
 
+from CentralController import CentralController, Directions
 from apple_spawner import AppleSpawner
 from lifetime_generators import ShortLifetimeGenerator
 from location_generators import UniformLocationGenerator
@@ -31,12 +33,7 @@ DARKGREEN = (  0, 155,   0)
 DARKGRAY  = ( 40,  40,  40)
 BGCOLOR = BLACK
 
-UP = 'up'
-DOWN = 'down'
-LEFT = 'left'
-RIGHT = 'right'
-
-HEAD = 0 # syntactic sugar: index of the worm's head
+HEAD = 0  # syntactic sugar: index of the worm's head
 
 
 def main():
@@ -55,45 +52,44 @@ def main():
 
 
 def get_new_direction_1(direction_1, key):
-    if (key == K_a or key == K_KP4) and direction_1 != RIGHT:
-        return LEFT
-    if (key == K_d or key == K_KP6) and direction_1 != LEFT:
-        return RIGHT
-    if (key == K_w or key == K_KP8) and direction_1 != DOWN:
-        return UP
-    if (key == K_s or key == K_KP2) and direction_1 != UP:
-        return DOWN
+    if (key == K_a or key == K_KP4) and direction_1 != Directions.RIGHT:
+        return Directions.LEFT
+    if (key == K_d or key == K_KP6) and direction_1 != Directions.LEFT:
+        return Directions.RIGHT
+    if (key == K_w or key == K_KP8) and direction_1 != Directions.DOWN:
+        return Directions.UP
+    if (key == K_s or key == K_KP2) and direction_1 != Directions.UP:
+        return Directions.DOWN
     return direction_1
 
 
 def get_new_direction_2(direction_2, key):
-    if (key == K_LEFT or key == K_KP4) and direction_2 != RIGHT:
-        direction_2 = LEFT
-    if (key == K_RIGHT or key == K_KP6) and direction_2 != LEFT:
-        direction_2 = RIGHT
-    if (key == K_UP or key == K_KP8) and direction_2 != DOWN:
-        direction_2 = UP
-    if (key == K_DOWN or key == K_KP2) and direction_2 != UP:
-        direction_2 = DOWN
+    if (key == K_LEFT or key == K_KP4) and direction_2 != Directions.RIGHT:
+        direction_2 = Directions.LEFT
+    if (key == K_RIGHT or key == K_KP6) and direction_2 != Directions.LEFT:
+        direction_2 = Directions.RIGHT
+    if (key == K_UP or key == K_KP8) and direction_2 != Directions.DOWN:
+        direction_2 = Directions.UP
+    if (key == K_DOWN or key == K_KP2) and direction_2 != Directions.UP:
+        direction_2 = Directions.DOWN
     return direction_2
 
 
 def run_game():
-    worm_1_coords = get_random_start_coords()
-    worm_2_coords = get_random_start_coords()
-    direction_1 = RIGHT
-    direction_2 = RIGHT
-    missed_apples = 0
 
     location_generator = UniformLocationGenerator(0, 0, CELLHEIGHT, CELLWIDTH)
     lifetime_generator = ShortLifetimeGenerator()
     apple_spawner = AppleSpawner(location_generator, lifetime_generator)
+    controller = CentralController(apple_spawner, CELLWIDTH, CELLHEIGHT)
     last_time = pygame.time.get_ticks()
 
     while True:  # main game loop
         current_time = pygame.time.get_ticks()
         elapsed_time = current_time - last_time
         last_time = current_time
+
+        (direction_1, direction_2) = controller.get_directions()
+
         for event in pygame.event.get():  # event handling loop
             if event.type == QUIT:
                 terminate()
@@ -103,27 +99,14 @@ def run_game():
                 direction_1 = get_new_direction_1(direction_1, event.key)
                 direction_2 = get_new_direction_2(direction_2, event.key)
 
-        apple_spawner.do_update(elapsed_time)
-        missed_apples += apple_spawner.get_missed_apples()
-
-        if is_game_over(worm_1_coords, worm_2_coords):
+        if is_game_over(controller._worm_1_coords, controller._worm_2_coords):
             return
 
-        eat_apple(worm_1_coords, apple_spawner)
-        eat_apple(worm_2_coords, apple_spawner)
+        # TODO Implement AI code inside controller
+        controller.set_directions(direction_1, direction_2)
+        controller.do_update(elapsed_time)
 
-        # move the worm by adding a segment in the direction it is moving
-        new_head_1 = get_new_head(direction_1, worm_1_coords[HEAD])
-        worm_1_coords.insert(0, new_head_1)
-        new_head_2 = get_new_head(direction_2, worm_2_coords[HEAD])
-        worm_2_coords.insert(0, new_head_2)
-        render_game(apple_spawner, worm_1_coords, worm_2_coords, missed_apples)
-
-
-def eat_apple(worm_1_coords, apple_spawner):
-    apple_is_eaten = apple_spawner.eat_apple(worm_1_coords[HEAD])
-    if not apple_is_eaten:
-        remove_tail_from(worm_1_coords)
+        render_game(apple_spawner, controller._worm_1_coords, controller._worm_2_coords, controller._missed_apples)
 
 
 def render_game(apple_spawner, worm_0_coords, worm_1_coords, missed_apples):
@@ -179,31 +162,8 @@ def are_intersecting(segment_1, segment_2):
     return segment_1['x'] == segment_2['x'] and segment_1['y'] == segment_2['y']
 
 
-def remove_tail_from(worm_1_coords):
-    del worm_1_coords[-1]  # remove worm's tail segment
-
-
-def get_new_head(direction, head):
-    if direction == UP:
-        return {'x': head['x'], 'y': head['y'] - 1}
-    elif direction == DOWN:
-        return {'x': head['x'], 'y': head['y'] + 1}
-    elif direction == LEFT:
-        return {'x': head['x'] - 1, 'y': head['y']}
-    elif direction == RIGHT:
-        return {'x': head['x'] + 1, 'y': head['y']}
-    return None
-
-
 def has_hit_edge(head):
     return head['x'] == -1 or head['x'] == CELLWIDTH or head['y'] == -1 or head['y'] == CELLHEIGHT
-
-
-def get_random_start_coords():
-    start_x = random.randint(5, CELLWIDTH - 6)
-    start_y = random.randint(5, CELLHEIGHT - 6)
-    start_coords = [{'x': start_x, 'y': start_y}, {'x': start_x - 1, 'y': start_y}, {'x': start_x - 2, 'y': start_y}]
-    return start_coords
 
 
 def drawPressKeyMsg():
