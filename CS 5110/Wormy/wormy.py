@@ -46,7 +46,7 @@ def main():
 
     showStartScreen()
     while True:
-        runGame()
+        run_game()
         showGameOverScreen()
 
 
@@ -74,7 +74,7 @@ def get_new_direction_2(direction_2, key):
     return direction_2
 
 
-def runGame():
+def run_game():
     worm_1_coords = get_random_start_coords()
     worm_2_coords = get_random_start_coords()
     direction_1 = RIGHT
@@ -115,6 +115,7 @@ def eat_apple(worm_1_coords, apples):
             return
     remove_tail_from(worm_1_coords)
 
+        render_game(apple_spawner, worm_1_coords, worm_2_coords)
 
 def initialize_apples():
     apples = []
@@ -127,18 +128,17 @@ def add_apple(current_apples):
     new_apple = get_new_apple(current_apples)
     current_apples.append(new_apple)
 
-
-def render_game(apples, worm_0_coords, worm_1_coords):
+def render_game(apple_spawner, worm_0_coords, worm_1_coords):
     DISPLAYSURF.fill(BGCOLOR)
-    drawGrid()
-    drawWorm(worm_0_coords, is_worm_1=True)
-    drawWorm(worm_1_coords, is_worm_1=False)
     for apple in apples:
         drawApple(apple)
     score_0 = len(worm_0_coords) - 3
     score_1 = len(worm_1_coords) - 3
     drawScore(score_0, is_worm_1=True)
     drawScore(score_1, is_worm_1=False)
+    draw_grid()
+    draw_worm(worm_0_coords, is_worm_1=True)
+    draw_worm(worm_1_coords, is_worm_1=False)
     pygame.display.update()
     FPSCLOCK.tick(FPS)
 
@@ -252,8 +252,8 @@ def showStartScreen():
             return
         pygame.display.update()
         FPSCLOCK.tick(FPS)
-        degrees1 += 3 # rotate by 3 degrees each frame
-        degrees2 += 7 # rotate by 7 degrees each frame
+        degrees1 += 3  # rotate by 3 degrees each frame
+        degrees2 += 7  # rotate by 7 degrees each frame
 
 
 def terminate():
@@ -287,11 +287,11 @@ def showGameOverScreen():
     drawPressKeyMsg()
     pygame.display.update()
     pygame.time.wait(500)
-    checkForKeyPress() # clear out any key presses in the event queue
+    checkForKeyPress()  # clear out any key presses in the event queue
 
     while True:
         if checkForKeyPress():
-            pygame.event.get() # clear event queue
+            pygame.event.get()  # clear event queue
             return
 
 def drawScore(score, is_worm_1):
@@ -304,8 +304,8 @@ def drawScore(score, is_worm_1):
     DISPLAYSURF.blit(scoreSurf, scoreRect)
 
 
-def drawWorm(wormCoords, is_worm_1):
-    for coord in wormCoords:
+def draw_worm(worm_coords, is_worm_1):
+    for coord in worm_coords:
         x = coord['x'] * CELLSIZE
         y = coord['y'] * CELLSIZE
         worm_color_1 = DARKGREEN if is_worm_1 else YELLOW
@@ -324,10 +324,10 @@ def drawApple(apple):
     pygame.draw.rect(DISPLAYSURF, worm_color, appleRect)
 
 
-def drawGrid():
-    for x in range(0, WINDOWWIDTH, CELLSIZE): # draw vertical lines
+def draw_grid():
+    for x in range(0, WINDOWWIDTH, CELLSIZE):  # draw vertical lines
         pygame.draw.line(DISPLAYSURF, DARKGRAY, (x, 0), (x, WINDOWHEIGHT))
-    for y in range(0, WINDOWHEIGHT, CELLSIZE): # draw horizontal lines
+    for y in range(0, WINDOWHEIGHT, CELLSIZE):  # draw horizontal lines
         pygame.draw.line(DISPLAYSURF, DARKGRAY, (0, y), (WINDOWWIDTH, y))
 
 
