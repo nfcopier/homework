@@ -9,8 +9,8 @@ from pygame.locals import *
 
 from CentralController import CentralController, Directions
 from apple_spawner import AppleSpawner
-from lifetime_generators import ShortLifetimeGenerator
-from location_generators import UniformLocationGenerator
+from lifetime_generators import InfiniteLifetimeGenerator, ShortLifetimeGenerator, VariableLifetimeGenerator
+from location_generators import UniformLocationGenerator, QuadrantLocationGenerator
 
 GAME_TITLE = "Golden Apple"
 FPS = 5
@@ -78,7 +78,7 @@ def get_new_direction_2(direction_2, key):
 def run_game():
 
     location_generator = UniformLocationGenerator(0, 0, CELLHEIGHT, CELLWIDTH)
-    lifetime_generator = ShortLifetimeGenerator()
+    lifetime_generator = InfiniteLifetimeGenerator()
     apple_spawner = AppleSpawner(location_generator, lifetime_generator)
     controller = CentralController(apple_spawner, CELLWIDTH, CELLHEIGHT)
     last_time = pygame.time.get_ticks()
@@ -99,14 +99,16 @@ def run_game():
                 direction_1 = get_new_direction_1(direction_1, event.key)
                 direction_2 = get_new_direction_2(direction_2, event.key)
 
-        if is_game_over(controller._worm_1_coords, controller._worm_2_coords):
-            return
-
         # TODO Implement AI code inside controller
         controller.set_directions(direction_1, direction_2)
         controller.do_update(elapsed_time)
+        location_generator.do_update(elapsed_time)
+        (coords_1, coords_2) = controller.get_worm_coords()
 
-        render_game(apple_spawner, controller._worm_1_coords, controller._worm_2_coords, controller._missed_apples)
+        if is_game_over(coords_1, coords_2):
+            return
+
+        render_game(apple_spawner, coords_1, coords_2, controller.get_missed_apples())
 
 
 def render_game(apple_spawner, worm_0_coords, worm_1_coords, missed_apples):

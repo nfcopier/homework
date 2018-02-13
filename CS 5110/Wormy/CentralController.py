@@ -46,8 +46,18 @@ class CentralController:
     def _get_random_start_coords(self):
         start_x = random.randint(5, self.cell_width - 6)
         start_y = random.randint(5, self.cell_height - 6)
-        start_coords = [{'x': start_x, 'y': start_y}, {'x': start_x - 1, 'y': start_y}, {'x': start_x - 2, 'y': start_y}]
+        start_coords = [
+            {'x': start_x, 'y': start_y},
+            {'x': start_x - 1, 'y': start_y},
+            {'x': start_x - 2, 'y': start_y}
+        ]
         return start_coords
+
+    def get_worm_coords(self):
+        return self._worm_1_coords, self._worm_2_coords
+
+    def get_missed_apples(self):
+        return self._missed_apples
 
 
 def eat_apple(worm_coords, apple_spawner):

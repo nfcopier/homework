@@ -8,6 +8,9 @@ class UniformLocationGenerator:
         self._bottom = bottom
         self._right = right
 
+    def do_update(self):
+        pass
+
     def generate(self):
         return {
             "x": random.randint(self._left, self._right),
@@ -40,7 +43,7 @@ class QuadrantLocationGenerator:
         elif self._quadrant is Quadrants.TOP_RIGHT:
             return self._top_right_generator()
         elif self._quadrant is Quadrants.BOTTOM_LEFT:
-            return  self._bottom_left_generator()
+            return self._bottom_left_generator()
         elif self._quadrant is Quadrants.BOTTOM_RIGHT:
             return self._bottom_right_generator()
 
@@ -81,12 +84,12 @@ class QuadrantLocationGenerator:
 
 
 def _choose_quadrant():
-    return random.choice(
+    return random.choice([
         Quadrants.TOP_LEFT,
         Quadrants.TOP_RIGHT,
         Quadrants.BOTTOM_LEFT,
         Quadrants.BOTTOM_RIGHT
-    )
+    ])
 
 
 def avg(one, two):
