@@ -10,8 +10,8 @@ class UniformLocationGenerator:
 
     def generate(self):
         return {
-            "X": random.randint(self._left, self._right),
-            "Y": random.randint(self._top, self._bottom)
+            "x": random.randint(self._left, self._right),
+            "y": random.randint(self._top, self._bottom)
         }
 
 
