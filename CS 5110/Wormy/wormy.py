@@ -3,8 +3,14 @@
 # http://inventwithpython.com/pygame
 # Released under a "Simplified BSD" license
 
-import random, pygame, sys
+import pygame
+import sys
 from pygame.locals import *
+
+from CentralController import CentralController, Directions
+from apple_spawner import AppleSpawner
+from lifetime_generators import InfiniteLifetimeGenerator, ShortLifetimeGenerator, VariableLifetimeGenerator
+from location_generators import UniformLocationGenerator, QuadrantLocationGenerator
 
 GAME_TITLE = "Golden Apple"
 FPS = 5
@@ -27,12 +33,7 @@ DARKGREEN = (  0, 155,   0)
 DARKGRAY  = ( 40,  40,  40)
 BGCOLOR = BLACK
 
-UP = 'up'
-DOWN = 'down'
-LEFT = 'left'
-RIGHT = 'right'
-
-HEAD = 0 # syntactic sugar: index of the worm's head
+HEAD = 0  # syntactic sugar: index of the worm's head
 
 
 def main():
@@ -46,44 +47,50 @@ def main():
 
     showStartScreen()
     while True:
-        runGame()
+        run_game()
         showGameOverScreen()
 
 
 def get_new_direction_1(direction_1, key):
-    if (key == K_a or key == K_KP4) and direction_1 != RIGHT:
-        return LEFT
-    if (key == K_d or key == K_KP6) and direction_1 != LEFT:
-        return RIGHT
-    if (key == K_w or key == K_KP8) and direction_1 != DOWN:
-        return UP
-    if (key == K_s or key == K_KP2) and direction_1 != UP:
-        return DOWN
+    if (key == K_a or key == K_KP4) and direction_1 != Directions.RIGHT:
+        return Directions.LEFT
+    if (key == K_d or key == K_KP6) and direction_1 != Directions.LEFT:
+        return Directions.RIGHT
+    if (key == K_w or key == K_KP8) and direction_1 != Directions.DOWN:
+        return Directions.UP
+    if (key == K_s or key == K_KP2) and direction_1 != Directions.UP:
+        return Directions.DOWN
     return direction_1
 
 
 def get_new_direction_2(direction_2, key):
-    if (key == K_LEFT or key == K_KP4) and direction_2 != RIGHT:
-        direction_2 = LEFT
-    if (key == K_RIGHT or key == K_KP6) and direction_2 != LEFT:
-        direction_2 = RIGHT
-    if (key == K_UP or key == K_KP8) and direction_2 != DOWN:
-        direction_2 = UP
-    if (key == K_DOWN or key == K_KP2) and direction_2 != UP:
-        direction_2 = DOWN
+    if (key == K_LEFT or key == K_KP4) and direction_2 != Directions.RIGHT:
+        direction_2 = Directions.LEFT
+    if (key == K_RIGHT or key == K_KP6) and direction_2 != Directions.LEFT:
+        direction_2 = Directions.RIGHT
+    if (key == K_UP or key == K_KP8) and direction_2 != Directions.DOWN:
+        direction_2 = Directions.UP
+    if (key == K_DOWN or key == K_KP2) and direction_2 != Directions.UP:
+        direction_2 = Directions.DOWN
     return direction_2
 
 
-def runGame():
-    worm_1_coords = get_random_start_coords()
-    worm_2_coords = get_random_start_coords()
-    direction_1 = RIGHT
-    direction_2 = RIGHT
+def run_game():
 
-    apples = initialize_apples()
+    location_generator = UniformLocationGenerator(0, 0, CELLHEIGHT, CELLWIDTH)
+    lifetime_generator = InfiniteLifetimeGenerator()
+    apple_spawner = AppleSpawner(location_generator, lifetime_generator)
+    controller = CentralController(apple_spawner, CELLWIDTH, CELLHEIGHT)
+    last_time = pygame.time.get_ticks()
 
     while True:  # main game loop
-        for event in pygame.event.get(): # event handling loop
+        current_time = pygame.time.get_ticks()
+        elapsed_time = current_time - last_time
+        last_time = current_time
+
+        (direction_1, direction_2) = controller.get_directions()
+
+        for event in pygame.event.get():  # event handling loop
             if event.type == QUIT:
                 terminate()
             elif event.type == KEYDOWN:
@@ -92,55 +99,36 @@ def runGame():
                 direction_1 = get_new_direction_1(direction_1, event.key)
                 direction_2 = get_new_direction_2(direction_2, event.key)
 
-        if is_game_over(worm_1_coords, worm_2_coords):
+        # TODO Implement AI code inside controller
+        controller.set_directions(direction_1, direction_2)
+        controller.do_update(elapsed_time)
+        location_generator.do_update(elapsed_time)
+        (coords_1, coords_2) = controller.get_worm_coords()
+
+        if is_game_over(coords_1, coords_2):
             return
 
-        eat_apple(worm_1_coords, apples)
-        eat_apple(worm_2_coords, apples)
-
-        # move the worm by adding a segment in the direction it is moving
-        new_head_1 = get_new_head(direction_1, worm_1_coords[HEAD])
-        worm_1_coords.insert(0, new_head_1)
-        new_head_2 = get_new_head(direction_2, worm_2_coords[HEAD])
-        worm_2_coords.insert(0, new_head_2)
-        render_game(apples, worm_1_coords, worm_2_coords)
+        render_game(apple_spawner, coords_1, coords_2, controller.get_missed_apples())
 
 
-def eat_apple(worm_1_coords, apples):
-    for index, apple in enumerate(apples):
-        if has_eaten_apple(worm_1_coords[HEAD], apple):
-            if apples[index]['is_golden']:
-                add_apple(apples)
-            apples[index] = get_new_apple(apples)
-            return
-    remove_tail_from(worm_1_coords)
-
-
-def initialize_apples():
-    apples = []
-    add_apple(apples)
-    add_apple(apples)
-    return apples
-
-
-def add_apple(current_apples):
-    new_apple = get_new_apple(current_apples)
-    current_apples.append(new_apple)
-
-
-def render_game(apples, worm_0_coords, worm_1_coords):
+def render_game(apple_spawner, worm_0_coords, worm_1_coords, missed_apples):
     DISPLAYSURF.fill(BGCOLOR)
-    drawGrid()
-    drawWorm(worm_0_coords, is_worm_1=True)
-    drawWorm(worm_1_coords, is_worm_1=False)
-    for apple in apples:
-        drawApple(apple)
-    score_0 = len(worm_0_coords) - 3
-    score_1 = len(worm_1_coords) - 3
-    drawScore(score_0, is_worm_1=True)
-    drawScore(score_1, is_worm_1=False)
+    draw_grid()
+    draw_worm(worm_0_coords, is_worm_1=True)
+    draw_worm(worm_1_coords, is_worm_1=False)
+    for apple in apple_spawner.get_apples():
+        draw_apple_at(apple["location"])
+    score = score_game(missed_apples, worm_0_coords, worm_1_coords)
+    draw_score(score)
     pygame.display.update()
     FPSCLOCK.tick(FPS)
+
+
+def score_game(missed_apples, worm_0_coords, worm_1_coords):
+    score = len(worm_0_coords) + len(worm_1_coords) - 6 - missed_apples
+    if score <= 0:
+        return 0
+    return score
 
 
 def is_game_over(worm_1_coords, worm_2_coords):
@@ -176,35 +164,8 @@ def are_intersecting(segment_1, segment_2):
     return segment_1['x'] == segment_2['x'] and segment_1['y'] == segment_2['y']
 
 
-def remove_tail_from(worm_1_coords):
-    del worm_1_coords[-1]  # remove worm's tail segment
-
-
-def has_eaten_apple(head, apple):
-    return head['x'] == apple['x'] and head['y'] == apple['y']
-
-
-def get_new_head(direction, head):
-    if direction == UP:
-        return {'x': head['x'], 'y': head['y'] - 1}
-    elif direction == DOWN:
-        return {'x': head['x'], 'y': head['y'] + 1}
-    elif direction == LEFT:
-        return {'x': head['x'] - 1, 'y': head['y']}
-    elif direction == RIGHT:
-        return {'x': head['x'] + 1, 'y': head['y']}
-    return None
-
-
 def has_hit_edge(head):
     return head['x'] == -1 or head['x'] == CELLWIDTH or head['y'] == -1 or head['y'] == CELLHEIGHT
-
-
-def get_random_start_coords():
-    start_x = random.randint(5, CELLWIDTH - 6)
-    start_y = random.randint(5, CELLHEIGHT - 6)
-    start_coords = [{'x': start_x, 'y': start_y}, {'x': start_x - 1, 'y': start_y}, {'x': start_x - 2, 'y': start_y}]
-    return start_coords
 
 
 def drawPressKeyMsg():
@@ -252,25 +213,13 @@ def showStartScreen():
             return
         pygame.display.update()
         FPSCLOCK.tick(FPS)
-        degrees1 += 3 # rotate by 3 degrees each frame
-        degrees2 += 7 # rotate by 7 degrees each frame
+        degrees1 += 3  # rotate by 3 degrees each frame
+        degrees2 += 7  # rotate by 7 degrees each frame
 
 
 def terminate():
     pygame.quit()
     sys.exit()
-
-
-def get_new_apple(current_apples):
-    new_location = {
-        'x': random.randint(0, CELLWIDTH - 1),
-        'y': random.randint(0, CELLHEIGHT - 1),
-        'is_golden': random.randint(1, 100) % (100/GOLDEN_APPLE_CHANCE) == 0
-    }
-    for apple in current_apples:
-        if are_intersecting(apple, new_location):
-            return get_new_apple(current_apples)
-    return new_location
 
 
 def showGameOverScreen():
@@ -287,47 +236,47 @@ def showGameOverScreen():
     drawPressKeyMsg()
     pygame.display.update()
     pygame.time.wait(500)
-    checkForKeyPress() # clear out any key presses in the event queue
+    checkForKeyPress()  # clear out any key presses in the event queue
 
     while True:
         if checkForKeyPress():
-            pygame.event.get() # clear event queue
+            pygame.event.get()  # clear event queue
             return
 
-def drawScore(score, is_worm_1):
-    score_color = GREEN if is_worm_1 else YELLOW
-    score_background = DARKGREEN if is_worm_1 else RED
-    scoreSurf = BASICFONT.render('Score: %s' % score, True, score_color, score_background)
-    scoreRect = scoreSurf.get_rect()
-    y_coord = 10 if is_worm_1 else 30
-    scoreRect.topleft = (WINDOWWIDTH - 120, y_coord)
-    DISPLAYSURF.blit(scoreSurf, scoreRect)
+
+def draw_score(score):
+    score_color = GREEN
+    score_background = DARKGREEN
+    y_coord = 10
+    score_surf = BASICFONT.render('Score: %s' % score, True, score_color, score_background)
+    score_rect = score_surf.get_rect()
+    score_rect.topleft = (WINDOWWIDTH - 120, y_coord)
+    DISPLAYSURF.blit(score_surf, score_rect)
 
 
-def drawWorm(wormCoords, is_worm_1):
-    for coord in wormCoords:
+def draw_worm(worm_coords, is_worm_1):
+    for coord in worm_coords:
         x = coord['x'] * CELLSIZE
         y = coord['y'] * CELLSIZE
         worm_color_1 = DARKGREEN if is_worm_1 else YELLOW
         worm_color_2 = GREEN if is_worm_1 else RED
-        wormSegmentRect = pygame.Rect(x, y, CELLSIZE, CELLSIZE)
-        pygame.draw.rect(DISPLAYSURF, worm_color_1, wormSegmentRect)
-        wormInnerSegmentRect = pygame.Rect(x + 4, y + 4, CELLSIZE - 8, CELLSIZE - 8)
-        pygame.draw.rect(DISPLAYSURF, worm_color_2, wormInnerSegmentRect)
+        worm_segment_rect = pygame.Rect(x, y, CELLSIZE, CELLSIZE)
+        pygame.draw.rect(DISPLAYSURF, worm_color_1, worm_segment_rect)
+        worm_inner_segment_rect = pygame.Rect(x + 4, y + 4, CELLSIZE - 8, CELLSIZE - 8)
+        pygame.draw.rect(DISPLAYSURF, worm_color_2, worm_inner_segment_rect)
 
 
-def drawApple(apple):
-    x = apple['x'] * CELLSIZE
-    y = apple['y'] * CELLSIZE
-    appleRect = pygame.Rect(x, y, CELLSIZE, CELLSIZE)
-    worm_color = YELLOW if apple['is_golden'] else RED
-    pygame.draw.rect(DISPLAYSURF, worm_color, appleRect)
+def draw_apple_at(location):
+    x = location['x'] * CELLSIZE
+    y = location['y'] * CELLSIZE
+    apple_rect = pygame.Rect(x, y, CELLSIZE, CELLSIZE)
+    pygame.draw.rect(DISPLAYSURF, RED, apple_rect)
 
 
-def drawGrid():
-    for x in range(0, WINDOWWIDTH, CELLSIZE): # draw vertical lines
+def draw_grid():
+    for x in range(0, WINDOWWIDTH, CELLSIZE):  # draw vertical lines
         pygame.draw.line(DISPLAYSURF, DARKGRAY, (x, 0), (x, WINDOWHEIGHT))
-    for y in range(0, WINDOWHEIGHT, CELLSIZE): # draw horizontal lines
+    for y in range(0, WINDOWHEIGHT, CELLSIZE):  # draw horizontal lines
         pygame.draw.line(DISPLAYSURF, DARKGRAY, (0, y), (WINDOWWIDTH, y))
 
 
