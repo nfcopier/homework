@@ -18,6 +18,9 @@ export default function (
 
     Simulation.prototype.update = function (actions, timeElapsed) {
         this._movePlayer(actions.moveAction);
+        if (this._hasCompletedMaze()) {
+            this.startNewMaze(20);
+        }
     };
 
     Simulation.prototype._movePlayer = function (moveAction) {
@@ -82,6 +85,12 @@ export default function (
         playerCell.hasPlayer = false;
         this._currentPlayerLocation.column += 1;
         this._maze[loc.row][loc.column].hasPlayer = true;
+    };
+
+    Simulation.prototype._hasCompletedMaze = function () {
+        const lastRow = this._maze.length-1;
+        const lastColumn = this._maze[0].length-1;
+        return this._maze[lastRow][lastColumn].hasPlayer;
     };
 
     Simulation.prototype.maze = function () {
