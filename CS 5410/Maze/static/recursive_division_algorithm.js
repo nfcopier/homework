@@ -118,7 +118,7 @@ export default function (Walls) {
     }
 
     function _generateBottomMaze(width, height, hole) {
-        const childHeight = Math.floor(height/2);
+        const childHeight = Math.ceil(height/2);
         const maze = _generateMaze(width, childHeight);
         const cells = _getTopRowFrom(maze);
         for (let i = 0; i < width; i++) {

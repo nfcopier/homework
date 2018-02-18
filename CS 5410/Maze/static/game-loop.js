@@ -13,7 +13,7 @@ export default function (
         this._lastTime = performance.now();
         const parent = document.getElementsByClassName("game-container")[0];
         parent.innerHTML = "";
-        parent.appendChild(this._renderer.render());
+        parent.appendChild(this._renderer._canvas);
         this._doLoop(this._lastTime);
     };
 

@@ -3,7 +3,7 @@ export default function (
 ) {
 
     function Simulation() {
-        const mazeAlgo = new MazeAlgo(64, 64);
+        const mazeAlgo = new MazeAlgo(15, 15);
         this._maze = mazeAlgo.generateMaze();
     }
 
