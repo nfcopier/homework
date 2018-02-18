@@ -23,12 +23,22 @@ export default function (Walls) {
     };
 
     function _generateMaze(width, height) {
-        if (width <= 1 && height <= 1) return [[{walls: 0}]];
+        if (width <= 1 && height <= 1) return [[_newCell()]];
         const isVertical = _chooseVorH(width, height);
         if (isVertical) {
             return _divideLeftRight(width, height);
         } else {
             return _divideTopBottom(width, height);
+        }
+    }
+
+    function _newCell() {
+        return {
+            walls: 0,
+            breadcrumbs: 0,
+            hasPlayer: false,
+            hasEntrance: false,
+            hasExit: false
         }
     }
 

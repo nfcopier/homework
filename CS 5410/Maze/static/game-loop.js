@@ -3,6 +3,8 @@ export default function (
     Simulation
 ) {
 
+    const DEFAULT_MAZE_SIZE = 5;
+
     function GameLoop() {
         this._gameStart = Date.now();
         this._simulation = new Simulation();
@@ -11,6 +13,7 @@ export default function (
 
     GameLoop.prototype.start = function () {
         this._lastTime = performance.now();
+        this._simulation.startNewMaze(DEFAULT_MAZE_SIZE);
         const parent = document.getElementsByClassName("game-container")[0];
         parent.innerHTML = "";
         parent.appendChild(this._renderer._canvas);

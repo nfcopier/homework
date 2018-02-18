@@ -1,14 +1,14 @@
 export default function (Walls) {
 
-    function CellRenderer(context, cell, width, height) {
+    function WallRenderer(context, walls, width, height) {
         this._context = context;
-        this._cell = cell;
+        this._walls = walls;
         this._width = width;
         this._height = height;
     }
 
-    CellRenderer.prototype.render = function () {
-        const walls = this._cell.walls;
+    WallRenderer.prototype.render = function () {
+        const walls = this._walls;
         if (walls & Walls.TOP) {
             this._renderTopWall();
         }
@@ -23,34 +23,34 @@ export default function (Walls) {
         }
     };
 
-    CellRenderer.prototype._renderTopWall = function () {
+    WallRenderer.prototype._renderTopWall = function () {
         this._context.beginPath();
         this._context.moveTo(0, 0);
         this._context.lineTo(this._width, 0);
         this._context.stroke();
     };
 
-    CellRenderer.prototype._renderBottomWall = function () {
+    WallRenderer.prototype._renderBottomWall = function () {
         this._context.beginPath();
         this._context.moveTo(0, this._height);
         this._context.lineTo(this._width, this._height);
         this._context.stroke();
     };
 
-    CellRenderer.prototype._renderLeftWall = function () {
+    WallRenderer.prototype._renderLeftWall = function () {
         this._context.beginPath();
         this._context.moveTo(0, 0);
         this._context.lineTo(0, this._height);
         this._context.stroke();
     };
 
-    CellRenderer.prototype._renderRightWall = function () {
+    WallRenderer.prototype._renderRightWall = function () {
         this._context.beginPath();
         this._context.moveTo(this._width, 0);
         this._context.lineTo(this._width, this._height);
         this._context.stroke();
     };
 
-    return CellRenderer;
+    return WallRenderer;
 
 }
