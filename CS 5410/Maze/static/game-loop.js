@@ -29,7 +29,7 @@ export default function (
         this._lastTime = currentTime;
         this._simulation.update( actions, elapsedTime );
         this._inputSystem.clear();
-        this._renderer.render();
+        this._renderer.render( actions );
         requestAnimationFrame(this._doLoop.bind(this));
     };
 

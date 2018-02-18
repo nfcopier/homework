@@ -1,7 +1,7 @@
 export default function (
     MazeAlgo,
     Actions,
-    Walls
+    Directions
 ) {
 
     function Simulation() {
@@ -47,7 +47,8 @@ export default function (
     Simulation.prototype._moveUp = function () {
         const loc = this._currentPlayerLocation;
         const playerCell = this._maze[loc.row][loc.column];
-        if (playerCell.walls & Walls.TOP) return;
+        if (playerCell.walls & Directions.TOP) return;
+        playerCell.breadcrumbs |= Directions.TOP;
         playerCell.hasPlayer = false;
         this._currentPlayerLocation.row -= 1;
         this._maze[loc.row][loc.column].hasPlayer = true;
@@ -56,7 +57,8 @@ export default function (
     Simulation.prototype._moveDown = function () {
         const loc = this._currentPlayerLocation;
         const playerCell = this._maze[loc.row][loc.column];
-        if (playerCell.walls & Walls.BOTTOM) return;
+        if (playerCell.walls & Directions.BOTTOM) return;
+        playerCell.breadcrumbs |= Directions.BOTTOM;
         playerCell.hasPlayer = false;
         this._currentPlayerLocation.row += 1;
         this._maze[loc.row][loc.column].hasPlayer = true;
@@ -65,7 +67,8 @@ export default function (
     Simulation.prototype._moveLeft = function () {
         const loc = this._currentPlayerLocation;
         const playerCell = this._maze[loc.row][loc.column];
-        if (playerCell.walls & Walls.LEFT) return;
+        if (playerCell.walls & Directions.LEFT) return;
+        playerCell.breadcrumbs |= Directions.LEFT;
         playerCell.hasPlayer = false;
         this._currentPlayerLocation.column -= 1;
         this._maze[loc.row][loc.column].hasPlayer = true;
@@ -74,7 +77,8 @@ export default function (
     Simulation.prototype._moveRight = function () {
         const loc = this._currentPlayerLocation;
         const playerCell = this._maze[loc.row][loc.column];
-        if (playerCell.walls & Walls.RIGHT) return;
+        if (playerCell.walls & Directions.RIGHT) return;
+        playerCell.breadcrumbs |= Directions.RIGHT;
         playerCell.hasPlayer = false;
         this._currentPlayerLocation.column += 1;
         this._maze[loc.row][loc.column].hasPlayer = true;

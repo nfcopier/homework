@@ -1,14 +1,18 @@
-import wallRenderer     from "./wall_renderer.js"
-import playerRenderer   from "./player_renderer.js"
-import entranceRenderer from "./entrance_renderer.js"
-import exitRenderer     from "./exit_renderer.js"
-import cellRenderer     from "./cell_renderer.js"
-import gameRenderer     from "./game-renderer.js"
+import wallRenderer         from "./wall_renderer.js"
+import playerRenderer       from "./player_renderer.js"
+import entranceRenderer     from "./entrance_renderer.js"
+import exitRenderer         from "./exit_renderer.js"
+import breadcrumbRenderer  from "./breadcrumb_renderer.js"
+import cellRenderer         from "./cell_renderer.js"
+import gameRenderer         from "./game-renderer.js"
 
-export default function (Walls) {
+export default function (
+    Directions,
+    Actions
+) {
 
     const WallRenderer = wallRenderer(
-        Walls
+        Directions
     );
 
     const PlayerRenderer = playerRenderer();
@@ -17,14 +21,20 @@ export default function (Walls) {
 
     const ExitRenderer = exitRenderer();
 
+    const BreadCrumbRenderer = breadcrumbRenderer(
+        Directions
+    );
+
     const CellRenderer = cellRenderer(
         WallRenderer,
         PlayerRenderer,
         EntranceRenderer,
-        ExitRenderer
+        ExitRenderer,
+        BreadCrumbRenderer
     );
 
     return gameRenderer(
-        CellRenderer
+        CellRenderer,
+        Actions
     );
 }

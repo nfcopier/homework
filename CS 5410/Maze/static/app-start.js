@@ -4,7 +4,7 @@ import inputSystem from "./input_system.js"
 import simulation from "./simulation.js"
 import gameRenderer from "./game_renderer/index.js"
 import gameLoopModule from "./game-loop.js"
-import Walls from "./walls.js"
+import Directions from "./directions.js"
 import recursiveDivisionAlgorithm from "./recursive_division_algorithm.js"
 
 export default function () {
@@ -15,17 +15,18 @@ export default function () {
     );
 
     const MazeAlgo = recursiveDivisionAlgorithm(
-        Walls
+        Directions
     );
 
     const Simulation = simulation(
         MazeAlgo,
         Actions,
-        Walls
+        Directions
     );
 
     const GameRenderer = gameRenderer(
-        Walls
+        Directions,
+        Actions
     );
 
     const GameLoop = gameLoopModule(

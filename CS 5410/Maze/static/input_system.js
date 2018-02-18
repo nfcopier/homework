@@ -16,6 +16,8 @@ export default function (
         if (_isMove(action)) {
             this._actions.moveAction = action;
         }
+        if (action === Actions.TOGGLE_BREADCRUMBS)
+            this._actions.toggleBreadcrumbs = action;
     };
 
     function _getActionFrom(e) {
@@ -36,6 +38,8 @@ export default function (
             case KeyCodes.DOM_VK_L:
             case KeyCodes.DOM_VK_RIGHT:
                 return Actions.MOVE_RIGHT;
+            case KeyCodes.DOM_VK_B:
+                return Actions.TOGGLE_BREADCRUMBS;
         }
     }
 
