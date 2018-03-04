@@ -6,7 +6,7 @@ return function Canvas() {
 
     const canvas = document.createElement("canvas");
     canvas.width = 1024;
-    canvas.height = 1024;
+    canvas.height = 768;
     const context = canvas.getContext("2d");
     let renderer = null;
 
@@ -20,7 +20,7 @@ return function Canvas() {
 
     self.render = function() {
         clearCanvas();
-        renderer.render( context );
+        renderer._render( context );
     };
 
     const clearCanvas = function () {

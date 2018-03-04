@@ -6,9 +6,9 @@ export default function (
 ) {
 
     function Game() {
-        this._clearGame();
         this._inputSystem = new InputSystem();
         this._canvas = Canvas();
+        this._clearGame();
     }
 
     Game.prototype.start = function () {
@@ -26,13 +26,35 @@ export default function (
         this._lastTime = currentTime;
         this._simulation.update( actions, elapsedTime );
         this._inputSystem.clear();
-        this._renderer.render();
+        this._canvas.render();
         requestAnimationFrame( this._doLoop.bind(this) );
     };
 
     Game.prototype._showMenu = function () {
-        this._simulation = new simulations.MenuSimulation( this._gameSimulation );
-        this._renderer = new renderers.MenuRenderer( this._simulation );
+        this._simulation =
+            new simulations.MenuSimulation( this._gameSimulation );
+        this._canvas.setRenderer(
+            new renderers.MenuRenderer( this._canvas, this._simulation )
+        );
+    };
+
+    Game.prototype._showHighScores = function () {
+        this._simulation = new simulations.HighScoresSimulation();
+        this._canvas.setRenderer(
+            new renderers.HighScoresRenderer( this._simulation )
+        );
+    };
+
+    Game.prototype._startNewGame = function () {
+        this._gameSimulation = new simulations.GameSimulation();
+        this._resumeGame();
+    };
+
+    Game.prototype._resumeGame = function () {
+        this._simulation = this._gameSimulation;
+        this._canvas.setRenderer(
+            new renderers.GameRenderer( this._simulation )
+        );
     };
 
     Game.prototype._clearGame = function () {

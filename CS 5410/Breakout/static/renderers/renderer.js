@@ -1,34 +1,54 @@
-export default function () {
+export default function (
+    Graphics
+) {
 
 return function Renderer(transform) {
 
     const self = {};
 
+    self.children = [];
+
+    self.upperLeft = {
+        x: transform.x,
+        y: transform.y
+    };
+
+    self.bottomRight = {
+        x: transform.width,
+        y: transform.height
+    };
+
     self._render = function (context) {
         context.save();
         applyTransformTo( context );
+        self.graphics = Graphics( context );
         self.render();
         renderChildrenTo( context );
         context.restore();
     };
 
     const applyTransformTo = function (context) {
-        const position = transform.position;
-        const rotation = transform.rotation;
-        context.translate( -position.x, -position.y );
-        context.rotate( -rotation );
+        context.translate( transform.x, transform.y );
+        context.rotate( transform.theta );
     };
 
-    self.render = function () {};
+    self.render = function () {
+        drawBackground();
+    };
+
+    const drawBackground = function () {
+        self.graphics.drawRectangle({
+            upperLeft: self.upperLeft,
+            bottomRight: self.bottomRight,
+            color: "red"
+        });
+    };
 
     const renderChildrenTo = function (context) {
-        const children = self.getChildren();
-        for (const child of children) {
+        for (let child of self.children) {
             child._render( context );
         }
     };
-
-    self.getChildren = function () { return []; };
 
     return self;
 
