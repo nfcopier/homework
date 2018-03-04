@@ -2,14 +2,15 @@ export default function (
     Actions
 ) {
 
-    function Simulation() {
+    function GameSimulation() {
+        this._gameTime = 0;
     }
 
-    Simulation.prototype.update = function (actions, timeElapsed) {
+    GameSimulation.prototype.update = function (actions, timeElapsed) {
         this._movePlayer(actions.moveAction);
     };
 
-    Simulation.prototype._movePlayer = function (moveAction) {
+    GameSimulation.prototype._movePlayer = function (moveAction) {
         switch(moveAction) {
             case Actions.MOVE_UP: {
                 this._moveUp();
@@ -33,18 +34,18 @@ export default function (
         }
     };
 
-    Simulation.prototype._moveUp = function () {
+    GameSimulation.prototype._moveUp = function () {
     };
 
-    Simulation.prototype._moveDown = function () {
+    GameSimulation.prototype._moveDown = function () {
     };
 
-    Simulation.prototype._moveLeft = function () {
+    GameSimulation.prototype._moveLeft = function () {
     };
 
-    Simulation.prototype._moveRight = function () {
+    GameSimulation.prototype._moveRight = function () {
     };
 
-    return Simulation;
+    return GameSimulation;
 
 }

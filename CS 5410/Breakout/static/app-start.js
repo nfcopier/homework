@@ -1,33 +1,37 @@
 import Actions from "./actions.js"
 import KeyCodes from "./key_codes.js"
+import canvas from "./canvas.js"
+import r from "./renderers/index.js"
+import s from "./simulations/index.js"
 import inputSystem from "./input_system.js"
-import simulation from "./simulation.js"
-import gameRenderer from "./game_renderer/index.js"
-import gameLoopModule from "./game-loop.js"
+import game from "./game.js"
 import Directions from "./directions.js"
 
 export default function () {
+
+    const Canvas = canvas();
+
+    const renderers = r(
+        Directions
+    );
+
+    const simulations = s(
+        Actions
+    );
 
     const InputSystem = inputSystem(
         KeyCodes,
         Actions
     );
 
-    const Simulation = simulation(
-        Actions
-    );
-
-    const GameRenderer = gameRenderer(
-        Directions
-    );
-
-    const GameLoop = gameLoopModule(
-        GameRenderer,
-        Simulation,
+    const Game = game(
+        Canvas,
+        renderers,
+        simulations,
         InputSystem
     );
 
-    const gameLoop = new GameLoop();
-    gameLoop.start();
+    const gameInstance = new Game();
+    gameInstance.start();
 
 }
