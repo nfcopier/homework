@@ -16,9 +16,10 @@ export default function (
 
     InputSystem.prototype._onKeyDown = function (e) {
         const action = _getActionFrom(e);
-        if (_isMove(action)) {
+        if (_isMove(action))
             this._actions.moveAction = action;
-        }
+        if (action === Actions.PAUSE_GAME)
+            this._actions.pause = action;
     };
 
     function _getActionFrom(e) {
@@ -39,6 +40,8 @@ export default function (
             case KeyCodes.DOM_VK_L:
             case KeyCodes.DOM_VK_RIGHT:
                 return Actions.MOVE_RIGHT;
+            case KeyCodes.DOM_VK_ESCAPE:
+                return Actions.PAUSE_GAME;
         }
     }
 
@@ -71,7 +74,8 @@ export default function (
         this._actions = {
             move: Actions.NONE,
             mouseMove: Actions.NONE,
-            mouseUp: Actions.NONE
+            mouseUp: Actions.NONE,
+            pause: Actions.NONE
         };
     };
 

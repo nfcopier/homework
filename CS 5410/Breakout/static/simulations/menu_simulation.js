@@ -7,6 +7,8 @@ return function MenuSimulation(gameSimulation) {
 
     const self = {};
 
+    let gameAction = Actions.NONE;
+
     self.transform = {
         x: 0,
         y: 0,
@@ -35,8 +37,16 @@ return function MenuSimulation(gameSimulation) {
                 menu = createMainMenu();
                 break;
             }
+            case "Resume" : {
+                gameAction = Actions.RESUME_GAME;
+                break;
+            }
+            case "New Game" : {
+                gameAction = Actions.NEW_GAME;
+                break;
+            }
             default : {
-                return
+                gameAction = Actions.NONE;
             }
         }
 
@@ -46,10 +56,14 @@ return function MenuSimulation(gameSimulation) {
         return menu.getButtons();
     };
 
+    self.getAction = function () {
+        return gameAction;
+    };
+
     function createMainMenu () {
         const menu = Menu( self.transform );
         if (gameSimulation) {
-            menu.addButton( "Resume Game" );
+            menu.addButton( "Resume" );
         }
         menu.addButton( "New Game" );
         menu.addButton( "Difficulty" );

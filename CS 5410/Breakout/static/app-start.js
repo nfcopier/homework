@@ -26,6 +26,7 @@ export default function () {
 
     const Game = game(
         Canvas,
+        Actions,
         renderers,
         simulations,
         InputSystem

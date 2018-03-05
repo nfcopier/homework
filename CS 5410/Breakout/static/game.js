@@ -1,5 +1,6 @@
 export default function (
     Canvas,
+    Actions,
     renderers,
     simulations,
     InputSystem
@@ -25,6 +26,7 @@ export default function (
         const actions = this._inputSystem.getActions();
         this._lastTime = currentTime;
         this._simulation.update( actions, elapsedTime );
+        this._checkGameAction();
         this._inputSystem.clear();
         this._canvas.render();
         requestAnimationFrame( this._doLoop.bind(this) );
@@ -38,22 +40,43 @@ export default function (
         );
     };
 
+    Game.prototype._checkGameAction = function () {
+        const action = this._simulation.getAction();
+        switch (action) {
+            case Actions.NEW_GAME: {
+                this._startNewGame();
+                break;
+            }
+            case Actions.RESUME_GAME: {
+                this._resumeGame();
+                break;
+            }
+            case Actions.PAUSE_GAME: {
+                this._showMenu();
+                break;
+            }
+            default : {
+                return;
+            }
+        }
+    };
+
     Game.prototype._showHighScores = function () {
-        this._simulation = new simulations.HighScoresSimulation();
+        this._simulation = simulations.HighScoresSimulation();
         this._canvas.setRenderer(
-            new renderers.HighScoresRenderer( this._simulation )
+            renderers.HighScoresRenderer( this._simulation )
         );
     };
 
     Game.prototype._startNewGame = function () {
-        this._gameSimulation = new simulations.GameSimulation();
+        this._gameSimulation = simulations.GameSimulation();
         this._resumeGame();
     };
 
     Game.prototype._resumeGame = function () {
         this._simulation = this._gameSimulation;
         this._canvas.setRenderer(
-            new renderers.GameRenderer( this._simulation )
+            renderers.GameRenderer( this._simulation )
         );
     };
 
