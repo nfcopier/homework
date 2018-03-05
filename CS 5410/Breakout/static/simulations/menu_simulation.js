@@ -15,26 +15,35 @@ return function MenuSimulation(gameSimulation) {
         height: 768
     };
 
-    const buttons = createMainMenu();
+    let menu = createMainMenu();
 
     self.update = function (actions) {
-        if (actions.mouseMove === Actions.NONE) return;
-        for (let button of buttons) {
-            button.hasMouse = checkCollision( button, actions.mouseMove );
-        }
+        if (actions.mouseMove !== Actions.NONE)
+            menu.updateButtons( actions.mouseMove );
+        if (actions.mouseUp !== Actions.NONE)
+            processClick();
     };
 
-    const checkCollision = function (button, mouseLocation) {
-        return (
-            (mouseLocation.x > button.transform.x &&
-            mouseLocation.x < button.transform.x + button.transform.width &&
-            mouseLocation.y > button.transform.y &&
-            mouseLocation.y < button.transform.y + button.transform.height)
-        )
+    const processClick = function () {
+        const button = menu.getSelectedButton();
+        switch (button) {
+            case "Difficulty": {
+                menu = createDifficultyMenu();
+                break;
+            }
+            case "Main Menu" : {
+                menu = createMainMenu();
+                break;
+            }
+            default : {
+                return
+            }
+        }
+
     };
 
     self.getButtons = function () {
-        return buttons;
+        return menu.getButtons();
     };
 
     function createMainMenu () {
@@ -45,7 +54,16 @@ return function MenuSimulation(gameSimulation) {
         menu.addButton( "New Game" );
         menu.addButton( "Difficulty" );
         menu.addButton( "High Scores" );
-        return menu.getButtons();
+        return menu;
+    }
+
+    function createDifficultyMenu () {
+        const menu = new Menu( self.transform );
+        menu.addButton( "Main Menu" );
+        menu.addButton( "Easy" );
+        menu.addButton( "Normal" );
+        menu.addButton( "Difficult" );
+        return menu;
     }
 
     return self;

@@ -10,7 +10,8 @@ export default function (
 
     InputSystem.prototype.startListening = function () {
         window.addEventListener("keydown", this._onKeyDown.bind(this), false);
-        window.addEventListener("mousemove", this._onMouseMove.bind(this))
+        window.addEventListener("mousemove", this._onMouseMove.bind(this));
+        window.addEventListener("mouseup", this._onMouseUp.bind(this));
     };
 
     InputSystem.prototype._onKeyDown = function (e) {
@@ -58,6 +59,10 @@ export default function (
         };
     };
 
+    InputSystem.prototype._onMouseUp = function () {
+        this._actions.mouseUp = Actions.MOUSE_UP;
+    };
+
     InputSystem.prototype.getActions = function () {
         return this._actions;
     };
@@ -65,7 +70,8 @@ export default function (
     InputSystem.prototype.clear = function () {
         this._actions = {
             move: Actions.NONE,
-            mouseMove: Actions.NONE
+            mouseMove: Actions.NONE,
+            mouseUp: Actions.NONE
         };
     };
 

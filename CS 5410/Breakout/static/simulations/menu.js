@@ -26,6 +26,28 @@ return function Menu(transform) {
         buttonTransform.y += 100;
     };
 
+    self.updateButtons = function (mouseLocation) {
+        for (let button of buttons) {
+            button.hasMouse = checkCollision( button, mouseLocation );
+        }
+    };
+
+    self.getSelectedButton = function () {
+        for (let button of buttons) {
+            if ( button.hasMouse) return button.text;
+        }
+        return null;
+    };
+
+    const checkCollision = function (button, mouseLocation) {
+        return (
+            (mouseLocation.x > button.transform.x &&
+                mouseLocation.x < button.transform.x + button.transform.width &&
+                mouseLocation.y > button.transform.y &&
+                mouseLocation.y < button.transform.y + button.transform.height)
+        )
+    };
+
     self.getButtons = function () {
         return buttons;
     };

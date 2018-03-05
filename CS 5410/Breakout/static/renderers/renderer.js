@@ -9,9 +9,8 @@ return function Renderer(transform) {
     self.width = transform.width;
     self.height = transform.height;
 
-    self.children = [];
-
     self._render = function (context) {
+        self.children = [];
         context.save();
         applyTransformTo( context );
         self.graphics = Graphics( context );

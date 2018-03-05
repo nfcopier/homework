@@ -7,10 +7,6 @@ return function MenuRenderer(canvas, simulation) {
 
     const self = Renderer( simulation.transform );
 
-    for (let button of simulation.getButtons()) {
-        self.children.push( ButtonRenderer(button) );
-    }
-
     const titleSpec = {
         text: "Breakout",
         location: {x: 512, y: 100},
@@ -21,9 +17,20 @@ return function MenuRenderer(canvas, simulation) {
     };
 
     self.render = function () {
-        self.graphics.clearCursor();
+        clearCursor();
         drawBackground();
         drawTitle();
+        appendButtons();
+    };
+
+    const appendButtons = function () {
+        for (let button of simulation.getButtons()) {
+            self.children.push( ButtonRenderer(button) );
+        }
+    };
+
+    const clearCursor = function () {
+        self.graphics.clearCursor();
     };
 
     const drawBackground = function () {
