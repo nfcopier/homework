@@ -1,8 +1,7 @@
 export default function (Renderer) {
 
-const buttonColor = "blue";
-const borderColor = "magenta";
-const highlightColor = "green";
+const BUTTON_COLOR = "blue";
+const BORDER_COLOR = "magenta";
 
 return function ButtonRenderer(menuItem) {
 
@@ -11,23 +10,23 @@ return function ButtonRenderer(menuItem) {
     const textSpec = {
         text: menuItem.text,
         location: { x: self.width/2, y: self.height/2 },
-        font: "48px san sarif",
-        color: buttonColor,
-        border: { color: borderColor, thickness: 3 },
+        font: "36px san sarif",
+        color: BUTTON_COLOR,
+        border: { color: BORDER_COLOR, thickness: 3 },
         alignment: "center"
     };
 
     const borderSpec = {
         upperLeft: { x: 0, y: 0 },
         bottomRight: { x: self.width, y: self.height },
-        color: buttonColor
+        color: BUTTON_COLOR
     };
 
 
     const highlightSpec = {
         upperLeft: { x: 0, y: 0 },
         bottomRight: { x: self.width, y: self.height },
-        color: highlightColor
+        color: BUTTON_COLOR
     };
 
     self.render = function () {

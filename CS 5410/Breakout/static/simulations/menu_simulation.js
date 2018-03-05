@@ -1,4 +1,7 @@
-export default function (Actions) {
+export default function (
+    Actions,
+    Menu
+) {
 
 return function MenuSimulation(gameSimulation) {
 
@@ -12,29 +15,7 @@ return function MenuSimulation(gameSimulation) {
         height: 768
     };
 
-    const buttons = [];
-    const buttonWidth = 300;
-    const buttonX = (self.transform.width-buttonWidth)/2;
-    const buttonTransform = {
-        x: buttonX,
-        y: 300,
-        theta: 0,
-        width: buttonWidth,
-        height: 75
-    };
-
-    let addButton = function (text) {
-        buttons.push({
-            text: text,
-            transform: Object.assign({}, buttonTransform)
-        });
-        buttonTransform.y += 125;
-    };
-    if (gameSimulation) {
-        addButton( "Resume Game" );
-    }
-    addButton( "New Game" );
-    addButton( "High Scores" );
+    const buttons = createMainMenu();
 
     self.update = function (actions) {
         if (actions.mouseMove === Actions.NONE) return;
@@ -55,6 +36,17 @@ return function MenuSimulation(gameSimulation) {
     self.getButtons = function () {
         return buttons;
     };
+
+    function createMainMenu () {
+        const menu = Menu( self.transform );
+        if (gameSimulation) {
+            menu.addButton( "Resume Game" );
+        }
+        menu.addButton( "New Game" );
+        menu.addButton( "Difficulty" );
+        menu.addButton( "High Scores" );
+        return menu.getButtons();
+    }
 
     return self;
 
