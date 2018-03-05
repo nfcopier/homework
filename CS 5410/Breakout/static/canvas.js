@@ -14,6 +14,13 @@ return function Canvas() {
         return canvas;
     };
 
+    self.getScale = function () {
+        return {
+            x: canvas.width / canvas.clientWidth,
+            y: canvas.height / canvas.clientHeight
+        }
+    };
+
     self.setRenderer = function (newRenderer) {
         renderer = newRenderer;
     };

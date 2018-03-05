@@ -6,23 +6,20 @@ return function Renderer(transform) {
 
     const self = {};
 
+    self.width = transform.width;
+    self.height = transform.height;
+
     self.children = [];
-
-    self.upperLeft = {
-        x: transform.x,
-        y: transform.y
-    };
-
-    self.bottomRight = {
-        x: transform.width,
-        y: transform.height
-    };
 
     self._render = function (context) {
         context.save();
         applyTransformTo( context );
         self.graphics = Graphics( context );
         self.render();
+        // context.beginPath();
+        // context.fillStyle = "red";
+        // context.arc(2.5, 2.5, 2.5, 0, 2*Math.PI);
+        // context.fill();
         renderChildrenTo( context );
         context.restore();
     };
@@ -38,8 +35,8 @@ return function Renderer(transform) {
 
     const drawBackground = function () {
         self.graphics.drawRectangle({
-            upperLeft: self.upperLeft,
-            bottomRight: self.bottomRight,
+            upperLeft: {x: 0, y: 0},
+            bottomRight: {x: self.width, y: self.height},
             color: "red"
         });
     };

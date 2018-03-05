@@ -14,22 +14,28 @@ return function MenuRenderer(canvas, simulation) {
     const titleSpec = {
         text: "Breakout",
         location: {x: 512, y: 200},
-        font: "48px san sarif",
+        font: "96px san sarif",
         color: "blue",
-        alignment: "center"
+        alignment: "center",
+        border: { color: "magenta", thickness: 3 }
     };
 
     self.render = function () {
+        self.graphics.clearCursor();
         drawBackground();
-        self.graphics.drawText( titleSpec );
+        drawTitle();
     };
 
     const drawBackground = function () {
         self.graphics.drawRectangle({
-            upperLeft: self.upperLeft,
-            bottomRight: self.bottomRight,
+            upperLeft: {x: 0, y: 0},
+            bottomRight: {x: self.width, y: self.height},
             color: "#000033"
         });
+    };
+
+    const drawTitle = function () {
+        self.graphics.drawText( titleSpec );
     };
 
     return self;

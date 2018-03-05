@@ -1,8 +1,10 @@
 import menuSimulation from "./menu_simulation.js"
 
-export default function () {
+export default function (Actions) {
 
-    const MenuSimulation = menuSimulation();
+    const MenuSimulation = menuSimulation(
+        Actions
+    );
 
     return {
         MenuSimulation: MenuSimulation

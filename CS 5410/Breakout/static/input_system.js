@@ -3,12 +3,14 @@ export default function (
     Actions
 ) {
 
-    function InputSystem() {
+    function InputSystem(canvas) {
         this.clear();
+        this._canvas = canvas;
     }
 
     InputSystem.prototype.startListening = function () {
         window.addEventListener("keydown", this._onKeyDown.bind(this), false);
+        window.addEventListener("mousemove", this._onMouseMove.bind(this))
     };
 
     InputSystem.prototype._onKeyDown = function (e) {
@@ -48,13 +50,22 @@ export default function (
         );
     }
 
+    InputSystem.prototype._onMouseMove = function(event) {
+        const canvasScale = this._canvas.getScale();
+        this._actions.mouseMove = {
+            x: canvasScale.x * event.clientX,
+            y: canvasScale.y * event.clientY
+        };
+    };
+
     InputSystem.prototype.getActions = function () {
         return this._actions;
     };
 
     InputSystem.prototype.clear = function () {
         this._actions = {
-            move: Actions.NONE
+            move: Actions.NONE,
+            mouseMove: Actions.NONE
         };
     };
 

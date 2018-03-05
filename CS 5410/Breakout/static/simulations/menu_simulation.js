@@ -1,4 +1,4 @@
-export default function () {
+export default function (Actions) {
 
 return function MenuSimulation(gameSimulation) {
 
@@ -13,14 +13,14 @@ return function MenuSimulation(gameSimulation) {
     };
 
     const buttons = [];
-    const buttonWidth = 400;
+    const buttonWidth = 300;
     const buttonX = (self.transform.width-buttonWidth)/2;
     const buttonTransform = {
         x: buttonX,
-        y: 400,
+        y: 300,
         theta: 0,
-        width: 200,
-        height: 50
+        width: buttonWidth,
+        height: 75
     };
 
     let addButton = function (text) {
@@ -28,7 +28,7 @@ return function MenuSimulation(gameSimulation) {
             text: text,
             transform: Object.assign({}, buttonTransform)
         });
-        buttonTransform.y += 250;
+        buttonTransform.y += 125;
     };
     if (gameSimulation) {
         addButton( "Resume Game" );
@@ -36,7 +36,21 @@ return function MenuSimulation(gameSimulation) {
     addButton( "New Game" );
     addButton( "High Scores" );
 
-    self.update = function () { };
+    self.update = function (actions) {
+        if (actions.mouseMove === Actions.NONE) return;
+        for (let button of buttons) {
+            button.hasMouse = checkCollision( button, actions.mouseMove );
+        }
+    };
+
+    const checkCollision = function (button, mouseLocation) {
+        return (
+            (mouseLocation.x > button.transform.x &&
+            mouseLocation.x < button.transform.x + button.transform.width &&
+            mouseLocation.y > button.transform.y &&
+            mouseLocation.y < button.transform.y + button.transform.height)
+        )
+    };
 
     self.getButtons = function () {
         return buttons;
