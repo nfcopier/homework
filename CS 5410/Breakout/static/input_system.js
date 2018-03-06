@@ -1,85 +1,104 @@
 export default function (
     KeyCodes,
-    Actions
+    Actions,
+    Directions
 ) {
 
-    function InputSystem(canvas) {
-        this.clear();
-        this._canvas = canvas;
-    }
+return function InputSystem(canvas) {
 
-    InputSystem.prototype.startListening = function () {
-        window.addEventListener("keydown", this._onKeyDown.bind(this), false);
-        window.addEventListener("keyup", this._onKeyUp.bind(this), false);
-        window.addEventListener("mousemove", this._onMouseMove.bind(this));
-        window.addEventListener("mouseup", this._onMouseUp.bind(this));
+    const self = {};
+    let actions = null;
+
+    self.clear = function () {
+        actions = {
+            move: Actions.NONE,
+            mouseMove: Actions.NONE,
+            mouseUp: Actions.NONE,
+            other: Actions.NONE
+        };
     };
 
-    InputSystem.prototype._onKeyDown = function (e) {
-        const action = _getActionFrom(e);
-        if (_isMove(action))
-            this._actions.moveAction = action;
-        if (action === Actions.PAUSE_GAME)
-            this._actions.pause = action;
+    self.clear();
+
+    self.startListening = function () {
+        window.addEventListener("keydown", onKeyDown, false);
+        window.addEventListener("keyup", onKeyUp, false);
+        window.addEventListener("mousemove", onMouseMove);
+        window.addEventListener("mouseup", onMouseUp);
     };
 
-    function _getActionFrom(e) {
+    const onKeyDown = function (e) {
+        const direction = getDirection( e );
+        if (direction) actions.move = getMoveActionFrom( direction );
+        actions.other = getOtherActionFrom( e );
+    };
+
+    const onKeyUp = function (e) {
+        const moveEvent = getDirection( e );
+        if (moveEvent) actions.move = Actions.STOP_PADDLE
+    };
+
+    const getDirection = function (e) {
         switch (e.keyCode) {
             case KeyCodes.DOM_VK_W:
             case KeyCodes.DOM_VK_I:
             case KeyCodes.DOM_VK_UP:
-                return Actions.MOVE_UP;
+                return Directions.TOP;
             case KeyCodes.DOM_VK_S:
             case KeyCodes.DOM_VK_K:
             case KeyCodes.DOM_VK_DOWN:
-                return Actions.MOVE_DOWN;
+                return Directions.BOTTOM;
             case KeyCodes.DOM_VK_A:
             case KeyCodes.DOM_VK_J:
             case KeyCodes.DOM_VK_LEFT:
-                return Actions.MOVE_LEFT;
+                return Directions.LEFT;
             case KeyCodes.DOM_VK_D:
             case KeyCodes.DOM_VK_L:
             case KeyCodes.DOM_VK_RIGHT:
+                return Directions.RIGHT;
+            default:
+                return null;
+        }
+    };
+
+    const getMoveActionFrom = function (event) {
+        switch (event) {
+            case Directions.LEFT:
+                return Actions.MOVE_LEFT;
+            case Directions.RIGHT:
                 return Actions.MOVE_RIGHT;
+            default:
+                return Actions.NONE;
+        }
+    };
+
+    const getOtherActionFrom = function (e) {
+        switch (e.keyCode) {
             case KeyCodes.DOM_VK_ESCAPE:
                 return Actions.PAUSE_GAME;
+            default:
+                return Actions.NONE;
         }
-    }
+    };
 
-    function _isMove(action) {
-        return (
-            action === Actions.MOVE_UP ||
-            action === Actions.MOVE_DOWN ||
-            action === Actions.MOVE_LEFT ||
-            action === Actions.MOVE_RIGHT
-        );
-    }
-
-    InputSystem.prototype._onMouseMove = function(event) {
-        const canvasScale = this._canvas.getScale();
-        this._actions.mouseMove = {
+    const onMouseMove = function(event) {
+        const canvasScale = canvas.getScale();
+        actions.mouseMove = {
             x: canvasScale.x * event.clientX,
             y: canvasScale.y * event.clientY
         };
     };
 
-    InputSystem.prototype._onMouseUp = function () {
-        this._actions.mouseUp = Actions.MOUSE_UP;
+    const onMouseUp = function () {
+        actions.mouseUp = Actions.MOUSE_UP;
     };
 
-    InputSystem.prototype.getActions = function () {
-        return this._actions;
+    self.getActions = function () {
+        return actions;
     };
 
-    InputSystem.prototype.clear = function () {
-        this._actions = {
-            move: Actions.NONE,
-            mouseMove: Actions.NONE,
-            mouseUp: Actions.NONE,
-            pause: Actions.NONE
-        };
-    };
+    return self;
 
-    return InputSystem;
+}
 
 }

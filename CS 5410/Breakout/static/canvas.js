@@ -2,7 +2,7 @@ export default function () {
 
 return function Canvas() {
 
-    self = {};
+    const self = {};
 
     const canvas = document.createElement("canvas");
     canvas.width = 1024;

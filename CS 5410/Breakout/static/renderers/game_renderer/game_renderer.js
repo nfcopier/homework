@@ -5,7 +5,7 @@ export default function (
 
 return function GameRenderer(simulation) {
 
-    self = Renderer( simulation.transform );
+    const self = Renderer( simulation.transform );
 
     self.render = function () {
         clearCursor();

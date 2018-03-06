@@ -17,7 +17,7 @@ return function GameSimulation() {
 
     const paddle = Paddle( self.transform );
 
-    let pauseAction = Actions.NONE;
+    let otherAction = Actions.NONE;
 
     let gameTime = 0;
 
@@ -31,38 +31,21 @@ return function GameSimulation() {
         return pauseAction;
     };
 
-    const movePlayer = function (moveAction) {
+
+    self.getAction = function () { return otherAction; };
+
+    const updatePlayerDirection = function (moveAction) {
         switch(moveAction) {
-            case Actions.MOVE_LEFT : {
-                moveLeft();
-                return;
-            }
-            case Actions.MOVE_RIGHT : {
-                moveRight();
-                return;
-            }
-            case Actions.STOP_PADDLE : {
-                stopPaddle();
-                return;
-            }
-            case Actions.NONE : {
-                return;
-            }
+            case Actions.MOVE_LEFT:
+                return paddle.moveLeft();
+            case Actions.MOVE_RIGHT:
+                return paddle.moveRight();
+            case Actions.STOP_PADDLE:
+                return paddle.stop();
         }
     };
 
-    const moveLeft = function () {
-    };
-
-    const moveRight = function () {
-    };
-
-    const stopPaddle = function () {
-    };
-
-    self.getPaddle = function () {
-        return paddle;
-    };
+    self.getPaddle = function () { return paddle; };
 
     return self;
 

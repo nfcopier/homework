@@ -9,7 +9,7 @@ return function MenuRenderer(canvas, simulation) {
 
     const titleSpec = {
         text: "Breakout",
-        location: {x: 512, y: 100},
+        location: {x: simulation.transform.width / 2, y: 100},
         font: "96px sarif",
         color: "blue",
         alignment: "center",

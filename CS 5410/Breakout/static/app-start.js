@@ -21,7 +21,8 @@ export default function () {
 
     const InputSystem = inputSystem(
         KeyCodes,
-        Actions
+        Actions,
+        Directions
     );
 
     const Game = game(

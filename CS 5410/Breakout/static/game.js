@@ -8,7 +8,7 @@ export default function (
 
     function Game() {
         this._canvas = Canvas();
-        this._inputSystem = new InputSystem( this._canvas );
+        this._inputSystem = InputSystem( this._canvas );
         this._clearGame();
     }
 
