@@ -10,7 +10,7 @@ return function ButtonRenderer(menuItem) {
     const textSpec = {
         text: menuItem.text,
         location: { x: self.width/2, y: self.height/2 },
-        font: "36px sarif",
+        font: "36px serif",
         color: BUTTON_COLOR,
         border: { color: BORDER_COLOR, thickness: 3 },
         alignment: "center"

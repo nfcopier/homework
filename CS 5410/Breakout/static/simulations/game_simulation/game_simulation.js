@@ -21,16 +21,22 @@ return function GameSimulation() {
 
     let gameTime = 0;
 
-    self.update = function (actions, timeElapsed) {
-        pauseAction = actions.pause;
-        gameTime += timeElapsed;
-        movePlayer(actions.move);
+    let countdown = 3000;
+
+    const updateCountdown = function (actions, elapsedTime) {
+        otherAction = actions.other;
+        countdown -= elapsedTime;
+        if (countdown <= 0) self.update = updateGame;
     };
 
-    self.getAction = function () {
-        return pauseAction;
-    };
+    self.update = updateCountdown;
 
+    const updateGame = function (actions, elapsedTime) {
+        otherAction = actions.other;
+        gameTime += elapsedTime;
+        updatePlayerDirection( actions.move);
+        paddle.update( elapsedTime );
+    };
 
     self.getAction = function () { return otherAction; };
 
@@ -46,6 +52,13 @@ return function GameSimulation() {
     };
 
     self.getPaddle = function () { return paddle; };
+
+    self.getCountdown = function () {
+        return {
+            value: countdown,
+            transform: self.transform
+        };
+    };
 
     return self;
 

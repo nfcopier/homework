@@ -1,4 +1,5 @@
 export default function (
+    CountdownRenderer,
     PaddleRenderer,
     Renderer
 ) {
@@ -14,13 +15,21 @@ return function GameRenderer(simulation) {
     };
 
     const addChildren = function () {
-        const paddleRenderer = PaddleRenderer( simulation.getPaddle() );
-        self.children.push( paddleRenderer );
+        self.children.push( createPaddleRenderer() );
+        const countdown = simulation.getCountdown();
+        if (countdown.value > 0)
+            self.children.push( createCountdownRenderer(countdown) )
     };
 
-    const clearCursor = function () {
-        self.graphics.clearCursor();
+    const createPaddleRenderer = function () {
+        return PaddleRenderer( simulation.getPaddle() );
     };
+
+    const createCountdownRenderer = function (countdown) {
+        return CountdownRenderer( countdown );
+    };
+
+    const clearCursor = function () { self.graphics.clearCursor(); };
 
     const drawBackground = function () {
         self.graphics.drawRectangle({
