@@ -1,6 +1,7 @@
 export default function (
     Paddle,
     Ball,
+    ScoreRepo,
     Difficulties,
     Actions
 ) {
@@ -34,6 +35,7 @@ return function GameSimulation(difficulty) {
     let paddleCount = 3;
     let score = 0;
     let gameOver = false;
+    const scoreRepo = ScoreRepo();
 
     updateDifficulty();
     resetPaddle();
@@ -117,6 +119,7 @@ return function GameSimulation(difficulty) {
         paddleCount -= 1;
         if (paddleCount <= 0) {
             gameOver = true;
+            scoreRepo.add( score )
             return;
         }
         resetPaddle();

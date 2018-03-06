@@ -24,7 +24,7 @@ return function Menu(transform) {
             transform: Object.assign({}, buttonTransform),
             isDisabled: false
         });
-        buttonTransform.y += 100;
+        buttonTransform.y += 80;
     };
 
     self.updateButtons = function (mouseLocation) {

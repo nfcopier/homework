@@ -3,6 +3,7 @@ import ball from "./ball.js"
 import gameSimulation from "./game_simulation.js"
 
 export default function (
+    ScoreRepo,
     Difficulties,
     Actions
 ) {
@@ -18,6 +19,7 @@ export default function (
     return gameSimulation(
         Paddle,
         Ball,
+        ScoreRepo,
         Difficulties,
         Actions
     );

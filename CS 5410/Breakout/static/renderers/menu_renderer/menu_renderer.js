@@ -1,5 +1,6 @@
 export default function (
     ButtonRenderer,
+    ScoreRenderer,
     Renderer
 ) {
 
@@ -21,12 +22,23 @@ return function MenuRenderer(canvas, simulation) {
         drawBackground();
         drawTitle();
         appendButtons();
+        const options = simulation.getOptions();
+        if (options.highScores)
+            appendScores();
     };
 
     const appendButtons = function () {
         for (let button of simulation.getButtons()) {
             self.children.push( ButtonRenderer(button) );
         }
+    };
+
+    const appendScores = function () {
+        const scoreStuffs = {
+            transform: simulation.transform,
+            list: simulation.getHighScores()
+        };
+        self.children.push( ScoreRenderer(scoreStuffs) );
     };
 
     const clearCursor = function () {
