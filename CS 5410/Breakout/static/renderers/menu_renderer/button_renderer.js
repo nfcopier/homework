@@ -2,6 +2,7 @@ export default function (Renderer) {
 
 const BUTTON_COLOR = "blue";
 const BORDER_COLOR = "magenta";
+const DISABLED_COLOR = "grey";
 
 return function ButtonRenderer(menuItem) {
 
@@ -19,7 +20,7 @@ return function ButtonRenderer(menuItem) {
     const borderSpec = {
         upperLeft: { x: 0, y: 0 },
         bottomRight: { x: self.width, y: self.height },
-        color: BUTTON_COLOR
+        color: menuItem.isDisabled ? DISABLED_COLOR : BUTTON_COLOR
     };
 
 

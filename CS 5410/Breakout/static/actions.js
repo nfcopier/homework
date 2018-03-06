@@ -8,5 +8,6 @@ export default {
     NEW_GAME: 6,
     RESUME_GAME: 7,
     PAUSE_GAME: 8,
-    STOP_PADDLE: 9
+    STOP_PADDLE: 9,
+    CHANGE_DIFFICULTY: 10
 }

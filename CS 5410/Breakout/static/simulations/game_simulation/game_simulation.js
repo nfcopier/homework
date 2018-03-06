@@ -26,12 +26,12 @@ return function GameSimulation(difficulty) {
     };
 
     let paddle = null;
-    let ball = null;
+    let balls = [];
     let countdown = null;
-    let multiplier = null;
+    let scoreMultiplier = null;
     let otherAction = Actions.NONE;
     let gameTime = 0;
-    let paddleCount = 1;
+    let paddleCount = 3;
     let score = 0;
     let gameOver = false;
 
@@ -51,20 +51,20 @@ return function GameSimulation(difficulty) {
     }
 
     function setToEasy() {
-        multiplier = Multipliers.EASY;
+        scoreMultiplier = Multipliers.EASY;
     }
 
     function setToNormal() {
-        multiplier = Multipliers.NORMAL;
+        scoreMultiplier = Multipliers.NORMAL;
     }
 
     function setToHard() {
-        multiplier = Multipliers.HARD;
+        scoreMultiplier = Multipliers.HARD;
     }
 
     function resetPaddle() {
-        paddle = Paddle( self.transform );
-        ball = Ball( paddle.transform );
+        paddle = Paddle( self.transform, difficulty );
+        balls = [Ball( paddle.transform, difficulty )];
     }
 
     function resetCountdown() {
@@ -84,17 +84,25 @@ return function GameSimulation(difficulty) {
         gameTime += elapsedTime;
         updatePlayerDirection( actions.move);
         paddle.update( elapsedTime );
-        ball.update( elapsedTime );
-        checkWallCollisions();
+        updateBalls(elapsedTime);
     }
 
-    const checkWallCollisions = function () {
+    const updateBalls = function (elapsedTime) {
+        for (let ball of balls) {
+            ball.update(elapsedTime);
+            checkWallCollisionsWith(ball);
+        }
+    };
+
+    const checkWallCollisionsWith = function (ball) {
         if (ball.transform.y >= self.transform.height)
             losePaddle();
         if (ball.transform.x <= self.transform.x)
             ball.collideAt({x: 1, y: 0});
-        if (ball.transform.y <= self.transform.y)
+        if (ball.transform.y <= self.transform.y) {
+            paddle.half();
             ball.collideAt({x: 0, y: 1});
+        }
         if (ball.transform.x + ball.transform.width >= self.transform.x + self.transform.width)
             ball.collideAt({x: -1, y: 0});
     };
@@ -104,7 +112,7 @@ return function GameSimulation(difficulty) {
     };
 
     const losePaddle = function () {
-        score += multiplier * PADDLE_SCORE;
+        score += scoreMultiplier * PADDLE_SCORE;
         if (score < 0) score = 0;
         paddleCount -= 1;
         if (paddleCount <= 0) {
@@ -130,7 +138,7 @@ return function GameSimulation(difficulty) {
 
     self.getPaddle = function () { return paddle; };
 
-    self.getBall = function () { return ball; };
+    self.getBalls = function () { return balls; };
 
     self.getScore = function () { return score; };
 
@@ -141,11 +149,16 @@ return function GameSimulation(difficulty) {
         };
     };
 
+    self.getPaddleCount = function () { return paddleCount; };
+
     self.isGameOver = function () { return gameOver; };
 
     self.setDifficulty = function (newDifficulty) {
         difficulty = newDifficulty;
         updateDifficulty();
+        paddle.setDifficulty( difficulty );
+        for (let ball of balls)
+            ball.setDifficulty( difficulty );
     };
 
     return self;

@@ -7,7 +7,7 @@ export default function (
     InputSystem
 ) {
 
-    const difficulty = Difficulties.NORMAL;
+    let difficulty = Difficulties.EASY;
 
     function Game() {
         this._canvas = Canvas();
@@ -37,7 +37,7 @@ export default function (
 
     Game.prototype._showMenu = function () {
         this._simulation =
-            simulations.MenuSimulation( this._gameSimulation );
+            simulations.MenuSimulation( this._gameSimulation, difficulty );
         this._canvas.setRenderer(
             renderers.MenuRenderer( this._canvas, this._simulation )
         );
@@ -58,10 +58,20 @@ export default function (
                 this._showMenu();
                 break;
             }
-            default : {
+            case Actions.CHANGE_DIFFICULTY: {
+                this._updateDifficulty();
+                break;
+            }
+            default: {
                 return;
             }
         }
+    };
+
+    Game.prototype._updateDifficulty = function () {
+        difficulty = this._simulation.getDifficulty();
+        if (this._gameSimulation)
+            this._gameSimulation.setDifficulty( difficulty );
     };
 
     Game.prototype._showHighScores = function () {

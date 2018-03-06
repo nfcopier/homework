@@ -42,7 +42,8 @@ return function GameRenderer(simulation) {
 
     const addChildren = function () {
         self.children.push( createPaddleRenderer() );
-        self.children.push( createBallRenderer() );
+        for (let ball of simulation.getBalls())
+            self.children.push( createBallRenderer( ball ) );
         const countdown = simulation.getCountdown();
         if (countdown.value > 0)
             self.children.push( createCountdownRenderer(countdown) )
@@ -52,8 +53,8 @@ return function GameRenderer(simulation) {
         return PaddleRenderer( simulation.getPaddle() );
     };
 
-    const createBallRenderer = function () {
-        return BallRenderer( simulation.getBall() );
+    const createBallRenderer = function (ball) {
+        return BallRenderer( ball );
     };
 
     const createCountdownRenderer = function (countdown) {

@@ -21,7 +21,8 @@ return function Menu(transform) {
     self.addButton = function (text) {
         buttons.push({
             text: text,
-            transform: Object.assign({}, buttonTransform)
+            transform: Object.assign({}, buttonTransform),
+            isDisabled: false
         });
         buttonTransform.y += 100;
     };
@@ -41,15 +42,22 @@ return function Menu(transform) {
 
     const checkCollision = function (button, mouseLocation) {
         return (
-            (mouseLocation.x > button.transform.x &&
-                mouseLocation.x < button.transform.x + button.transform.width &&
-                mouseLocation.y > button.transform.y &&
-                mouseLocation.y < button.transform.y + button.transform.height)
+            !button.isDisabled &&
+            mouseLocation.x > button.transform.x &&
+            mouseLocation.x < button.transform.x + button.transform.width &&
+            mouseLocation.y > button.transform.y &&
+            mouseLocation.y < button.transform.y + button.transform.height
         )
     };
 
     self.getButtons = function () {
         return buttons;
+    };
+
+    self.disable = function (buttonText) {
+        for (let button of buttons) {
+            button.isDisabled = button.text === buttonText;
+        }
     };
 
     return self;

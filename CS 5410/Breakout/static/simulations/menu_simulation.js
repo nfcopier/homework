@@ -1,9 +1,10 @@
 export default function (
     Actions,
+    Difficulties,
     Menu
 ) {
 
-return function MenuSimulation(gameSimulation) {
+return function MenuSimulation(gameSimulation, difficulty) {
 
     const self = {};
 
@@ -31,6 +32,7 @@ return function MenuSimulation(gameSimulation) {
         switch (button) {
             case "Difficulty": {
                 menu = createDifficultyMenu();
+                disableDifficultyButton();
                 break;
             }
             case "Main Menu" : {
@@ -45,11 +47,29 @@ return function MenuSimulation(gameSimulation) {
                 gameAction = Actions.NEW_GAME;
                 break;
             }
+            case "Easy" : {
+                changeDifficulty( Difficulties.EASY );
+                break;
+            }
+            case "Normal" : {
+                changeDifficulty( Difficulties.NORMAL );
+                break;
+            }
+            case "Hard" : {
+                changeDifficulty( Difficulties.HARD );
+                break;
+            }
             default : {
                 gameAction = Actions.NONE;
             }
         }
 
+    };
+
+    const changeDifficulty = function (newDifficulty) {
+        gameAction = Actions.CHANGE_DIFFICULTY;
+        difficulty = newDifficulty;
+        disableDifficultyButton();
     };
 
     self.getButtons = function () {
@@ -59,6 +79,8 @@ return function MenuSimulation(gameSimulation) {
     self.getAction = function () {
         return gameAction;
     };
+
+    self.getDifficulty = function () { return difficulty; };
 
     function createMainMenu () {
         const menu = Menu( self.transform );
@@ -76,9 +98,20 @@ return function MenuSimulation(gameSimulation) {
         menu.addButton( "Main Menu" );
         menu.addButton( "Easy" );
         menu.addButton( "Normal" );
-        menu.addButton( "Difficult" );
+        menu.addButton( "Hard" );
         return menu;
     }
+
+    const disableDifficultyButton = function () {
+        switch (difficulty) {
+            case Difficulties.EASY:
+                return menu.disable( "Easy" );
+            case Difficulties.NORMAL:
+                return menu.disable( "Normal" );
+            case Difficulties.HARD:
+                return menu.disable( "Hard" );
+        }
+    };
 
     return self;
 

@@ -7,9 +7,13 @@ export default function (
     Actions
 ) {
 
-    const Paddle = paddle();
+    const Paddle = paddle(
+        Difficulties
+    );
 
-    const Ball = ball();
+    const Ball = ball(
+        Difficulties
+    );
 
     return gameSimulation(
         Paddle,
