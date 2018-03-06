@@ -10,6 +10,7 @@ export default function (
 
     InputSystem.prototype.startListening = function () {
         window.addEventListener("keydown", this._onKeyDown.bind(this), false);
+        window.addEventListener("keyup", this._onKeyUp.bind(this), false);
         window.addEventListener("mousemove", this._onMouseMove.bind(this));
         window.addEventListener("mouseup", this._onMouseUp.bind(this));
     };

@@ -1,14 +1,33 @@
-export default function (Renderer) {
+export default function (
+    PaddleRenderer,
+    Renderer
+) {
 
 return function GameRenderer(simulation) {
 
     self = Renderer( simulation.transform );
 
-    const superRender = self.render;
-
     self.render = function () {
-        superRender();
+        clearCursor();
+        drawBackground();
+        addChildren();
+    };
+
+    const addChildren = function () {
+        const paddleRenderer = PaddleRenderer( simulation.getPaddle() );
+        self.children.push( paddleRenderer );
+    };
+
+    const clearCursor = function () {
         self.graphics.clearCursor();
+    };
+
+    const drawBackground = function () {
+        self.graphics.drawRectangle({
+            upperLeft: {x: 0, y: 0},
+            bottomRight: {x: self.width, y: self.height},
+            color: "#000033"
+        });
     };
 
     return self;

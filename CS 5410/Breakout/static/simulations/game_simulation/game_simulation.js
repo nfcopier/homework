@@ -1,4 +1,5 @@
 export default function (
+    Paddle,
     Actions
 ) {
 
@@ -13,6 +14,8 @@ return function GameSimulation() {
         width: 1024,
         height: 768
     };
+
+    const paddle = Paddle( self.transform );
 
     let pauseAction = Actions.NONE;
 
@@ -30,38 +33,35 @@ return function GameSimulation() {
 
     const movePlayer = function (moveAction) {
         switch(moveAction) {
-            case Actions.MOVE_UP: {
-                moveUp();
-                return
-            }
-            case Actions.MOVE_DOWN: {
-                moveDown();
-                return
-            }
-            case Actions.MOVE_LEFT: {
+            case Actions.MOVE_LEFT : {
                 moveLeft();
-                return
+                return;
             }
-            case Actions.MOVE_RIGHT: {
+            case Actions.MOVE_RIGHT : {
                 moveRight();
-                return
+                return;
             }
-            case Actions.NONE: {
-                return
+            case Actions.STOP_PADDLE : {
+                stopPaddle();
+                return;
+            }
+            case Actions.NONE : {
+                return;
             }
         }
-    };
-
-    const moveUp = function () {
-    };
-
-    const moveDown = function () {
     };
 
     const moveLeft = function () {
     };
 
     const moveRight = function () {
+    };
+
+    const stopPaddle = function () {
+    };
+
+    self.getPaddle = function () {
+        return paddle;
     };
 
     return self;
