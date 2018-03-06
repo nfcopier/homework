@@ -1,5 +1,6 @@
 import countdownRenderer from "./countdown_renderer.js"
 import paddleRenderer from "./paddle_renderer.js"
+import ballRenderer from "./ball_renderer.js"
 import gameRenderer from "./game_renderer.js"
 
 export default function (
@@ -14,9 +15,14 @@ export default function (
         Renderer
     );
 
+    const BallRenderer = ballRenderer(
+        Renderer
+    );
+
     return gameRenderer(
         CountdownRenderer,
         PaddleRenderer,
+        BallRenderer,
         Renderer
     );
 

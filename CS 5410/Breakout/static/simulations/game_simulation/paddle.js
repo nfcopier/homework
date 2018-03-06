@@ -1,6 +1,6 @@
 export default function () {
 
-const PADDLE_WIDTH = 75;
+const NORMAL_WIDTH = 75;
 const PADDLE_HEIGHT = 10;
 const PADDLE_SUBTRACT = 15;
 const PADDLE_SPEED = 0.5;
@@ -12,10 +12,10 @@ return function Paddle(gameTransform) {
     let speed = 0;
 
     self.transform = {
-        x: (gameTransform.width - PADDLE_WIDTH) * 0.5,
+        x: (gameTransform.width - NORMAL_WIDTH) * 0.5,
         y: gameTransform.height * 0.85,
         theta: 0,
-        width: PADDLE_WIDTH,
+        width: NORMAL_WIDTH,
         height: PADDLE_HEIGHT
     };
 

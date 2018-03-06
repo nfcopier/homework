@@ -1,6 +1,7 @@
 export default function (
     CountdownRenderer,
     PaddleRenderer,
+    BallRenderer,
     Renderer
 ) {
 
@@ -11,11 +12,37 @@ return function GameRenderer(simulation) {
     self.render = function () {
         clearCursor();
         drawBackground();
-        addChildren();
+        if (simulation.isGameOver())
+            drawGameOver();
+        else
+            addChildren();
     };
+
+    const drawGameOver = function () {
+        const mainSpec = {
+            text: "GameOver",
+            location: {x: simulation.transform.width / 2, y: 200},
+            font: "96px serif",
+            color: "blue",
+            alignment: "center",
+            border: { color: "magenta", thickness: 3 }
+        };
+        self.graphics.drawText( mainSpec );
+        const scoreSpec = {
+            text: `Score: ${simulation.getScore()}`,
+            location: {x: simulation.transform.width / 2, y: 350},
+            font: "48px serif",
+            color: "blue",
+            alignment: "center",
+            border: { color: "magenta", thickness: 3 }
+        };
+        self.graphics.drawText( scoreSpec );
+    };
+
 
     const addChildren = function () {
         self.children.push( createPaddleRenderer() );
+        self.children.push( createBallRenderer() );
         const countdown = simulation.getCountdown();
         if (countdown.value > 0)
             self.children.push( createCountdownRenderer(countdown) )
@@ -23,6 +50,10 @@ return function GameRenderer(simulation) {
 
     const createPaddleRenderer = function () {
         return PaddleRenderer( simulation.getPaddle() );
+    };
+
+    const createBallRenderer = function () {
+        return BallRenderer( simulation.getBall() );
     };
 
     const createCountdownRenderer = function (countdown) {

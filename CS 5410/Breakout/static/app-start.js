@@ -6,6 +6,7 @@ import s from "./simulations/index.js"
 import inputSystem from "./input_system.js"
 import game from "./game.js"
 import Directions from "./directions.js"
+import Difficulties from "./difficulties.js"
 
 export default function () {
 
@@ -16,6 +17,7 @@ export default function () {
     );
 
     const simulations = s(
+        Difficulties,
         Actions
     );
 
@@ -27,6 +29,7 @@ export default function () {
 
     const Game = game(
         Canvas,
+        Difficulties,
         Actions,
         renderers,
         simulations,

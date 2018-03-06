@@ -1,9 +1,19 @@
 export default function (
     Paddle,
+    Ball,
+    Difficulties,
     Actions
 ) {
 
-return function GameSimulation() {
+const Multipliers = {
+    EASY: 0.5,
+    NORMAL: 1,
+    HARD: 2
+};
+
+const PADDLE_SCORE = -100;
+
+return function GameSimulation(difficulty) {
 
     const self = {};
 
@@ -15,30 +25,95 @@ return function GameSimulation() {
         height: 768
     };
 
-    const paddle = Paddle( self.transform );
-
+    let paddle = null;
+    let ball = null;
+    let countdown = null;
+    let multiplier = null;
     let otherAction = Actions.NONE;
-
     let gameTime = 0;
+    let paddleCount = 1;
+    let score = 0;
+    let gameOver = false;
 
-    let countdown = 3000;
+    updateDifficulty();
+    resetPaddle();
+    resetCountdown();
 
-    const updateCountdown = function (actions, elapsedTime) {
+    function updateDifficulty() {
+        switch (difficulty) {
+            case Difficulties.EASY:
+                return setToEasy();
+            case Difficulties.NORMAL:
+                return setToNormal();
+            case Difficulties.HARD:
+                return setToHard();
+        }
+    }
+
+    function setToEasy() {
+        multiplier = Multipliers.EASY;
+    }
+
+    function setToNormal() {
+        multiplier = Multipliers.NORMAL;
+    }
+
+    function setToHard() {
+        multiplier = Multipliers.HARD;
+    }
+
+    function resetPaddle() {
+        paddle = Paddle( self.transform );
+        ball = Ball( paddle.transform );
+    }
+
+    function resetCountdown() {
+        self.update = updateCountdown;
+        countdown = 3000;
+    }
+
+    function updateCountdown (actions, elapsedTime) {
         otherAction = actions.other;
         countdown -= elapsedTime;
         if (countdown <= 0) self.update = updateGame;
-    };
+    }
 
-    self.update = updateCountdown;
-
-    const updateGame = function (actions, elapsedTime) {
+    function updateGame (actions, elapsedTime) {
         otherAction = actions.other;
+        if (gameOver) return;
         gameTime += elapsedTime;
         updatePlayerDirection( actions.move);
         paddle.update( elapsedTime );
+        ball.update( elapsedTime );
+        checkWallCollisions();
+    }
+
+    const checkWallCollisions = function () {
+        if (ball.transform.y >= self.transform.height)
+            losePaddle();
+        if (ball.transform.x <= self.transform.x)
+            ball.collideAt({x: 1, y: 0});
+        if (ball.transform.y <= self.transform.y)
+            ball.collideAt({x: 0, y: 1});
+        if (ball.transform.x + ball.transform.width >= self.transform.x + self.transform.width)
+            ball.collideAt({x: -1, y: 0});
     };
 
-    self.getAction = function () { return otherAction; };
+    const checkPaddleCollisions = function () {
+        // what do I do here?
+    };
+
+    const losePaddle = function () {
+        score += multiplier * PADDLE_SCORE;
+        if (score < 0) score = 0;
+        paddleCount -= 1;
+        if (paddleCount <= 0) {
+            gameOver = true;
+            return;
+        }
+        resetPaddle();
+        resetCountdown();
+    };
 
     const updatePlayerDirection = function (moveAction) {
         switch(moveAction) {
@@ -51,13 +126,26 @@ return function GameSimulation() {
         }
     };
 
+    self.getAction = function () { return otherAction; };
+
     self.getPaddle = function () { return paddle; };
+
+    self.getBall = function () { return ball; };
+
+    self.getScore = function () { return score; };
 
     self.getCountdown = function () {
         return {
             value: countdown,
             transform: self.transform
         };
+    };
+
+    self.isGameOver = function () { return gameOver; };
+
+    self.setDifficulty = function (newDifficulty) {
+        difficulty = newDifficulty;
+        updateDifficulty();
     };
 
     return self;

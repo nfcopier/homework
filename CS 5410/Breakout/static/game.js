@@ -1,10 +1,13 @@
 export default function (
     Canvas,
+    Difficulties,
     Actions,
     renderers,
     simulations,
     InputSystem
 ) {
+
+    const difficulty = Difficulties.NORMAL;
 
     function Game() {
         this._canvas = Canvas();
@@ -34,9 +37,9 @@ export default function (
 
     Game.prototype._showMenu = function () {
         this._simulation =
-            new simulations.MenuSimulation( this._gameSimulation );
+            simulations.MenuSimulation( this._gameSimulation );
         this._canvas.setRenderer(
-            new renderers.MenuRenderer( this._canvas, this._simulation )
+            renderers.MenuRenderer( this._canvas, this._simulation )
         );
     };
 
@@ -69,7 +72,7 @@ export default function (
     };
 
     Game.prototype._startNewGame = function () {
-        this._gameSimulation = simulations.GameSimulation();
+        this._gameSimulation = simulations.GameSimulation( difficulty );
         this._resumeGame();
     };
 
