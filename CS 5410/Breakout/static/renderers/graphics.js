@@ -36,6 +36,13 @@ return function Graphics(context) {
         context.textBaseline = "middle";
         context.textAlign = spec.alignment;
         context.font = spec.font;
+        context.fillStyle = spec.color;
+        context.fillText(
+            spec.text,
+            spec.location.x,
+            spec.location.y
+        );
+        if (!spec.border) return;
         context.strokeStyle = spec.border.color;
         context.lineWidth = spec.border.thickness;
         context.strokeText(
@@ -43,12 +50,6 @@ return function Graphics(context) {
             spec.location.x,
             spec.location.y
         );
-        context.fillStyle = spec.color;
-        context.fillText(
-            spec.text,
-            spec.location.x,
-            spec.location.y
-        )
     };
 
     return self;

@@ -20,7 +20,7 @@ return function CountdownRenderer(countdown) {
             color: "blue",
             location: {x: transform.width / 2, y: transform.height / 2},
             alignment: "center",
-            border: { color: "magenta", thickness: 3 }
+            border: { color: "magenta", thickness: 2 }
         }
     };
 

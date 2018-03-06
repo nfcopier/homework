@@ -1,5 +1,6 @@
 import buttonRenderer from "./button_renderer.js"
-import scoreRenderer from "./score_renderer.js"
+import scoresRenderer from "./scores_renderer.js"
+import creditsRenderer from "./credits_renderer.js"
 import menuRenderer from "./menu_renderer.js"
 
 export default function (Renderer) {
@@ -8,13 +9,18 @@ export default function (Renderer) {
         Renderer
     );
 
-    const ScoreRenderer = scoreRenderer(
+    const ScoresRenderer = scoresRenderer(
+        Renderer
+    );
+
+    const CreditsRenderer = creditsRenderer(
         Renderer
     );
 
     return menuRenderer(
         ButtonRenderer,
-        ScoreRenderer,
+        ScoresRenderer,
+        CreditsRenderer,
         Renderer
     )
 

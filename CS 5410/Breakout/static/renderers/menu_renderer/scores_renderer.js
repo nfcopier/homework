@@ -1,16 +1,16 @@
 export default function (Renderer) {
 
-return function (scores) {
+return function ScoresRenderer(scores) {
 
     const self = Renderer( scores.transform );
 
-    let currentY = 350;
+    let currentY = 400;
 
     const specTemplate = {
         font: "36px serif",
         color: "blue",
         alignment: "center",
-        border: { color: "magenta", thickness: 3 }
+        border: { color: "magenta", thickness: 1.5 }
     };
 
     self.render = function () {

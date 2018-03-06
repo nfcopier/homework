@@ -65,6 +65,8 @@ return function MenuSimulation(gameSimulation, difficulty) {
         disableDifficultyButton();
     };
 
+    self.getMenuName = function () { return menu.getName(); };
+
     self.getButtons = function () {
         return menu.getButtons();
     };
@@ -76,7 +78,7 @@ return function MenuSimulation(gameSimulation, difficulty) {
     self.getDifficulty = function () { return difficulty; };
 
     function showMainMenu () {
-        menu = Menu( self.transform );
+        menu = Menu( "Main Menu", self.transform );
         if (gameSimulation) {
             menu.addButton( "Resume" );
         }
@@ -88,7 +90,7 @@ return function MenuSimulation(gameSimulation, difficulty) {
     }
 
     function showDifficultyMenu () {
-        showSubMenu();
+        showSubMenu( "Difficulty" );
         menu.addButton( "Easy" );
         menu.addButton( "Normal" );
         menu.addButton( "Hard" );
@@ -108,19 +110,19 @@ return function MenuSimulation(gameSimulation, difficulty) {
     };
 
     const showHighScores = function () {
-        showSubMenu();
+        showSubMenu( "High Scores" );
         resetOptions();
         options.highScores = true;
     };
 
     const showCredits = function () {
-        showSubMenu();
+        showSubMenu( "Credits" );
         resetOptions();
         options.credits = true;
     };
 
-    const showSubMenu = function () {
-        menu = new Menu( self.transform );
+    const showSubMenu = function (name) {
+        menu = new Menu( name, self.transform );
         menu.addButton( "Main Menu" );
     };
 
@@ -135,7 +137,18 @@ return function MenuSimulation(gameSimulation, difficulty) {
     };
 
     self.getCredits = function () {
-        return "";
+        return [
+            ["Developed, with love, for CS 5410."],
+            [],
+            ["School", "Utah State University"],
+            ["Professor", "Dr. Dean Mathias"],
+            ["Developer", "Nathan Copier"],
+            [],
+            ["Built using HTML5 canvas."],
+            ["No other libraries have been used."],
+            ["To see more of my homework projects go to: "],
+            ["https://github.com/nfcopier/homework"]
+        ];
     };
 
     return self;

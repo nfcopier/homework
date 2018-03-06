@@ -3,7 +3,7 @@ export default function () {
 const BUTTON_WIDTH = 250;
 const BUTTON_HEIGHT = 50;
 
-return function Menu(transform) {
+return function Menu(name, transform) {
 
     const self = {};
 
@@ -12,7 +12,7 @@ return function Menu(transform) {
 
     const buttonTransform = {
         x: buttonX,
-        y: 250,
+        y: 300,
         theta: 0,
         width: BUTTON_WIDTH,
         height: BUTTON_HEIGHT
@@ -50,9 +50,9 @@ return function Menu(transform) {
         )
     };
 
-    self.getButtons = function () {
-        return buttons;
-    };
+    self.getName = function () { return name; };
+
+    self.getButtons = function () { return buttons; };
 
     self.disable = function (buttonText) {
         for (let button of buttons) {

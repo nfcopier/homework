@@ -1,6 +1,7 @@
 export default function (
     ButtonRenderer,
-    ScoreRenderer,
+    ScoresRenderer,
+    CreditsRenderer,
     Renderer
 ) {
 
@@ -14,31 +15,28 @@ return function MenuRenderer(canvas, simulation) {
         font: "96px serif",
         color: "blue",
         alignment: "center",
-        border: { color: "magenta", thickness: 3 }
+        border: { color: "magenta", thickness: 2 }
+    };
+
+    const nameSpec = {
+        location: {x: simulation.transform.width / 2, y: 250},
+        font: "48px serif",
+        color: "blue",
+        alignment: "center",
+        border: { color: "magenta", thickness: 2 }
     };
 
     self.render = function () {
         clearCursor();
         drawBackground();
         drawTitle();
+        drawMenuName();
         appendButtons();
         const options = simulation.getOptions();
         if (options.highScores)
             appendScores();
-    };
-
-    const appendButtons = function () {
-        for (let button of simulation.getButtons()) {
-            self.children.push( ButtonRenderer(button) );
-        }
-    };
-
-    const appendScores = function () {
-        const scoreStuffs = {
-            transform: simulation.transform,
-            list: simulation.getHighScores()
-        };
-        self.children.push( ScoreRenderer(scoreStuffs) );
+        if (options.credits)
+            appendCredits();
     };
 
     const clearCursor = function () {
@@ -55,6 +53,34 @@ return function MenuRenderer(canvas, simulation) {
 
     const drawTitle = function () {
         self.graphics.drawText( titleSpec );
+    };
+
+    const drawMenuName = function () {
+        const spec = Object.assign( {}, nameSpec );
+        spec.text = simulation.getMenuName();
+        self.graphics.drawText( spec );
+    };
+
+    const appendButtons = function () {
+        for (let button of simulation.getButtons()) {
+            self.children.push( ButtonRenderer(button) );
+        }
+    };
+
+    const appendScores = function () {
+        const scoreStuffs = {
+            transform: simulation.transform,
+            list: simulation.getHighScores()
+        };
+        self.children.push( ScoresRenderer(scoreStuffs) );
+    };
+
+    const appendCredits = function () {
+        const creditsStuffs = {
+            transform: simulation.transform,
+            list: simulation.getCredits()
+        };
+        self.children.push( CreditsRenderer(creditsStuffs) );
     };
 
     return self;

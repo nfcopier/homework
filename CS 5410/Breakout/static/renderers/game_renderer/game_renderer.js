@@ -20,12 +20,12 @@ return function GameRenderer(simulation) {
 
     const drawGameOver = function () {
         const mainSpec = {
-            text: "GameOver",
+            text: "Game Over",
             location: {x: simulation.transform.width / 2, y: 200},
             font: "96px serif",
             color: "blue",
             alignment: "center",
-            border: { color: "magenta", thickness: 3 }
+            border: { color: "magenta", thickness: 2 }
         };
         self.graphics.drawText( mainSpec );
         const scoreSpec = {
@@ -34,7 +34,7 @@ return function GameRenderer(simulation) {
             font: "48px serif",
             color: "blue",
             alignment: "center",
-            border: { color: "magenta", thickness: 3 }
+            border: { color: "magenta", thickness: 2 }
         };
         self.graphics.drawText( scoreSpec );
     };

@@ -13,7 +13,7 @@ return function ButtonRenderer(menuItem) {
         location: { x: self.width/2, y: self.height/2 },
         font: "36px serif",
         color: BUTTON_COLOR,
-        border: { color: BORDER_COLOR, thickness: 3 },
+        border: { color: BORDER_COLOR, thickness: 2 },
         alignment: "center"
     };
 
