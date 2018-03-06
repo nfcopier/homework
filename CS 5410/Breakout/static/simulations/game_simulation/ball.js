@@ -78,9 +78,9 @@ return function (paddleTransform, difficulty) {
         updateDifficulty();
     };
 
-    self.hasCollidedWith = function (other) {
+    self.hasCollidedWith = function (otherTransform) {
         const selfBounds = getBoundsFrom( self.transform );
-        const otherBounds = getBoundsFrom( other.transform );
+        const otherBounds = getBoundsFrom( otherTransform );
         return (
             selfBounds.left < otherBounds.right &&
             selfBounds.right > otherBounds.left &&

@@ -4,6 +4,7 @@ export default function (
     BallRenderer,
     ScoreRenderer,
     PaddlesRenderer,
+    RowGroupRenderer,
     Renderer
 ) {
 
@@ -48,6 +49,8 @@ return function GameRenderer(simulation) {
             self.children.push( createBallRenderer( ball ) );
         self.children.push( createScoreRenderer() );
         self.children.push( createPaddlesRenderer() );
+        for (let rowGroup of simulation.getRowGroups())
+            self.children.push( createRowGroupRenderer( rowGroup ) )
         const countdown = simulation.getCountdown();
         if (countdown.value > 0)
             self.children.push( createCountdownRenderer(countdown) )
@@ -75,6 +78,11 @@ return function GameRenderer(simulation) {
             transform: simulation.transform
         };
         return PaddlesRenderer( paddles );
+    };
+
+    const createRowGroupRenderer = function (rowGroup) {
+        const color = "red";
+        return RowGroupRenderer( color, rowGroup );
     };
 
     const createCountdownRenderer = function (countdown) {
