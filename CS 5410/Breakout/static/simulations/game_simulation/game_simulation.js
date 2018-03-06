@@ -32,7 +32,7 @@ return function GameSimulation(difficulty) {
     let scoreMultiplier = null;
     let otherAction = Actions.NONE;
     let gameTime = 0;
-    let paddleCount = 1;
+    let paddleCount = 3;
     let score = 0;
     let gameOver = false;
     const scoreRepo = ScoreRepo();

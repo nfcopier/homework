@@ -2,6 +2,8 @@ export default function (
     CountdownRenderer,
     PaddleRenderer,
     BallRenderer,
+    ScoreRenderer,
+    PaddlesRenderer,
     Renderer
 ) {
 
@@ -44,6 +46,8 @@ return function GameRenderer(simulation) {
         self.children.push( createPaddleRenderer() );
         for (let ball of simulation.getBalls())
             self.children.push( createBallRenderer( ball ) );
+        self.children.push( createScoreRenderer() );
+        self.children.push( createPaddlesRenderer() );
         const countdown = simulation.getCountdown();
         if (countdown.value > 0)
             self.children.push( createCountdownRenderer(countdown) )
@@ -55,6 +59,22 @@ return function GameRenderer(simulation) {
 
     const createBallRenderer = function (ball) {
         return BallRenderer( ball );
+    };
+
+    const createScoreRenderer = function () {
+        const score = {
+            value: simulation.getScore(),
+            transform: simulation.transform
+        };
+        return ScoreRenderer( score );
+    };
+
+    const createPaddlesRenderer = function () {
+        const paddles = {
+            count: simulation.getPaddleCount(),
+            transform: simulation.transform
+        };
+        return PaddlesRenderer( paddles );
     };
 
     const createCountdownRenderer = function (countdown) {
