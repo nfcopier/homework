@@ -56,6 +56,12 @@ return function (paddleTransform, difficulty) {
         }
     }
 
+    self.setDirection = function (newDirection) {
+        const speed = Math.sqrt( velocity.x*velocity.x + velocity.y*velocity.y );
+        velocity.x = speed * newDirection.x;
+        velocity.y = speed * newDirection.y;
+    };
+
     self.collideAt = function (angle) {
         const parallelMag = angle.x*velocity.x + angle.y*velocity.y;
         velocity.x -= 2*parallelMag*angle.x;

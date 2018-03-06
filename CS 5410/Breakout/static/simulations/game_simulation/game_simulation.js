@@ -113,18 +113,7 @@ return function GameSimulation(difficulty) {
     const checkPaddleCollisionWith = function (ball) {
         if (!ball.hasCollidedWith(paddle)) return;
         const incidenceAngle = getIncidenceAngleBetween( ball, paddle );
-        ball.collideAt( incidenceAngle );
-    };
-
-    let isSideCollision = function (ballCenter, otherBounds) {
-        return (
-            ballCenter.y < otherBounds.top &&
-            ballCenter.y > otherBounds.bottom &&
-            (
-                ballCenter.x < otherBounds.left ||
-                ballCenter.x > otherBounds.right
-            )
-        );
+        ball.setDirection( incidenceAngle );
     };
 
     const getIncidenceAngleBetween = function (ball, other) {
@@ -136,33 +125,49 @@ return function GameSimulation(difficulty) {
             return topBottomCollision( ball, otherBounds );
     };
 
+    const isSideCollision = function (ballCenter, otherBounds) {
+        return (
+            ballCenter.y > otherBounds.top &&
+            ballCenter.y < otherBounds.bottom &&
+            (
+                ballCenter.x < otherBounds.left ||
+                ballCenter.x > otherBounds.right
+            )
+        );
+    };
+
     const sideCollision = function (ball, otherBounds) {
         const ballCenter = ball.getCenter();
-        const otherCenterX = (otherBounds.left + otherBounds.right) / 2;
-        const otherCenterY = (otherBounds.top + otherBounds.bottom) / 2;
+        const otherCenter = getCenterFrom( otherBounds );
         const scale = otherBounds.bottom - otherCenterY;
-        const newY = (ballCenter.y - otherCenterY) / scale;
-        let newX = ballCenter.x < otherCenterX ? -1 : 1;
+        const newY = (ballCenter.y - otherCenter.y) / scale;
+        let newX = ballCenter.x < otherCenter.x ? -1 : 1;
         return unitize({ x: newX, y: newY });
     };
 
     const topBottomCollision = function (ball, otherBounds) {
         const ballCenter = ball.getCenter();
-        const otherCenterX = (otherBounds.left + otherBounds.right) / 2;
-        const otherCenterY = (otherBounds.top + otherBounds.bottom) / 2;
-        const scale = otherBounds.right - otherCenterX;
-        const newX = (ballCenter.x - otherCenterX) / scale;
-        let newY = ballCenter.y < otherCenterY ? -1 : 1;
+        const otherCenter = getCenterFrom( otherBounds );
+        const scale = otherBounds.right - otherCenter.x;
+        const newX = (ballCenter.x - otherCenter.x) / scale;
+        let newY = ballCenter.y < otherCenter.y ? -1 : 1;
         return unitize({ x: newX, y: newY });
     };
 
-    const getBoundsFrom = function( transform ) {
+    const getBoundsFrom = function(transform) {
         return {
             left: transform.x,
             right: transform.x + transform.width,
             top: transform.y,
             bottom: transform.y + transform.height
         };
+    };
+
+    const getCenterFrom = function(bounds) {
+        return {
+            x: (bounds.left + bounds.right) / 2,
+            y: (bounds.top + bounds.bottom) / 2
+        }
     };
 
     const unitize = function (vector) {
