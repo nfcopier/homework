@@ -18,7 +18,8 @@ export default function () {
 
     const simulations = s(
         Difficulties,
-        Actions
+        Actions,
+        Directions
     );
 
     const InputSystem = inputSystem(

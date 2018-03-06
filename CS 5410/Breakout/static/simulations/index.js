@@ -4,7 +4,8 @@ import gameSimulation from "./game_simulation/index.js"
 
 export default function (
     Difficulties,
-    Actions
+    Actions,
+    Directions
 ) {
 
     const ScoreRepo = scoreRepo();
@@ -18,7 +19,8 @@ export default function (
     const GameSimulation = gameSimulation(
         ScoreRepo,
         Difficulties,
-        Actions
+        Actions,
+        Directions
     );
 
     return {

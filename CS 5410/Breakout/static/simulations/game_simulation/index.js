@@ -5,11 +5,13 @@ import gameSimulation from "./game_simulation.js"
 export default function (
     ScoreRepo,
     Difficulties,
-    Actions
+    Actions,
+    Directions
 ) {
 
     const Paddle = paddle(
-        Difficulties
+        Difficulties,
+        Directions
     );
 
     const Ball = ball(

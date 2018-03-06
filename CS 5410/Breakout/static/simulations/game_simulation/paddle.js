@@ -1,5 +1,6 @@
 export default function (
-    Difficulties
+    Difficulties,
+    Directions
 ) {
 
 const Widths = {

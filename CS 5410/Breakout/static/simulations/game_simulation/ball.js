@@ -63,13 +63,40 @@ return function (paddleTransform, difficulty) {
     };
 
     self.update = function (elapsedTime) {
-      self.transform.x += velocity.x * elapsedTime;
-      self.transform.y += velocity.y * elapsedTime;
+        self.transform.x += velocity.x * elapsedTime;
+        self.transform.y += velocity.y * elapsedTime;
     };
 
     self.setDifficulty = function (newDifficulty) {
         difficulty = newDifficulty;
         updateDifficulty();
+    };
+
+    self.hasCollidedWith = function (other) {
+        const selfBounds = getBoundsFrom( self.transform );
+        const otherBounds = getBoundsFrom( other.transform );
+        return (
+            selfBounds.left < otherBounds.right &&
+            selfBounds.right > otherBounds.left &&
+            selfBounds.top < otherBounds.bottom &&
+            selfBounds.bottom > otherBounds.top
+        )
+    };
+
+    const getBoundsFrom = function( transform ) {
+        return {
+            left: transform.x,
+            right: transform.x + transform.width,
+            top: transform.y,
+            bottom: transform.y + transform.height
+        };
+    };
+
+    self.getCenter = function () {
+        return {
+            x: self.transform.x + BALL_RADIUS,
+            y: self.transform.y + BALL_RADIUS
+        };
     };
 
     return self;

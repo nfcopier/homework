@@ -91,12 +91,13 @@ return function GameSimulation(difficulty) {
 
     const updateBalls = function (elapsedTime) {
         for (let ball of balls) {
-            ball.update(elapsedTime);
-            checkWallCollisionsWith(ball);
+            ball.update( elapsedTime );
+            checkWallCollisionWith( ball );
+            checkPaddleCollisionWith( ball )
         }
     };
 
-    const checkWallCollisionsWith = function (ball) {
+    const checkWallCollisionWith = function (ball) {
         if (ball.transform.y >= self.transform.height)
             losePaddle();
         if (ball.transform.x <= self.transform.x)
@@ -109,8 +110,64 @@ return function GameSimulation(difficulty) {
             ball.collideAt({x: -1, y: 0});
     };
 
-    const checkPaddleCollisions = function () {
-        // what do I do here?
+    const checkPaddleCollisionWith = function (ball) {
+        if (!ball.hasCollidedWith(paddle)) return;
+        const incidenceAngle = getIncidenceAngleBetween( ball, paddle );
+        ball.collideAt( incidenceAngle );
+    };
+
+    let isSideCollision = function (ballCenter, otherBounds) {
+        return (
+            ballCenter.y < otherBounds.top &&
+            ballCenter.y > otherBounds.bottom &&
+            (
+                ballCenter.x < otherBounds.left ||
+                ballCenter.x > otherBounds.right
+            )
+        );
+    };
+
+    const getIncidenceAngleBetween = function (ball, other) {
+        const ballCenter = ball.getCenter();
+        const otherBounds = getBoundsFrom( other.transform );
+        if (isSideCollision(ballCenter, otherBounds))
+            return sideCollision( ball, otherBounds );
+        else
+            return topBottomCollision( ball, otherBounds );
+    };
+
+    const sideCollision = function (ball, otherBounds) {
+        const ballCenter = ball.getCenter();
+        const otherCenterX = (otherBounds.left + otherBounds.right) / 2;
+        const otherCenterY = (otherBounds.top + otherBounds.bottom) / 2;
+        const scale = otherBounds.bottom - otherCenterY;
+        const newY = (ballCenter.y - otherCenterY) / scale;
+        let newX = ballCenter.x < otherCenterX ? -1 : 1;
+        return unitize({ x: newX, y: newY });
+    };
+
+    const topBottomCollision = function (ball, otherBounds) {
+        const ballCenter = ball.getCenter();
+        const otherCenterX = (otherBounds.left + otherBounds.right) / 2;
+        const otherCenterY = (otherBounds.top + otherBounds.bottom) / 2;
+        const scale = otherBounds.right - otherCenterX;
+        const newX = (ballCenter.x - otherCenterX) / scale;
+        let newY = ballCenter.y < otherCenterY ? -1 : 1;
+        return unitize({ x: newX, y: newY });
+    };
+
+    const getBoundsFrom = function( transform ) {
+        return {
+            left: transform.x,
+            right: transform.x + transform.width,
+            top: transform.y,
+            bottom: transform.y + transform.height
+        };
+    };
+
+    const unitize = function (vector) {
+        const mag = Math.sqrt( vector.x * vector.x + vector.y * vector.y );
+        return { x: vector.x / mag, y: vector.y / mag };
     };
 
     const losePaddle = function () {
@@ -119,7 +176,7 @@ return function GameSimulation(difficulty) {
         paddleCount -= 1;
         if (paddleCount <= 0) {
             gameOver = true;
-            scoreRepo.add( score )
+            scoreRepo.add( score );
             return;
         }
         resetPaddle();
