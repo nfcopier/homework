@@ -3,17 +3,18 @@ export default function (
     Renderer
 ) {
 
-return function (color, rowGroup) {
+return function (rowGroup) {
 
     const self = Renderer( rowGroup.transform );
 
     self.render = function () {
-        for (let row of rowGroup.rows) {
-            self.children.push( createRowRenderer(row) );
+        const color = rowGroup.getColor();
+        for (let row of rowGroup.getRows()) {
+            self.children.push( createRowRenderer(color, row) );
         }
     };
 
-    const createRowRenderer = function(row) {
+    const createRowRenderer = function(color, row) {
         return RowRenderer( color, row );
     };
 

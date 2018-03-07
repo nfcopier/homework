@@ -81,8 +81,7 @@ return function GameRenderer(simulation) {
     };
 
     const createRowGroupRenderer = function (rowGroup) {
-        const color = "red";
-        return RowGroupRenderer( color, rowGroup );
+        return RowGroupRenderer( rowGroup );
     };
 
     const createCountdownRenderer = function (countdown) {

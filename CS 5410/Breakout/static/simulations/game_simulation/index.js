@@ -1,7 +1,7 @@
 import paddle from "./paddle.js"
 import ball from "./ball.js"
 import row from "./row.js"
-import rowGroups from "./row_groups.js"
+import rowGroups from "./row_group.js"
 import gameSimulation from "./game_simulation.js"
 
 export default function (

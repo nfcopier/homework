@@ -1,7 +1,7 @@
 export default function (
     Paddle,
     Ball,
-    RowGroups,
+    RowGroup,
     ScoreRepo,
     Difficulties,
     Actions
@@ -13,7 +13,15 @@ const Multipliers = {
     HARD: 2
 };
 
+const COLORS = [
+    "green",
+    "blue",
+    "orange",
+    "yellow"
+];
+
 const PADDLE_SCORE = -100;
+const GROUP_TOP_MARGIN = 100;
 
 return function GameSimulation(difficulty) {
 
@@ -37,11 +45,23 @@ return function GameSimulation(difficulty) {
     let score = 0;
     let gameOver = false;
     const scoreRepo = ScoreRepo();
-    const rowGroups = RowGroups( self.transform );
+    const rowGroups = createRowGroups();
+    debugger;
 
     updateDifficulty();
     resetPaddle();
     resetCountdown();
+
+    function createRowGroups () {
+        let y = self.transform.y + GROUP_TOP_MARGIN;
+        const results = [];
+        for (let color of COLORS) {
+            const group = RowGroup(color, y, self.transform);
+            results.push( group );
+            y += group.transform.height;
+        }
+        return results;
+    }
 
     function updateDifficulty() {
         switch (difficulty) {
@@ -120,30 +140,30 @@ return function GameSimulation(difficulty) {
     };
 
     const checkBrickCollisionsWith = function (ball) {
-        let transform = self.transform;
-        for (let rowGroup of rowGroups.getGroups()) {
-            transform.x += rowGroup.transform.x;
-            transform.y += rowGroup.transform.y;
-            for (let row of rowGroup.rows) {
-                transform.x += row.transform.x;
-                transform.y += row.transform.y;
-                for (let brick of row.getBricks()) {
-                    transform.x += brick.x;
-                    transform.y += brick.y;
-                    if (ball.hasCollidedWith(brick)) {
-                        row.removeBrick(brick);
-                        const incidenceAngle = getIncidenceAngleBetween(ball, brick);
-                        ball.setDirection(incidenceAngle);
-                    }
-                    transform.x -= brick.x;
-                    transform.y -= brick.y;
-                }
-                transform.x -= row.transform.x;
-                transform.y -= row.transform.y;
-            }
-            transform.x -= rowGroup.transform.x;
-            transform.y -= rowGroup.transform.y;
-        }
+        // let transform = Object.assign( {}, self.transform );
+        // for (let rowGroup of rowGroups) {
+        //     transform.x += rowGroup.transform.x;
+        //     transform.y += rowGroup.transform.y;
+        //     for (let row of rowGroup.rows) {
+        //         transform.x += row.transform.x;
+        //         transform.y += row.transform.y;
+        //         for (let brick of row.getBricks()) {
+        //             transform.x += brick.x;
+        //             transform.y += brick.y;
+        //             if (ball.hasCollidedWith(brick)) {
+        //                 row.removeBrick(brick);
+        //                 const incidenceAngle = getIncidenceAngleBetween(ball, brick);
+        //                 ball.setDirection(incidenceAngle);
+        //             }
+        //             transform.x -= brick.x;
+        //             transform.y -= brick.y;
+        //         }
+        //         transform.x -= row.transform.x;
+        //         transform.y -= row.transform.y;
+        //     }
+        //     transform.x -= rowGroup.transform.x;
+        //     transform.y -= rowGroup.transform.y;
+        // }
     };
 
     const getIncidenceAngleBetween = function (ball, otherTransform) {
@@ -246,7 +266,7 @@ return function GameSimulation(difficulty) {
 
     self.getPaddleCount = function () { return paddleCount; };
 
-    self.getRowGroups = function () { return rowGroups.getGroups(); };
+    self.getRowGroups = function () { return rowGroups; };
 
     self.isGameOver = function () { return gameOver; };
 
