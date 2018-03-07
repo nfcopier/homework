@@ -2,6 +2,7 @@ export default function (
     Paddle,
     Ball,
     RowGroup,
+    CollisionSystem,
     ScoreRepo,
     Difficulties,
     Actions
@@ -138,7 +139,12 @@ return function GameSimulation(difficulty) {
         ball.setDirection( incidenceAngle );
     };
 
-    const checkBrickCollisionsWith = function (ball) { };
+    const checkBrickCollisionsWith = function (ball) {
+        for (let group of rowGroups) {
+            const collisionSystem = CollisionSystem( ball, group );
+            collisionSystem.run();
+        }
+    };
 
     const getIncidenceAngleBetween = function (ball, otherTransform) {
         const ballCenter = ball.getCenter();
