@@ -41,15 +41,16 @@ return function (ball, rowGroup) {
     };
 
     const doBrickCollision = function (row, brick) {
-        const noCollision = !collidedWithBrick( row, brick );
+        const ballTransform =
+            toLocalCoords( localBallTransform, row.transform );
+        const noCollision = !collidedWithBrick( ballTransform, brick );
         if (noCollision) return;
+        doReflection( ballTransform, brick );
         row.removeBrick( brick );
         brokenBrickCount += 1;
     };
 
-    const collidedWithBrick = function (row, brick) {
-        const ballTransform =
-            toLocalCoords( localBallTransform, row.transform );
+    const collidedWithBrick = function (ballTransform, brick) {
         return collided( ballTransform, brick.transform );
     };
 
@@ -66,6 +67,26 @@ return function (ball, rowGroup) {
     const collided = function (transform1, transform2) {
         const detector = CollisionDetector( transform1, transform2 );
         return detector.collisionOccurred();
+    };
+
+    const doReflection = function( ballTransform, brick ) {
+        const ballCenter = getCenterOf( ballTransform );
+        const brickCenter = getCenterOf( brick.transform );
+        if (ballCenter.x < brickCenter.x)
+            doLeftCollision( ballTransform, brick.transform );
+    };
+
+    const getCenterOf = function (transform) {
+        return {
+            x: transform.x + transform.width / 2,
+            y: transform.y + transform.height / 2
+        };
+    };
+
+    const doLeftCollision = function (ballTransform, brickTransform) {
+        const xDiff = ballTransform.x + ballTransform.width - brickTransform.x;
+        ball.x = ball.transform.x - xDiff;
+        ball.collideAt({ x: -1, y: 0 });
     };
 
     self.scoreCollisions = function () {
