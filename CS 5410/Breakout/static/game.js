@@ -13,6 +13,7 @@ export default function (
         this._canvas = Canvas();
         this._inputSystem = InputSystem( this._canvas );
         this._clearGame();
+        this._showMenu();
     }
 
     Game.prototype.start = function () {
@@ -36,6 +37,8 @@ export default function (
     };
 
     Game.prototype._showMenu = function () {
+        if (this._gameSimulation && this._gameSimulation.isGameOver())
+            this._clearGame();
         this._simulation =
             simulations.MenuSimulation( this._gameSimulation, difficulty );
         this._canvas.setRenderer(
@@ -74,13 +77,6 @@ export default function (
             this._gameSimulation.setDifficulty( difficulty );
     };
 
-    Game.prototype._showHighScores = function () {
-        this._simulation = simulations.HighScoresSimulation();
-        this._canvas.setRenderer(
-            renderers.HighScoresRenderer( this._simulation )
-        );
-    };
-
     Game.prototype._startNewGame = function () {
         this._gameSimulation = simulations.GameSimulation( difficulty );
         this._resumeGame();
@@ -95,7 +91,6 @@ export default function (
 
     Game.prototype._clearGame = function () {
         this._gameSimulation = null;
-        this._showMenu();
     };
 
     return Game;
