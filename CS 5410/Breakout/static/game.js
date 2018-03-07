@@ -7,7 +7,7 @@ export default function (
     InputSystem
 ) {
 
-    let difficulty = Difficulties.EASY;
+    let difficulty = Difficulties.NORMAL;
 
     function Game() {
         this._canvas = Canvas();

@@ -3,10 +3,13 @@ export default function (
 ) {
 
 const BALL_RADIUS = 7.5;
+const SPEED_INCREMENT = 0.05;
+const MAX_SPEED = 2;
+
 const Speeds = {
-    EASY: 0.3,
+    EASY: 0.35,
     NORMAL: 0.5,
-    HARD: 0.75
+    HARD: 0.7
 };
 
 return function (paddleTransform, difficulty) {
@@ -26,6 +29,8 @@ return function (paddleTransform, difficulty) {
         height: BALL_RADIUS * 2
     };
 
+    let speedIncrementCount = 0;
+
     updateDifficulty();
 
     function getX() {
@@ -35,25 +40,6 @@ return function (paddleTransform, difficulty) {
 
     function getY() {
         return paddleTransform.y - BALL_RADIUS * 2;
-    }
-
-    function updateDifficulty() {
-        const newSpeed = getNewSpeed();
-        const oldSpeed = Math.sqrt( velocity.x*velocity.x + velocity.y*velocity.y );
-        const ratio = newSpeed / oldSpeed;
-        velocity.x *= ratio;
-        velocity.y *= ratio;
-    }
-
-    function getNewSpeed() {
-        switch (difficulty) {
-            case Difficulties.EASY:
-                return Speeds.EASY;
-            case Difficulties.NORMAL:
-                return Speeds.NORMAL;
-            case Difficulties.HARD:
-                return Speeds.HARD;
-        }
     }
 
     self.setDirection = function (newDirection) {
@@ -73,10 +59,38 @@ return function (paddleTransform, difficulty) {
         self.transform.y += velocity.y * elapsedTime;
     };
 
+    self.incrementSpeed = function() {
+        speedIncrementCount += 1;
+        const currentSpeed = calculateCurrentSpeed();
+        const newSpeed = currentSpeed + SPEED_INCREMENT;
+        setSpeed( newSpeed );
+    };
+
     self.setDifficulty = function (newDifficulty) {
         difficulty = newDifficulty;
         updateDifficulty();
     };
+
+    function updateDifficulty() {
+        const baseSpeed = getBaseSpeed();
+        const newSpeed = baseSpeed + speedIncrementCount * SPEED_INCREMENT;
+        setSpeed( newSpeed );
+    }
+
+    function getBaseSpeed() {
+        switch (difficulty) {
+            case Difficulties.EASY:
+                return Speeds.EASY;
+            case Difficulties.NORMAL:
+                return Speeds.NORMAL;
+            case Difficulties.HARD:
+                return Speeds.HARD;
+        }
+    }
+
+    function calculateCurrentSpeed() {
+        return Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
+    }
 
     self.hasCollidedWith = function (otherTransform) {
         const selfBounds = getBoundsFrom( self.transform );
@@ -104,6 +118,18 @@ return function (paddleTransform, difficulty) {
             y: self.transform.y + BALL_RADIUS
         };
     };
+
+    function setSpeed(speed) {
+        if (speed > MAX_SPEED) speed = MAX_SPEED;
+        const direction = unitize( velocity );
+        velocity.x = speed * direction.x;
+        velocity.y = speed * direction.y;
+    }
+
+    function unitize (vector) {
+        const mag = Math.sqrt( vector.x * vector.x + vector.y * vector.y );
+        return { x: vector.x / mag, y: vector.y / mag };
+    }
 
     return self;
 

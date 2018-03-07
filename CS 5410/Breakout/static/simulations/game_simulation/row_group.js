@@ -6,7 +6,7 @@ const GROUP_HEIGHT = 75;
 const ROW_GAP = 5;
 const ROW_COUNT = 2;
 
-return function RowGroup(color, yPosition, gameTransform) {
+return function RowGroup({pointValue, color}, yPosition, gameTransform) {
 
     const self = {};
 
@@ -34,6 +34,20 @@ return function RowGroup(color, yPosition, gameTransform) {
     self.getRows = function () { return rows; };
 
     self.getColor = function () { return color; };
+
+    self.getPointValue = function () { return pointValue; };
+
+    self.getTopBrickCount = function () {
+        const topBricks = rows[0].getBricks();
+        return topBricks.length;
+    };
+
+    self.hasBricks = function () {
+        for (let row of rows) {
+            if (row.hasBricks()) return true;
+        }
+        return false;
+    };
 
     return self;
 

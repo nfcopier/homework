@@ -51,6 +51,8 @@ return function MenuSimulation(gameSimulation, difficulty) {
                 return changeDifficulty( Difficulties.HARD );
             case "High Scores":
                 return showHighScores();
+            case "Reset":
+                return resetHighScores();
             case "Credits":
                 return showCredits();
             default:
@@ -111,8 +113,13 @@ return function MenuSimulation(gameSimulation, difficulty) {
 
     const showHighScores = function () {
         showSubMenu( "High Scores" );
+        menu.addButton( "Reset" );
         resetOptions();
         options.highScores = true;
+    };
+
+    const resetHighScores = function () {
+        scoreRepo.reset();
     };
 
     const showCredits = function () {

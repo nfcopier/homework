@@ -17,6 +17,10 @@ return function ScoreRepository() {
         persistScores( scores.slice(0,5) );
     };
 
+    self.reset = function () {
+        persistScores( [] );
+    };
+
     function ensureScores() {
         const scores = getAll();
         if (!scores) persistScores( [] );

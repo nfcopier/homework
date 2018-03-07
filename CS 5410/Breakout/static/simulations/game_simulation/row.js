@@ -2,7 +2,7 @@ export default function () {
 
 const BRICK_HEIGHT = 25;
 const BRICK_GAP = 5;
-const BRICK_COUNT = 15;
+const BRICK_COUNT = 16;
 
 return function Row(rowY, groupWidth) {
 
@@ -41,6 +41,8 @@ return function Row(rowY, groupWidth) {
         brickTransformTemplate.x += BRICK_GAP + brickWidth;
         return {transform: transform};
     }
+
+    self.hasBricks = function () { return bricks.length > 0; };
 
     self.getBricks = function () { return bricks; };
 

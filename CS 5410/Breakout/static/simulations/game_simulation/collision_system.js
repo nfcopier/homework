@@ -2,12 +2,14 @@ export default function (
     CollisionDetector
 ) {
 
+const ROW_POINT_VALUE = 25;
+
 return function (ball, rowGroup) {
 
     const self = {};
 
-    let collisionOccurred = false;
-
+    let brokenBrickCount = 0;
+    let clearedRowCount = 0;
     let localBallTransform = toLocalCoords( ball.transform, rowGroup.transform );
 
     self.run = function () {
@@ -28,17 +30,21 @@ return function (ball, rowGroup) {
         for (let brick of row.getBricks()) {
             doBrickCollision( row, brick );
         }
+        if (!row.hasBricks()) clearedRowCount += 1;
     };
 
     const collidedWithRow = function (row) {
-        return collided( localBallTransform, row.transform );
+        return (
+            row.hasBricks() &&
+            collided( localBallTransform, row.transform )
+        );
     };
 
     const doBrickCollision = function (row, brick) {
         const noCollision = !collidedWithBrick( row, brick );
         if (noCollision) return;
         row.removeBrick( brick );
-        collisionOccurred = true;
+        brokenBrickCount += 1;
     };
 
     const collidedWithBrick = function (row, brick) {
@@ -62,7 +68,13 @@ return function (ball, rowGroup) {
         return detector.collisionOccurred();
     };
 
-    self.collisionOccurred = function () { return collisionOccurred; };
+    self.scoreCollisions = function () {
+        const brickPoints = brokenBrickCount * rowGroup.getPointValue();
+        const rowPoints = clearedRowCount * ROW_POINT_VALUE;
+        return brickPoints + rowPoints;
+    };
+
+    self.getBrokenBricks = function () { return brokenBrickCount; };
 
     return self;
 
