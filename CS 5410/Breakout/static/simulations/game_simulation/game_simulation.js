@@ -1,8 +1,6 @@
 export default function (
-    Paddle,
-    Ball,
-    RowGroup,
-    CollisionSystem,
+    gameObjects,
+    collisionSystems,
     ScoreRepo,
     DifficultyRepo,
     Difficulties,
@@ -71,7 +69,7 @@ return function GameSimulation() {
         let y = self.transform.y + GROUP_TOP_MARGIN;
         const results = [];
         for (let groupSpec of GROUP_SPECS) {
-            const group = RowGroup(groupSpec, y, self.transform);
+            const group = gameObjects.RowGroup(groupSpec, y, self.transform);
             results.push( group );
             y += group.transform.height;
         }
@@ -102,7 +100,7 @@ return function GameSimulation() {
     }
 
     function resetPaddle() {
-        paddle = Paddle( self.transform, difficulty );
+        paddle = gameObjects.Paddle( self.transform, difficulty );
         balls = [ createBall() ];
         currentBrickMilestone = 0;
         brokenBrickCount = 0;
@@ -194,7 +192,7 @@ return function GameSimulation() {
     };
 
     const doCollisionFor = function (ball, group) {
-        const collisionSystem = CollisionSystem(ball, group);
+        const collisionSystem = collisionSystems.BrickSystem(ball, group);
         collisionSystem.run();
         const newPoints = collisionSystem.scoreCollisions();
         brokenBrickCount += collisionSystem.getBrokenBricks();
@@ -300,7 +298,7 @@ return function GameSimulation() {
     };
 
     function createBall() {
-        return Ball(paddle.transform, difficulty);
+        return gameObjects.Ball(paddle.transform, difficulty);
     }
 
     self.getAction = function () { return otherAction; };
