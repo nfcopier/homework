@@ -46,7 +46,6 @@ return function GameSimulation(difficulty) {
     let gameOver = false;
     const scoreRepo = ScoreRepo();
     const rowGroups = createRowGroups();
-    debugger;
 
     updateDifficulty();
     resetPaddle();
@@ -108,7 +107,7 @@ return function GameSimulation(difficulty) {
         gameTime += elapsedTime;
         updatePlayerDirection( actions.move);
         paddle.update( elapsedTime );
-        updateBalls(elapsedTime);
+        updateBalls( elapsedTime );
     }
 
     const updateBalls = function (elapsedTime) {
@@ -139,32 +138,7 @@ return function GameSimulation(difficulty) {
         ball.setDirection( incidenceAngle );
     };
 
-    const checkBrickCollisionsWith = function (ball) {
-        // let transform = Object.assign( {}, self.transform );
-        // for (let rowGroup of rowGroups) {
-        //     transform.x += rowGroup.transform.x;
-        //     transform.y += rowGroup.transform.y;
-        //     for (let row of rowGroup.rows) {
-        //         transform.x += row.transform.x;
-        //         transform.y += row.transform.y;
-        //         for (let brick of row.getBricks()) {
-        //             transform.x += brick.x;
-        //             transform.y += brick.y;
-        //             if (ball.hasCollidedWith(brick)) {
-        //                 row.removeBrick(brick);
-        //                 const incidenceAngle = getIncidenceAngleBetween(ball, brick);
-        //                 ball.setDirection(incidenceAngle);
-        //             }
-        //             transform.x -= brick.x;
-        //             transform.y -= brick.y;
-        //         }
-        //         transform.x -= row.transform.x;
-        //         transform.y -= row.transform.y;
-        //     }
-        //     transform.x -= rowGroup.transform.x;
-        //     transform.y -= rowGroup.transform.y;
-        // }
-    };
+    const checkBrickCollisionsWith = function (ball) { };
 
     const getIncidenceAngleBetween = function (ball, otherTransform) {
         const ballCenter = ball.getCenter();

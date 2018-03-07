@@ -2,9 +2,9 @@ export default function (
     Renderer
 ) {
 
-return function (color, transform) {
+return function (color, brick) {
 
-    const self = Renderer( transform );
+    const self = Renderer( brick.transform );
 
     return self;
 

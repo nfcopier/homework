@@ -20,25 +20,6 @@ return function RowGroup(color, yPosition, gameTransform) {
 
     const rows = createRows();
 
-    // const groups = createRowGroups();
-    //
-    // function createRowGroups() {
-    //     const results = [];
-    //     for (let i = 0; i < GROUP_COUNT; i++) {
-    //         results.push( createGroup() );
-    //     }
-    //     return results;
-    // }
-    //
-    // function createGroup() {
-    //     const transform = Object.assign( {}, transformTemplate );
-    //     transformTemplate.y += GROUP_HEIGHT;
-    //     return {
-    //         transform: transform,
-    //         rows: createRows()
-    //     }
-    // }
-
     function createRows() {
         let rowY = 0;
         const results = [];
@@ -53,8 +34,6 @@ return function RowGroup(color, yPosition, gameTransform) {
     self.getRows = function () { return rows; };
 
     self.getColor = function () { return color; };
-
-    // self.getGroups = function () { return groups; };
 
     return self;
 

@@ -39,7 +39,7 @@ return function Row(rowY, groupWidth) {
     function createBrick() {
         const transform = Object.assign( {}, brickTransformTemplate );
         brickTransformTemplate.x += BRICK_GAP + brickWidth;
-        return transform;
+        return {transform: transform};
     }
 
     self.getBricks = function () { return bricks; };
