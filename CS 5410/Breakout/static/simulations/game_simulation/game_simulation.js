@@ -4,6 +4,7 @@ export default function (
     RowGroup,
     CollisionSystem,
     ScoreRepo,
+    DifficultyRepo,
     Difficulties,
     Actions
 ) {
@@ -29,7 +30,7 @@ const GROUP_TOP_MARGIN = 100;
 const INITIAL_PADDLE_COUNT = 3;
 const POINTS_FOR_NEW_BALL = 100;
 
-return function GameSimulation(difficulty) {
+return function GameSimulation() {
 
     const self = {};
 
@@ -54,6 +55,8 @@ return function GameSimulation(difficulty) {
     let gameOver = false;
     let brokenBrickCount = 0;
     const scoreRepo = ScoreRepo();
+    const difficultyRepo = DifficultyRepo();
+    let difficulty = difficultyRepo.getDifficulty();
 
     resetGame();
 
@@ -321,8 +324,8 @@ return function GameSimulation(difficulty) {
 
     self.isGameOver = function () { return gameOver; };
 
-    self.setDifficulty = function (newDifficulty) {
-        difficulty = newDifficulty;
+    self.updateDifficulty = function () {
+        difficulty = difficultyRepo.getDifficulty();
         updateDifficulty();
         paddle.setDifficulty( difficulty );
         for (let ball of balls)

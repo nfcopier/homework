@@ -30,7 +30,6 @@ export default function () {
 
     const Game = game(
         Canvas,
-        Difficulties,
         Actions,
         renderers,
         simulations,

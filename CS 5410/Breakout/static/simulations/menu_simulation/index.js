@@ -3,6 +3,7 @@ import menuSimulation from "./menu_simulation.js"
 
 export default function (
     ScoreRepo,
+    DifficultyRepo,
     Actions,
     Difficulties
 ) {
@@ -11,6 +12,7 @@ export default function (
 
     return menuSimulation(
         ScoreRepo,
+        DifficultyRepo,
         Actions,
         Difficulties,
         Menu

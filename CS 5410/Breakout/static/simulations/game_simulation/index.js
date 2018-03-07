@@ -8,6 +8,7 @@ import gameSimulation from "./game_simulation.js"
 
 export default function (
     ScoreRepo,
+    DifficultyRepo,
     Difficulties,
     Actions,
     Directions
@@ -40,6 +41,7 @@ export default function (
         RowGroups,
         CollisionSystem,
         ScoreRepo,
+        DifficultyRepo,
         Difficulties,
         Actions
     );

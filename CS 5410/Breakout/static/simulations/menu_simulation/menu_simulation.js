@@ -1,11 +1,12 @@
 export default function (
     ScoreRepo,
+    DifficultyRepo,
     Actions,
     Difficulties,
     Menu
 ) {
 
-return function MenuSimulation(gameSimulation, difficulty) {
+return function MenuSimulation(gameSimulation) {
 
     const self = {};
 
@@ -18,6 +19,7 @@ return function MenuSimulation(gameSimulation, difficulty) {
     };
 
     const scoreRepo = ScoreRepo();
+    const difficultyRepo = DifficultyRepo();
     let gameAction = Actions.NONE;
     let menu = null;
     let options = null;
@@ -62,8 +64,8 @@ return function MenuSimulation(gameSimulation, difficulty) {
     };
 
     const changeDifficulty = function (newDifficulty) {
+        difficultyRepo.update( newDifficulty );
         gameAction = Actions.CHANGE_DIFFICULTY;
-        difficulty = newDifficulty;
         disableDifficultyButton();
     };
 
@@ -76,8 +78,6 @@ return function MenuSimulation(gameSimulation, difficulty) {
     self.getAction = function () {
         return gameAction;
     };
-
-    self.getDifficulty = function () { return difficulty; };
 
     function showMainMenu () {
         menu = Menu( "Main Menu", self.transform );
@@ -101,6 +101,7 @@ return function MenuSimulation(gameSimulation, difficulty) {
     }
 
     const disableDifficultyButton = function () {
+        const difficulty = difficultyRepo.getDifficulty();
         switch (difficulty) {
             case Difficulties.EASY:
                 return menu.disable( "Easy" );
