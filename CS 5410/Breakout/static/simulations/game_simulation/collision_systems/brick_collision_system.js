@@ -72,8 +72,14 @@ return function (ball, rowGroup) {
     const doReflection = function( ballTransform, brick ) {
         const ballCenter = getCenterOf( ballTransform );
         const brickCenter = getCenterOf( brick.transform );
-        if (ballCenter.x < brickCenter.x)
+        if (ballCenter.x < brick.transform.x)
             doLeftCollision( ballTransform, brick.transform );
+        else if (ballCenter.x > brick.transform.x + brick.transform.width)
+            doRightCollision( ballTransform, brick.transform );
+        else if (ballCenter.y < brickCenter.y)
+            doTopCollision( ballTransform, brick.transform );
+        else
+            doBottomCollision( ballTransform, brick.transform );
     };
 
     const getCenterOf = function (transform) {
@@ -84,9 +90,23 @@ return function (ball, rowGroup) {
     };
 
     const doLeftCollision = function (ballTransform, brickTransform) {
-        const xDiff = ballTransform.x + ballTransform.width - brickTransform.x;
-        ball.x = ball.transform.x - xDiff;
-        ball.collideAt({ x: -1, y: 0 });
+        const xDiff = brickTransform.x - ballTransform.x - ballTransform.width;
+        ball.adjustX(xDiff);
+    };
+
+    const doRightCollision = function (ballTransform, brickTransform) {
+        const xDiff = brickTransform.x + brickTransform.width - ballTransform.x;
+        ball.adjustX(xDiff);
+    };
+
+    const doTopCollision = function (ballTransform, brickTransform) {
+        const yDiff = brickTransform.y - ballTransform.y - ballTransform.height;
+        ball.adjustY(yDiff);
+    };
+
+    const doBottomCollision = function (ballTransform, brickTransform) {
+        const yDiff = brickTransform.height + brickTransform.y - ballTransform.y;
+        ball.adjustY(yDiff);
     };
 
     self.scoreCollisions = function () {

@@ -7,9 +7,9 @@ const SPEED_INCREMENT = 0.05;
 const MAX_SPEED = 2;
 
 const Speeds = {
-    EASY: 0.35,
-    NORMAL: 0.5,
-    HARD: 0.7
+    EASY: 0.25,
+    NORMAL: 0.3,
+    HARD: 0.35
 };
 
 return function (paddleTransform, difficulty) {
@@ -46,6 +46,16 @@ return function (paddleTransform, difficulty) {
         const speed = Math.sqrt( velocity.x*velocity.x + velocity.y*velocity.y );
         velocity.x = speed * newDirection.x;
         velocity.y = speed * newDirection.y;
+    };
+
+    self.adjustX = function (xDiff) {
+        velocity.x = -velocity.x;
+        self.transform.x += 2*xDiff;
+    };
+
+    self.adjustY = function (yDiff) {
+        velocity.y = -velocity.y;
+        self.transform.y += 2*yDiff;
     };
 
     self.collideAt = function (angle) {
