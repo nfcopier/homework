@@ -2,17 +2,18 @@ export default function (Renderer) {
 
 const SCORE_HEIGHT = 50;
 
-return function (score) {
+return function (score, gameTransform) {
 
     const transform = {
-        x: 25,
-        y: score.transform.y + score.transform.height - SCORE_HEIGHT,
+        x: 15,
+        y: 0,
         theta: 0,
-        width: score.transform.width / 2,
+        width: gameTransform.width / 4,
         height: SCORE_HEIGHT
     };
 
-    const spec = {
+    const labelSpec = {
+        text: "Score:",
         font: "36px serif",
         color: "blue",
         alignment: "left",
@@ -20,11 +21,20 @@ return function (score) {
         border: { color: "magenta", thickness: 1.5 }
     };
 
+    const valueSpec = {
+        text: "" + score,
+        font: "36px serif",
+        color: "blue",
+        alignment: "right",
+        location: { x: transform.width, y: transform.height / 2 },
+        border: { color: "magenta", thickness: 1.5 }
+    };
+
     const self = Renderer( transform );
 
     self.render = function () {
-        spec.text = `Score: ${score.value}`;
-        self.graphics.drawText( spec );
+        self.graphics.drawText( labelSpec );
+        self.graphics.drawText( valueSpec );
     };
 
     return self;

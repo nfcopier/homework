@@ -55,6 +55,9 @@ return function GameSimulation() {
     const scoreRepo = ScoreRepo();
     const difficultyRepo = DifficultyRepo();
     let difficulty = difficultyRepo.getDifficulty();
+    let frameCount = 0;
+    let fps = 0;
+    let timeSinceLastCheck = 0;
 
     resetGame();
 
@@ -114,6 +117,8 @@ return function GameSimulation() {
     function updateCountdown (actions, elapsedTime) {
         otherAction = actions.other;
         countdown -= elapsedTime;
+        gameTime += elapsedTime;
+        updateFps( elapsedTime );
         if (countdown <= 0) self.update = updateGame;
     }
 
@@ -121,7 +126,8 @@ return function GameSimulation() {
         otherAction = actions.other;
         if (gameOver) return;
         gameTime += elapsedTime;
-        updatePlayerDirection( actions.move);
+        updateFps( elapsedTime );
+        updatePlayerDirection( actions.move );
         paddle.update( elapsedTime );
         const topRowBricksBefore = rowGroups[0].getTopBrickCount();
         updateBalls( elapsedTime );
@@ -131,6 +137,15 @@ return function GameSimulation() {
         checkBrickMilestone();
         if (noBricksLeft()) resetGame();
     }
+
+    const updateFps = function (elapsedTime) {
+        frameCount += 1;
+        timeSinceLastCheck += elapsedTime;
+        if (timeSinceLastCheck < 1000) return;
+        fps = frameCount;
+        frameCount = 0;
+        timeSinceLastCheck = 0;
+    };
 
     const noBricksLeft = function () {
         for (let rowGroup of rowGroups)
@@ -319,6 +334,13 @@ return function GameSimulation() {
     self.getPaddleCount = function () { return paddleCount; };
 
     self.getRowGroups = function () { return rowGroups; };
+
+    self.getAnalytics = function () {
+        return {
+            fps: fps,
+            gameTime: gameTime
+        };
+    };
 
     self.isGameOver = function () { return gameOver; };
 

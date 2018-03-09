@@ -9,16 +9,7 @@ return function InputSystem(canvas) {
     const self = {};
     let actions = null;
 
-    self.clear = function () {
-        actions = {
-            move: Actions.NONE,
-            mouseMove: Actions.NONE,
-            mouseUp: Actions.NONE,
-            other: Actions.NONE
-        };
-    };
-
-    self.clear();
+    clearActions();
 
     self.startListening = function () {
         window.addEventListener("keydown", onKeyDown, false);
@@ -94,8 +85,19 @@ return function InputSystem(canvas) {
     };
 
     self.getActions = function () {
-        return actions;
+        const currentActions = actions;
+        clearActions();
+        return currentActions;
     };
+
+    function clearActions() {
+        actions = {
+            move: Actions.NONE,
+            mouseMove: Actions.NONE,
+            mouseUp: Actions.NONE,
+            other: Actions.NONE
+        };
+    }
 
     return self;
 

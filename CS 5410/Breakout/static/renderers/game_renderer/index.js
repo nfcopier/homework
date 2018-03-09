@@ -6,6 +6,7 @@ import paddlesRenderer from "./paddles_renderer.js"
 import brickRenderer from "./brick_renderer.js"
 import rowRenderer from "./row_renderer.js"
 import rowGroupRenderer from "./row_group_renderer.js"
+import analyticsRenderer from "./analytics_renderer.js"
 import gameRenderer from "./game_renderer.js"
 
 export default function (
@@ -47,6 +48,10 @@ export default function (
         Renderer
     );
 
+    const AnalyticsRenderer = analyticsRenderer(
+        Renderer
+    );
+
     return gameRenderer(
         CountdownRenderer,
         PaddleRenderer,
@@ -54,6 +59,7 @@ export default function (
         ScoreRenderer,
         PaddlesRenderer,
         RowGroupRenderer,
+        AnalyticsRenderer,
         Renderer
     );
 

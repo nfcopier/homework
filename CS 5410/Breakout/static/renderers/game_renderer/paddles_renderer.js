@@ -9,11 +9,11 @@ const PADDLE_WIDTH = 30;
 const PADDLE_HEIGHT = 15;
 const PADDLE_GAP = 10;
 
-return function (paddles) {
+return function (paddleCount, gameTransform) {
 
     const transform = {
-        x: paddles.transform.x + paddles.transform.width - 25 - BAR_WIDTH,
-        y: paddles.transform.y + paddles.transform.height - BAR_HEIGHT,
+        x: gameTransform.x + gameTransform.width - 15 - BAR_WIDTH,
+        y: 0,
         theta: 0,
         width: BAR_WIDTH,
         height: BAR_HEIGHT
@@ -31,7 +31,7 @@ return function (paddles) {
     };
 
     self.render = function () {
-        for (let i = 0; i < paddles.count; i++) {
+        for (let i = 0; i < paddleCount; i++) {
             self.children.push( createPaddleRenderer() );
         }
     };

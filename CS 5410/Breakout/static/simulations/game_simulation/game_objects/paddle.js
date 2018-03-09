@@ -9,7 +9,7 @@ const Widths = {
 };
 const PADDLE_HEIGHT = 15;
 const PADDLE_SUBTRACT = 15;
-const PADDLE_SPEED = 0.5;
+const PADDLE_SPEED = 0.7;
 
 return function Paddle(gameTransform, difficulty) {
 

@@ -24,11 +24,10 @@ export default function (
 
     Game.prototype._doLoop = function (currentTime) {
         const elapsedTime = currentTime - this._lastTime;
-        const actions = this._inputSystem.getActions();
         this._lastTime = currentTime;
+        const actions = this._inputSystem.getActions( currentTime );
         this._simulation.update( actions, elapsedTime );
         this._checkGameAction();
-        this._inputSystem.clear();
         this._canvas.render();
         requestAnimationFrame( this._doLoop.bind(this) );
     };

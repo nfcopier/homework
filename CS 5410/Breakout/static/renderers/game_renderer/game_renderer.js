@@ -5,6 +5,7 @@ export default function (
     ScoreRenderer,
     PaddlesRenderer,
     RowGroupRenderer,
+    AnalyticsRenderer,
     Renderer
 ) {
 
@@ -53,7 +54,8 @@ return function GameRenderer(simulation) {
             self.children.push( createRowGroupRenderer( rowGroup ) )
         const countdown = simulation.getCountdown();
         if (countdown.value > 0)
-            self.children.push( createCountdownRenderer(countdown) )
+            self.children.push( createCountdownRenderer( countdown ) );
+        self.children.push( createAnalyticsRenderer() );
     };
 
     const createPaddleRenderer = function () {
@@ -65,19 +67,14 @@ return function GameRenderer(simulation) {
     };
 
     const createScoreRenderer = function () {
-        const score = {
-            value: simulation.getScore(),
-            transform: simulation.transform
-        };
-        return ScoreRenderer( score );
+        const score =  simulation.getScore();
+        const gameTransform = simulation.transform;
+        return ScoreRenderer( score, gameTransform );
     };
 
     const createPaddlesRenderer = function () {
-        const paddles = {
-            count: simulation.getPaddleCount(),
-            transform: simulation.transform
-        };
-        return PaddlesRenderer( paddles );
+        const paddleCount = simulation.getPaddleCount();
+        return PaddlesRenderer( paddleCount, simulation.transform );
     };
 
     const createRowGroupRenderer = function (rowGroup) {
@@ -86,6 +83,11 @@ return function GameRenderer(simulation) {
 
     const createCountdownRenderer = function (countdown) {
         return CountdownRenderer( countdown );
+    };
+
+    const createAnalyticsRenderer = function() {
+        const analytics = simulation.getAnalytics();
+        return new AnalyticsRenderer( analytics, simulation.transform );
     };
 
     const clearCursor = function () { self.graphics.clearCursor(); };
