@@ -196,18 +196,11 @@ return function GameSimulation() {
     };
 
     const checkBrickCollisionsWith = function (ball) {
-        for (let group of self.getChildren()) {
-            doCollisionFor( ball, group );
-        }
-    };
-
-    const doCollisionFor = function (ball, group) {
-        const collisionSystem = collisionSystems.BrickSystem(ball, group);
+        const collisionSystem = collisionSystems.BrickSystem(ball, self);
         collisionSystem.run();
         const newPoints = collisionSystem.scoreCollisions();
         brokenBrickCount += collisionSystem.getBrokenBricks();
         if (newPoints !== 0) incrementScore( newPoints );
-        if (!group.hasChildren()) self.removeChild( group );
     };
 
     const getIncidenceAngleBetween = function (ball, otherTransform) {

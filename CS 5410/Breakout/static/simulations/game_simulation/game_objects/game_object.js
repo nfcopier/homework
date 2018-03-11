@@ -26,6 +26,10 @@ return function GameObject(transform) {
         children.splice( index, 1 );
     };
 
+    self.destroy = function () {
+        parent.removeChild( self );
+    };
+
     self.toAncestorCoords = function (ancestor) {
         if (ancestor == null) throw "Ancestor cannot be null";
         const offset = getOffset( parent, ancestor );

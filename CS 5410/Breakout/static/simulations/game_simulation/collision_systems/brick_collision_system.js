@@ -4,36 +4,45 @@ export default function (
 
 const ROW_POINT_VALUE = 25;
 
-return function (ball, rowGroup) {
+return function (ball, game) {
 
     const self = {};
 
     const ballCenter = getCenterOf( ball.transform );
-    let brokenBrickCount = 0;
+    let brokenBricks = [];
     let clearedRowCount = 0;
-    const game = rowGroup.getParent();
 
     self.run = function () {
-        const noCollision = !collidedWithGroup();
-        if (noCollision) return;
-        for (let row of rowGroup.getChildren()) {
-            doRowCollision( row );
+        for (let group of game.getChildren()) {
+            doGroupCollision( group );
         }
     };
 
-    const collidedWithGroup = function () {
-        return collided( ball.transform, rowGroup.toAncestorCoords( game ) );
+    const doGroupCollision = function (group) {
+        const noCollision = !collidedWithGroup( group );
+        if (noCollision) return;
+        const brickCount = { points: group.getPointValue(), count: 0 };
+        brokenBricks.push( brickCount );
+        for (let row of group.getChildren()) {
+            doRowCollision( row, brickCount );
+        }
+        if (!group.hasChildren()) group.destroy();
     };
 
-    const doRowCollision = function (row) {
+    const collidedWithGroup = function (group) {
+        const groupTransform = group.toAncestorCoords( game );
+        return collided( ball.transform, groupTransform );
+    };
+
+    const doRowCollision = function (row, brickCount) {
         const noCollision = !collidedWithRow( row );
         if (noCollision) return;
         for (let brick of row.getChildren()) {
-            doBrickCollision( row, brick );
+            doBrickCollision( brick, brickCount );
         }
         if (row.hasChildren()) return;
         clearedRowCount += 1;
-        rowGroup.removeChild( row );
+        row.destroy()
     };
 
     const collidedWithRow = function (row) {
@@ -41,13 +50,13 @@ return function (ball, rowGroup) {
         return collided( ball.transform, rowTransform );
     };
 
-    const doBrickCollision = function (row, brick) {
+    const doBrickCollision = function (brick, brickCount) {
         const brickTransform = brick.toAncestorCoords( game );
         const noCollision = !collided( ball.transform, brickTransform );
         if (noCollision) return;
         doReflection( brickTransform );
-        row.removeChild( brick );
-        brokenBrickCount += 1;
+        brick.destroy();
+        brickCount.count += 1;
     };
 
     const collided = function (transform1, transform2) {
@@ -95,12 +104,28 @@ return function (ball, rowGroup) {
     };
 
     self.scoreCollisions = function () {
-        const brickPoints = brokenBrickCount * rowGroup.getPointValue();
-        const rowPoints = clearedRowCount * ROW_POINT_VALUE;
-        return brickPoints + rowPoints;
+        return scoreBricks() + scoreRows();
     };
 
-    self.getBrokenBricks = function () { return brokenBrickCount; };
+    const scoreBricks = function () {
+        let points = 0;
+        for (let bricks of brokenBricks) {
+            points += bricks.points * bricks.count;
+        }
+        return points;
+    };
+
+    const scoreRows = function () {
+        return clearedRowCount * ROW_POINT_VALUE;
+    };
+
+    self.getBrokenBricks = function () {
+        let count = 0;
+        for (let bricks of brokenBricks) {
+            count += bricks.count;
+        }
+        return count;
+    };
 
     return self;
 
