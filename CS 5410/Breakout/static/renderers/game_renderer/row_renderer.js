@@ -5,10 +5,10 @@ export default function (
 
 return function (color, row) {
 
-    const self = Renderer( row.transform );
+    const self = Renderer( row.getTransform() );
 
     self.render = function() {
-        for (let brick of row.getBricks()) {
+        for (let brick of row.getChildren()) {
             self.children.push( createBrickRenderer( brick ) )
         }
     };

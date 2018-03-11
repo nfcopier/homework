@@ -40,7 +40,8 @@ return function (paddleCount, gameTransform) {
         const transform = Object.assign( {}, paddleTransform );
         transform.x = paddleX;
         paddleX -= PADDLE_WIDTH + PADDLE_GAP;
-        return PaddleRenderer( {transform: transform} );
+        const paddle = {getTransform: () => {return transform;}};
+        return PaddleRenderer( paddle );
     };
 
     return self;

@@ -30,9 +30,7 @@ const POINTS_FOR_NEW_BALL = 100;
 
 return function GameSimulation() {
 
-    const self = {};
-
-    self.transform = {
+    const transform = {
         x: 0,
         y: 0,
         theta: 0,
@@ -40,12 +38,13 @@ return function GameSimulation() {
         height: 768
     };
 
+    const self = gameObjects.GameObject( transform );
+
     let paddle = null;
     let balls = [];
     let countdown = null;
     let scoreMultiplier = null;
     let currentBrickMilestone = null;
-    let rowGroups = null;
     let otherAction = Actions.NONE;
     let gameTime = 0;
     let paddleCount = INITIAL_PADDLE_COUNT;
@@ -58,25 +57,27 @@ return function GameSimulation() {
     let frameCount = 0;
     let fps = 0;
     let timeSinceLastCheck = 0;
+    let topGroup = null;
 
     resetGame();
 
     function resetGame() {
-        rowGroups = createRowGroups();
+        createRowGroups();
         resetPaddle();
         resetCountdown();
         updateDifficulty();
     }
 
     function createRowGroups () {
-        let y = self.transform.y + GROUP_TOP_MARGIN;
-        const results = [];
-        for (let groupSpec of GROUP_SPECS) {
-            const group = gameObjects.RowGroup(groupSpec, y, self.transform);
-            results.push( group );
-            y += group.transform.height;
+        let y = transform.y + GROUP_TOP_MARGIN;
+        topGroup = gameObjects.RowGroup( GROUP_SPECS[0], y, transform);
+        self.addChild( topGroup );
+        y += topGroup.getTransform().height;
+        for (let groupSpec of GROUP_SPECS.slice(1)) {
+            const group = gameObjects.RowGroup(groupSpec, y, transform);
+            self.addChild( group );
+            y += group.getTransform().height;
         }
-        return results;
     }
 
     function updateDifficulty() {
@@ -103,7 +104,7 @@ return function GameSimulation() {
     }
 
     function resetPaddle() {
-        paddle = gameObjects.Paddle( self.transform, difficulty );
+        paddle = gameObjects.Paddle( transform, difficulty );
         balls = [ createBall() ];
         currentBrickMilestone = 0;
         brokenBrickCount = 0;
@@ -129,13 +130,13 @@ return function GameSimulation() {
         updateFps( elapsedTime );
         updatePlayerDirection( actions.move );
         paddle.update( elapsedTime );
-        const topRowBricksBefore = rowGroups[0].getTopBrickCount();
+        const topRowBricksBefore = topGroup.getTopBrickCount();
         updateBalls( elapsedTime );
-        const topRowBricksAfter = rowGroups[0].getTopBrickCount();
+        const topRowBricksAfter = topGroup.getTopBrickCount();
         const topBrickBroken = topRowBricksAfter < topRowBricksBefore;
         if (topBrickBroken) paddle.half();
         checkBrickMilestone();
-        if (noBricksLeft()) resetGame();
+        if (!self.hasChildren()) resetGame();
     }
 
     const updateFps = function (elapsedTime) {
@@ -145,12 +146,6 @@ return function GameSimulation() {
         fps = frameCount;
         frameCount = 0;
         timeSinceLastCheck = 0;
-    };
-
-    const noBricksLeft = function () {
-        for (let rowGroup of rowGroups)
-            if (rowGroup.hasBricks()) return false;
-        return true;
     };
 
     const updateBalls = function (elapsedTime) {
@@ -163,13 +158,13 @@ return function GameSimulation() {
     };
 
     const checkWallCollisionWith = function (ball) {
-        if (ball.transform.y >= self.transform.height)
+        if (ball.transform.y >= transform.height)
             removeBall( ball );
-        if (ball.transform.x <= self.transform.x)
+        if (ball.transform.x <= transform.x)
             ball.collideAt({x: 1, y: 0});
-        if (ball.transform.y <= self.transform.y)
+        if (ball.transform.y <= transform.y)
             ball.collideAt({x: 0, y: 1});
-        if (ball.transform.x + ball.transform.width >= self.transform.x + self.transform.width)
+        if (ball.transform.x + ball.transform.width >= transform.x + transform.width)
             ball.collideAt({x: -1, y: 0});
     };
 
@@ -182,26 +177,26 @@ return function GameSimulation() {
     };
 
     const losePaddle = function () {
-        incrementScore( PADDLE_POINT_VALUE );
-        if (score < 0) score = 0;
         paddleCount -= 1;
         if (paddleCount <= 0) {
             gameOver = true;
             scoreRepo.add( score );
-            return;
+        } else {
+            incrementScore( PADDLE_POINT_VALUE );
+            resetPaddle();
+            resetCountdown();
         }
-        resetPaddle();
-        resetCountdown();
     };
 
     const checkPaddleCollisionWith = function (ball) {
-        if (!ball.hasCollidedWith(paddle.transform)) return;
-        const incidenceAngle = getIncidenceAngleBetween( ball, paddle.transform );
+        const paddleTransform = paddle.getTransform();
+        if (!ball.hasCollidedWith(paddleTransform)) return;
+        const incidenceAngle = getIncidenceAngleBetween( ball, paddleTransform );
         ball.setDirection( incidenceAngle );
     };
 
     const checkBrickCollisionsWith = function (ball) {
-        for (let group of rowGroups) {
+        for (let group of self.getChildren()) {
             doCollisionFor( ball, group );
         }
     };
@@ -211,8 +206,8 @@ return function GameSimulation() {
         collisionSystem.run();
         const newPoints = collisionSystem.scoreCollisions();
         brokenBrickCount += collisionSystem.getBrokenBricks();
-        if (newPoints !== 0)
-            incrementScore( newPoints );
+        if (newPoints !== 0) incrementScore( newPoints );
+        if (!group.hasChildren()) self.removeChild( group );
     };
 
     const getIncidenceAngleBetween = function (ball, otherTransform) {
@@ -310,10 +305,11 @@ return function GameSimulation() {
         if (newBallEarned) earnedBallCount += 1;
         for (let i = 0; i < earnedBallCount; i++)
             balls.push( createBall() );
+         if (score <= 0) score = 0;
     };
 
     function createBall() {
-        return gameObjects.Ball(paddle.transform, difficulty);
+        return gameObjects.Ball(paddle.getTransform(), difficulty);
     }
 
     self.getAction = function () { return otherAction; };
@@ -327,13 +323,11 @@ return function GameSimulation() {
     self.getCountdown = function () {
         return {
             value: countdown,
-            transform: self.transform
+            transform: transform
         };
     };
 
     self.getPaddleCount = function () { return paddleCount; };
-
-    self.getRowGroups = function () { return rowGroups; };
 
     self.getAnalytics = function () {
         return {

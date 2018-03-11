@@ -5,11 +5,11 @@ export default function (
 
 return function (rowGroup) {
 
-    const self = Renderer( rowGroup.transform );
+    const self = Renderer( rowGroup.getTransform() );
 
     self.render = function () {
         const color = rowGroup.getColor();
-        for (let row of rowGroup.getRows()) {
+        for (let row of rowGroup.getChildren()) {
             self.children.push( createRowRenderer(color, row) );
         }
     };

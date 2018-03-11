@@ -4,7 +4,7 @@ export default function (
 
 return function (color, brick) {
 
-    const self = Renderer( brick.transform );
+    const self = Renderer( brick.getTransform() );
 
     return self;
 

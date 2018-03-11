@@ -6,15 +6,13 @@ export default function (
     ScoreRepo,
     DifficultyRepo,
     Difficulties,
-    Actions,
-    Directions
+    Actions
 ) {
 
     const collisionSystems = c();
 
     const gameObjects = g(
-        Difficulties,
-        Directions
+        Difficulties
     );
 
     return gameSimulation(

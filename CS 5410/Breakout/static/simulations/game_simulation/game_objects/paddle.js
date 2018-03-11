@@ -1,41 +1,46 @@
 export default function (
-    Difficulties
+    Difficulties,
+    GameObject
 ) {
 
 const Widths = {
-    EASY: 100,
-    NORMAL: 75,
-    HARD: 60
+    EASY: 125,
+    NORMAL: 85,
+    HARD: 70
 };
+
 const PADDLE_HEIGHT = 15;
 const PADDLE_SUBTRACT = 15;
 const PADDLE_SPEED = 0.7;
 
-return function Paddle(gameTransform, difficulty) {
+return function Paddle(parent, difficulty) {
 
-    const self = {};
-
-    let speed = 0;
-    let isHalf = false;
-
-    self.transform = {
-        x: gameTransform.width * 0.5,
-        y: gameTransform.height * 0.85,
+    const transform = {
+        x: parent.width * 0.5,
+        y: parent.height * 0.85,
         theta: 0,
         width: 0,
         height: PADDLE_HEIGHT
     };
 
-    updateDifficulty();
+    const self = GameObject( transform );
 
-    function updateDifficulty() {
-        const center = self.transform.x + self.transform.width / 2;
-        self.transform.width = baseWidth();
-        self.transform.x = center - self.transform.width / 2;
+    let speed = 0;
+    let isHalf = false;
+
+    const initialize = function () {
+        updateDifficulty();
+        self._setParent( parent );
+    };
+
+    const updateDifficulty = function () {
+        const center = transform.x + transform.width / 2;
+        transform.width = baseWidth();
+        transform.x = center - transform.width / 2;
         if (isHalf) half();
-    }
+    };
 
-    function baseWidth() {
+    const baseWidth = function () {
         switch (difficulty) {
             case Difficulties.EASY:
                 return Widths.EASY;
@@ -44,7 +49,7 @@ return function Paddle(gameTransform, difficulty) {
             case Difficulties.HARD:
                 return Widths.HARD;
         }
-    }
+    };
 
     self.moveLeft = function () { speed = -PADDLE_SPEED; };
 
@@ -53,23 +58,23 @@ return function Paddle(gameTransform, difficulty) {
     self.stop = function () { speed = 0; };
 
     self.update = function (elapsedTime) {
-        self.transform.x += speed * elapsedTime;
+        transform.x += speed * elapsedTime;
         if (isTooFarLeft())
-            self.transform.x = gameTransform.x;
+            transform.x = parent.x;
         if (isTooFarRight()) {
-            const gameRight = gameTransform.x + gameTransform.width;
-            self.transform.x = gameRight - self.transform.width;
+            const gameRight = parent.x + parent.width;
+            transform.x = gameRight - transform.width;
         }
     };
 
     const isTooFarLeft = function () {
-        return self.transform.x < gameTransform.x;
+        return transform.x < parent.x;
     };
 
     const isTooFarRight = function () {
-        const selfRight = self.transform.x + self.transform.width;
-        const gameRight = gameTransform.x + gameTransform.width;
-        return selfRight > gameRight;
+        const selfRight = transform.x + transform.width;
+        const parentRight = parent.x + parent.width;
+        return selfRight > parentRight;
     };
 
     self.setDifficulty = function (newDifficulty) {
@@ -83,10 +88,12 @@ return function Paddle(gameTransform, difficulty) {
         half();
     };
 
-    function half() {
-        self.transform.x += PADDLE_SUBTRACT;
-        self.transform.width -= PADDLE_SUBTRACT * 2;
-    }
+    const half = function() {
+        transform.x += PADDLE_SUBTRACT;
+        transform.width -= PADDLE_SUBTRACT * 2;
+    };
+
+    initialize();
 
     return self;
 

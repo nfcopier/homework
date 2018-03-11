@@ -1,4 +1,6 @@
-export default function () {
+export default function (
+    GameObject
+) {
 
 const BRICK_HEIGHT = 25;
 const BRICK_GAP = 5;
@@ -6,9 +8,7 @@ const BRICK_COUNT = 16;
 
 return function Row(rowY, groupWidth) {
 
-    const self = {};
-
-    self.transform = {
+    const transform = {
         x: 0,
         y: rowY,
         theta: 0,
@@ -16,7 +16,9 @@ return function Row(rowY, groupWidth) {
         height: BRICK_HEIGHT
     };
 
-    const brickWidth = self.transform.width / BRICK_COUNT - BRICK_GAP;
+    const self = GameObject( transform );
+
+    const brickWidth = transform.width / BRICK_COUNT - BRICK_GAP;
 
     const brickTransformTemplate = {
         x: BRICK_GAP / 2,
@@ -26,30 +28,23 @@ return function Row(rowY, groupWidth) {
         height: BRICK_HEIGHT
     };
 
-    const bricks = createBricks();
+    const initialize = function () {
+        createBricks();
+    };
 
-    function createBricks() {
-        const results = [];
+    const createBricks = function () {
         for (let i = 0; i < BRICK_COUNT; i++) {
-            results.push( createBrick() );
+            self.addChild( createBrick() );
         }
-        return results;
-    }
+    };
 
-    function createBrick() {
+    const createBrick = function () {
         const transform = Object.assign( {}, brickTransformTemplate );
         brickTransformTemplate.x += BRICK_GAP + brickWidth;
-        return {transform: transform};
-    }
-
-    self.hasBricks = function () { return bricks.length > 0; };
-
-    self.getBricks = function () { return bricks; };
-
-    self.removeBrick = function (victim) {
-        const index = bricks.indexOf( victim );
-        bricks.splice( index, 1 );
+        return GameObject( transform );
     };
+
+    initialize();
 
     return self;
 

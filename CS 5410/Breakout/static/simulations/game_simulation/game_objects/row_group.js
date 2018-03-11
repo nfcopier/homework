@@ -1,16 +1,14 @@
 export default function (
-    Row
+    Row,
+    GameObject
 ) {
 
 const GROUP_HEIGHT = 75;
 const ROW_GAP = 5;
-const ROW_COUNT = 2;
 
 return function RowGroup({pointValue, color}, yPosition, gameTransform) {
 
-    const self = {};
-
-    self.transform = {
+    const transform = {
         x: gameTransform.x,
         y: yPosition,
         theta: 0,
@@ -18,36 +16,26 @@ return function RowGroup({pointValue, color}, yPosition, gameTransform) {
         height: GROUP_HEIGHT
     };
 
-    const rows = createRows();
+    const topRow = Row(0, transform.width);
+    const bottomRow = Row( topRow.getTransform().height + ROW_GAP, transform.width );
 
-    function createRows() {
-        let rowY = 0;
-        const results = [];
-        for (let i = 0; i < ROW_COUNT; i++) {
-            const row = Row(rowY, self.transform.width);
-            results.push( row );
-            rowY += row.transform.height + ROW_GAP;
-        }
-        return results;
-    }
+    const self = GameObject( transform );
 
-    self.getRows = function () { return rows; };
+    const initialize = function () {
+        self.addChild( topRow );
+        self.addChild( bottomRow );
+    };
 
     self.getColor = function () { return color; };
 
     self.getPointValue = function () { return pointValue; };
 
     self.getTopBrickCount = function () {
-        const topBricks = rows[0].getBricks();
+        const topBricks = topRow.getChildren();
         return topBricks.length;
     };
 
-    self.hasBricks = function () {
-        for (let row of rows) {
-            if (row.hasBricks()) return true;
-        }
-        return false;
-    };
+    initialize();
 
     return self;
 

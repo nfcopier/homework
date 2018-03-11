@@ -8,105 +8,90 @@ return function (ball, rowGroup) {
 
     const self = {};
 
+    const ballCenter = getCenterOf( ball.transform );
     let brokenBrickCount = 0;
     let clearedRowCount = 0;
-    let localBallTransform = toLocalCoords( ball.transform, rowGroup.transform );
+    const game = rowGroup.getParent();
 
     self.run = function () {
         const noCollision = !collidedWithGroup();
         if (noCollision) return;
-        for (let row of rowGroup.getRows()) {
+        for (let row of rowGroup.getChildren()) {
             doRowCollision( row );
         }
     };
 
     const collidedWithGroup = function () {
-        return collided( ball.transform, rowGroup.transform );
+        return collided( ball.transform, rowGroup.toAncestorCoords( game ) );
     };
 
     const doRowCollision = function (row) {
         const noCollision = !collidedWithRow( row );
         if (noCollision) return;
-        for (let brick of row.getBricks()) {
+        for (let brick of row.getChildren()) {
             doBrickCollision( row, brick );
         }
-        if (!row.hasBricks()) clearedRowCount += 1;
+        if (row.hasChildren()) return;
+        clearedRowCount += 1;
+        rowGroup.removeChild( row );
     };
 
     const collidedWithRow = function (row) {
-        return (
-            row.hasBricks() &&
-            collided( localBallTransform, row.transform )
-        );
+        const rowTransform = row.toAncestorCoords( game );
+        return collided( ball.transform, rowTransform );
     };
 
     const doBrickCollision = function (row, brick) {
-        const ballTransform =
-            toLocalCoords( localBallTransform, row.transform );
-        const noCollision = !collidedWithBrick( ballTransform, brick );
+        const brickTransform = brick.toAncestorCoords( game );
+        const noCollision = !collided( ball.transform, brickTransform );
         if (noCollision) return;
-        doReflection( ballTransform, brick );
-        row.removeBrick( brick );
+        doReflection( brickTransform );
+        row.removeChild( brick );
         brokenBrickCount += 1;
     };
-
-    const collidedWithBrick = function (ballTransform, brick) {
-        return collided( ballTransform, brick.transform );
-    };
-
-    function toLocalCoords (sourceTransform, targetTransform) {
-        return {
-            x: sourceTransform.x - targetTransform.x,
-            y: sourceTransform.y - targetTransform.y,
-            theta: sourceTransform.theta - targetTransform.theta,
-            width: sourceTransform.width,
-            height: sourceTransform.height
-        }
-    }
 
     const collided = function (transform1, transform2) {
         const detector = CollisionDetector( transform1, transform2 );
         return detector.collisionOccurred();
     };
 
-    const doReflection = function( ballTransform, brick ) {
-        const ballCenter = getCenterOf( ballTransform );
-        const brickCenter = getCenterOf( brick.transform );
-        if (ballCenter.x < brick.transform.x)
-            doLeftCollision( ballTransform, brick.transform );
-        else if (ballCenter.x > brick.transform.x + brick.transform.width)
-            doRightCollision( ballTransform, brick.transform );
+    const doReflection = function( brickTransform ) {
+        const brickCenter = getCenterOf( brickTransform );
+        if (ballCenter.x < brickTransform.x)
+            doLeftCollision( brickTransform );
+        else if (ballCenter.x > brickTransform.x + brickTransform.width)
+            doRightCollision( brickTransform );
         else if (ballCenter.y < brickCenter.y)
-            doTopCollision( ballTransform, brick.transform );
+            doTopCollision( brickTransform );
         else
-            doBottomCollision( ballTransform, brick.transform );
+            doBottomCollision( brickTransform );
     };
 
-    const getCenterOf = function (transform) {
+    function getCenterOf(transform) {
         return {
             x: transform.x + transform.width / 2,
             y: transform.y + transform.height / 2
         };
+    }
+
+    const doLeftCollision = function (brickTransform) {
+        const xDiff = brickTransform.x-ball.transform.x-ball.transform.width;
+        ball.adjustX( xDiff );
     };
 
-    const doLeftCollision = function (ballTransform, brickTransform) {
-        const xDiff = brickTransform.x - ballTransform.x - ballTransform.width;
-        ball.adjustX(xDiff);
+    const doRightCollision = function (brickTransform) {
+        const xDiff = brickTransform.x+brickTransform.width-ball.transform.x;
+        ball.adjustX( xDiff );
     };
 
-    const doRightCollision = function (ballTransform, brickTransform) {
-        const xDiff = brickTransform.x + brickTransform.width - ballTransform.x;
-        ball.adjustX(xDiff);
+    const doTopCollision = function (brickTransform) {
+        const yDiff = brickTransform.y-ball.transform.y-ball.transform.height;
+        ball.adjustY( yDiff );
     };
 
-    const doTopCollision = function (ballTransform, brickTransform) {
-        const yDiff = brickTransform.y - ballTransform.y - ballTransform.height;
-        ball.adjustY(yDiff);
-    };
-
-    const doBottomCollision = function (ballTransform, brickTransform) {
-        const yDiff = brickTransform.height + brickTransform.y - ballTransform.y;
-        ball.adjustY(yDiff);
+    const doBottomCollision = function (brickTransform) {
+        const yDiff = brickTransform.height+brickTransform.y-ball.transform.y;
+        ball.adjustY( yDiff );
     };
 
     self.scoreCollisions = function () {

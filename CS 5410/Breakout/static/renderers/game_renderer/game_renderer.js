@@ -11,7 +11,7 @@ export default function (
 
 return function GameRenderer(simulation) {
 
-    const self = Renderer( simulation.transform );
+    const self = Renderer( simulation.getTransform() );
 
     self.render = function () {
         clearCursor();
@@ -25,7 +25,7 @@ return function GameRenderer(simulation) {
     const drawGameOver = function () {
         const mainSpec = {
             text: "Game Over",
-            location: {x: simulation.transform.width / 2, y: 200},
+            location: {x: simulation.getTransform().width / 2, y: 200},
             font: "96px serif",
             color: "blue",
             alignment: "center",
@@ -34,7 +34,7 @@ return function GameRenderer(simulation) {
         self.graphics.drawText( mainSpec );
         const scoreSpec = {
             text: `Score: ${simulation.getScore()}`,
-            location: {x: simulation.transform.width / 2, y: 350},
+            location: {x: simulation.getTransform().width / 2, y: 350},
             font: "48px serif",
             color: "blue",
             alignment: "center",
@@ -43,14 +43,13 @@ return function GameRenderer(simulation) {
         self.graphics.drawText( scoreSpec );
     };
 
-
     const addChildren = function () {
         self.children.push( createPaddleRenderer() );
         for (let ball of simulation.getBalls())
             self.children.push( createBallRenderer( ball ) );
         self.children.push( createScoreRenderer() );
         self.children.push( createPaddlesRenderer() );
-        for (let rowGroup of simulation.getRowGroups())
+        for (let rowGroup of simulation.getChildren())
             self.children.push( createRowGroupRenderer( rowGroup ) )
         const countdown = simulation.getCountdown();
         if (countdown.value > 0)
@@ -68,13 +67,13 @@ return function GameRenderer(simulation) {
 
     const createScoreRenderer = function () {
         const score =  simulation.getScore();
-        const gameTransform = simulation.transform;
+        const gameTransform = simulation.getTransform();
         return ScoreRenderer( score, gameTransform );
     };
 
     const createPaddlesRenderer = function () {
         const paddleCount = simulation.getPaddleCount();
-        return PaddlesRenderer( paddleCount, simulation.transform );
+        return PaddlesRenderer( paddleCount, simulation.getTransform() );
     };
 
     const createRowGroupRenderer = function (rowGroup) {
@@ -87,7 +86,7 @@ return function GameRenderer(simulation) {
 
     const createAnalyticsRenderer = function() {
         const analytics = simulation.getAnalytics();
-        return new AnalyticsRenderer( analytics, simulation.transform );
+        return new AnalyticsRenderer( analytics, simulation.getTransform() );
     };
 
     const clearCursor = function () { self.graphics.clearCursor(); };
