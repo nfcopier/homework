@@ -1,6 +1,7 @@
 export default function (
     gameObjects,
     collisionSystems,
+    ParticleSystem,
     ScoreRepo,
     DifficultyRepo,
     Difficulties,
@@ -40,6 +41,9 @@ return function GameSimulation() {
 
     const self = gameObjects.GameObject( transform );
 
+    const scoreRepo = ScoreRepo();
+    const difficultyRepo = DifficultyRepo();
+    const particleSystem = new ParticleSystem();
     let paddle = null;
     let balls = [];
     let countdown = null;
@@ -51,8 +55,6 @@ return function GameSimulation() {
     let score = 0;
     let gameOver = false;
     let brokenBrickCount = 0;
-    const scoreRepo = ScoreRepo();
-    const difficultyRepo = DifficultyRepo();
     let difficulty = difficultyRepo.getDifficulty();
     let frameCount = 0;
     let fps = 0;
@@ -66,6 +68,7 @@ return function GameSimulation() {
         resetPaddle();
         resetCountdown();
         updateDifficulty();
+        particleSystem.reset();
     }
 
     function createRowGroups () {
@@ -137,6 +140,7 @@ return function GameSimulation() {
         if (topBrickBroken) paddle.half();
         checkBrickMilestone();
         if (!self.hasChildren()) resetGame();
+        particleSystem.update( elapsedTime );
     }
 
     const updateFps = function (elapsedTime) {
@@ -196,7 +200,8 @@ return function GameSimulation() {
     };
 
     const checkBrickCollisionsWith = function (ball) {
-        const collisionSystem = collisionSystems.BrickSystem(ball, self);
+        const collisionSystem =
+                  collisionSystems.BrickSystem( ball, self, particleSystem );
         collisionSystem.run();
         const newPoints = collisionSystem.scoreCollisions();
         brokenBrickCount += collisionSystem.getBrokenBricks();
@@ -338,6 +343,8 @@ return function GameSimulation() {
         for (let ball of balls)
             ball.setDifficulty( difficulty );
     };
+
+    self.getParticleSystem = function () { return particleSystem; };
 
     return self;
 

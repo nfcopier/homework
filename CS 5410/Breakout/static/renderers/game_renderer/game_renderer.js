@@ -6,6 +6,7 @@ export default function (
     PaddlesRenderer,
     RowGroupRenderer,
     AnalyticsRenderer,
+    ParticleRenderer,
     Renderer
 ) {
 
@@ -18,8 +19,10 @@ return function GameRenderer(simulation) {
         drawBackground();
         if (simulation.isGameOver())
             drawGameOver();
-        else
+        else {
             addChildren();
+            drawParticles();
+        }
     };
 
     const drawGameOver = function () {
@@ -97,6 +100,12 @@ return function GameRenderer(simulation) {
             bottomRight: {x: self.width, y: self.height},
             color: "#000033"
         });
+    };
+
+    const drawParticles = function () {
+        const particleSystem = simulation.getParticleSystem();
+        const renderer = ParticleRenderer( particleSystem, self.graphics );
+        renderer.render();
     };
 
     return self;

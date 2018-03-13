@@ -7,6 +7,7 @@ import brickRenderer from "./brick_renderer.js"
 import rowRenderer from "./row_renderer.js"
 import rowGroupRenderer from "./row_group_renderer.js"
 import analyticsRenderer from "./analytics_renderer.js"
+import particleRenderer from "./particle_system_renderer.js"
 import gameRenderer from "./game_renderer.js"
 
 export default function (
@@ -52,6 +53,8 @@ export default function (
         Renderer
     );
 
+    const ParticleRenderer = particleRenderer();
+
     return gameRenderer(
         CountdownRenderer,
         PaddleRenderer,
@@ -60,6 +63,7 @@ export default function (
         PaddlesRenderer,
         RowGroupRenderer,
         AnalyticsRenderer,
+        ParticleRenderer,
         Renderer
     );
 

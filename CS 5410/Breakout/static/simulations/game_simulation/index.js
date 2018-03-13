@@ -1,5 +1,6 @@
 import g from "./game_objects/index.js"
 import c from "./collision_systems/index.js"
+import p from "./particle_system.js"
 import gameSimulation from "./game_simulation.js"
 
 export default function (
@@ -15,9 +16,12 @@ export default function (
         Difficulties
     );
 
+    const ParticleSystem = p();
+
     return gameSimulation(
         gameObjects,
         collisionSystems,
+        ParticleSystem,
         ScoreRepo,
         DifficultyRepo,
         Difficulties,

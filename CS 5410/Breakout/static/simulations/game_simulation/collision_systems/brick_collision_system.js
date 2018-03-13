@@ -4,7 +4,7 @@ export default function (
 
 const ROW_POINT_VALUE = 25;
 
-return function (ball, game) {
+return function (ball, game, particleSystem) {
 
     const self = {};
 
@@ -57,6 +57,7 @@ return function (ball, game) {
         doReflection( brickTransform );
         brick.destroy();
         brickCount.count += 1;
+        particleSystem.addEffect( brickTransform );
     };
 
     const collided = function (transform1, transform2) {

@@ -15,10 +15,6 @@ return function Renderer(transform) {
         applyTransformTo( context );
         self.graphics = Graphics( context );
         self.render();
-        // context.beginPath();
-        // context.fillStyle = "red";
-        // context.arc(2.5, 2.5, 2.5, 0, 2*Math.PI);
-        // context.fill();
         renderChildrenTo( context );
         context.restore();
     };
