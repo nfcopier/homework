@@ -12,7 +12,9 @@ export default function (
 
 return function GameRenderer(simulation) {
 
-    const self = Renderer( simulation.getTransform() );
+    const transform = simulation.getTransform();
+
+    const self = Renderer( transform );
 
     const fetchImage = function () {
         const image = new Image();
@@ -116,7 +118,13 @@ return function GameRenderer(simulation) {
     };
 
     const drawBackgroundImage = function(image) { return function () {
-        const spec = { x: 0, y: 0, image: image };
+        const spec = {
+            x: transform.x,
+            y: transform.y,
+            image: image,
+            width: transform.width,
+            height: transform.height
+        };
         self.graphics.drawImage( spec );
     }};
 

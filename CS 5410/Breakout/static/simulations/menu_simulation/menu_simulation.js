@@ -152,9 +152,10 @@ return function MenuSimulation(gameSimulation) {
             ["Professor", "Dr. Dean Mathias"],
             ["Developer", "Nathan Copier"],
             [],
-            ["Built using HTML5 canvas."],
-            ["Gaussian function taken from sample code. Background image taken from"],
-            ["http://www.spyderonlines.com/picture/free-space-backgrounds.html."],
+            ["Gaussian function taken from sample code."],
+            ["Background: http://www.spyderonlines.com/picture/free-space-backgrounds.html"],
+            ["Brick overlay: https://pngtree.com/element/down?id=Mjg1MTQxOA==&type=1"],
+            ["Steel ball: https://pixabay.com/en/balls-many-small-steel-ball-steel-1378300/"],
             ["To see more of my homework projects go to: "],
             ["https://github.com/nfcopier/homework"]
         ];

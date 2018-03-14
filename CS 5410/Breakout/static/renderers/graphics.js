@@ -4,6 +4,13 @@ return function Graphics(context) {
 
     const self = {};
 
+    const addAlpha = function (alpha) {
+        const red = "0x" + context.fillStyle.slice(1,3);
+        const green = "0x" + context.fillStyle.slice(3,5);
+        const blue = "0x" + context.fillStyle.slice(5,7);
+        context.fillStyle = `rgba(${+red},${+green},${+blue},${alpha})`;
+    };
+
     self.clearCursor = function () {
         self.setCursor("default")
     };
@@ -14,6 +21,7 @@ return function Graphics(context) {
 
     self.drawRectangle = function (spec) {
         context.fillStyle = spec.color;
+        if (spec.alpha) addAlpha( spec.alpha );
         context.fillRect(
             spec.upperLeft.x,
             spec.upperLeft.y,
@@ -53,7 +61,13 @@ return function Graphics(context) {
     };
 
     self.drawImage = function (spec) {
-        context.drawImage( spec.image, spec.x, spec.y );
+        context.drawImage(
+            spec.image,
+            spec.x,
+            spec.y,
+            spec.width,
+            spec.height
+        );
     };
 
     return self;
