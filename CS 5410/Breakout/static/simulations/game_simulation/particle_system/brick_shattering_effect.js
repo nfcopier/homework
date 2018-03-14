@@ -7,10 +7,10 @@ const ParticleCount = {
     COLUMN: 25
 };
 
-const ParticleSpeed = { MEAN: 0.07, STD_DEV: 0.025 };
-const ParticleLifetime = { MEAN: 500, STD_DEV: 200 };
+const ParticleSpeed = { MEAN: 0.07, STD_DEV: 0.01 };
+const ParticleLifetime = { MEAN: 500, STD_DEV: 400 };
 
-return function BrickShatteringEffect(color, transform) {
+return function BrickShatteringEffect(transform, {color, velocity}) {
 
     const self = {};
 
@@ -23,13 +23,16 @@ return function BrickShatteringEffect(color, transform) {
     const createParticles = function* () {
         for (let i = 0; i < ParticleCount.ROW; i++) {
             for (let j = 0; j < ParticleCount.COLUMN; j++) {
-                let speed = random.Gaussian( ParticleSpeed.MEAN, ParticleSpeed.STD_DEV );
+                let v = {
+                    x: random.Gaussian( velocity.x, ParticleSpeed.STD_DEV ),
+                    y: random.Gaussian( velocity.y, ParticleSpeed.STD_DEV )
+                };
                 let lifetime = random.Gaussian( ParticleLifetime.MEAN, ParticleLifetime.STD_DEV );
                 yield {
                     x: i * particleWidth,
                     y: j * particleHeight,
                     size: particleSize,
-                    velocity: { x: 0, y: Math.abs(speed) },
+                    velocity: { x: v.x, y: v.y },
                     lifetime: lifetime
                 }
             }

@@ -12,10 +12,10 @@ return function () {
 
     let masterList = [];
 
-    self.addEffect = function (type, color, transform) {
+    self.addEffect = function (type, transform, params = {}) {
         const Effect = registry[type];
         if (!Effect) return;
-        const effect = Effect( color, transform );
+        const effect = Effect( transform, params );
         masterList.push( effect );
     };
 

@@ -141,6 +141,8 @@ return function (paddleTransform, difficulty) {
         return { x: vector.x / mag, y: vector.y / mag };
     }
 
+    self.getVelocity = function () { return velocity; };
+
     return self;
 
 }
