@@ -1,6 +1,6 @@
-import g from "./game_objects/index.js"
-import c from "./collision_systems/index.js"
-import p from "./particle_system.js"
+import g              from "./game_objects/index.js"
+import c              from "./collision_systems/index.js"
+import p              from "./particle_system/index.js"
 import gameSimulation from "./game_simulation.js"
 
 export default function (

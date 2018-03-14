@@ -123,6 +123,7 @@ return function GameSimulation() {
         countdown -= elapsedTime;
         gameTime += elapsedTime;
         updateFps( elapsedTime );
+        particleSystem.update( elapsedTime );
         if (countdown <= 0) self.update = updateGame;
     }
 
@@ -133,6 +134,7 @@ return function GameSimulation() {
         updateFps( elapsedTime );
         updatePlayerDirection( actions.move );
         paddle.update( elapsedTime );
+        particleSystem.update( elapsedTime );
         const topRowBricksBefore = topGroup.getTopBrickCount();
         updateBalls( elapsedTime );
         const topRowBricksAfter = topGroup.getTopBrickCount();
@@ -140,7 +142,6 @@ return function GameSimulation() {
         if (topBrickBroken) paddle.half();
         checkBrickMilestone();
         if (!self.hasChildren()) resetGame();
-        particleSystem.update( elapsedTime );
     }
 
     const updateFps = function (elapsedTime) {
@@ -344,7 +345,7 @@ return function GameSimulation() {
             ball.setDifficulty( difficulty );
     };
 
-    self.getParticleSystem = function () { return particleSystem; };
+    self.getParticleEffects = function () { return particleSystem.getEffects(); };
 
     return self;
 

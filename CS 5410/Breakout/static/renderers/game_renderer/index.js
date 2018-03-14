@@ -1,14 +1,14 @@
-import countdownRenderer from "./countdown_renderer.js"
-import paddleRenderer from "./paddle_renderer.js"
-import ballRenderer from "./ball_renderer.js"
-import scoreRenderer from "./score_renderer.js"
-import paddlesRenderer from "./paddles_renderer.js"
-import brickRenderer from "./brick_renderer.js"
-import rowRenderer from "./row_renderer.js"
-import rowGroupRenderer from "./row_group_renderer.js"
-import analyticsRenderer from "./analytics_renderer.js"
-import particleRenderer from "./particle_system_renderer.js"
-import gameRenderer from "./game_renderer.js"
+import countdownRenderer      from "./countdown_renderer.js"
+import paddleRenderer         from "./paddle_renderer.js"
+import ballRenderer           from "./ball_renderer.js"
+import scoreRenderer          from "./score_renderer.js"
+import paddlesRenderer        from "./paddles_renderer.js"
+import brickRenderer          from "./brick_renderer.js"
+import rowRenderer            from "./row_renderer.js"
+import rowGroupRenderer       from "./row_group_renderer.js"
+import analyticsRenderer      from "./analytics_renderer.js"
+import particleEffectRenderer from "./particle_effect_renderer.js"
+import gameRenderer           from "./game_renderer.js"
 
 export default function (
     Renderer
@@ -53,7 +53,9 @@ export default function (
         Renderer
     );
 
-    const ParticleRenderer = particleRenderer();
+    const ParticleEffectRenderer = particleEffectRenderer(
+        Renderer
+    );
 
     return gameRenderer(
         CountdownRenderer,
@@ -63,7 +65,7 @@ export default function (
         PaddlesRenderer,
         RowGroupRenderer,
         AnalyticsRenderer,
-        ParticleRenderer,
+        ParticleEffectRenderer,
         Renderer
     );
 

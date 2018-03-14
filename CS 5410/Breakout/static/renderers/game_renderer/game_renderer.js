@@ -6,7 +6,7 @@ export default function (
     PaddlesRenderer,
     RowGroupRenderer,
     AnalyticsRenderer,
-    ParticleRenderer,
+    ParticleEffectRenderer,
     Renderer
 ) {
 
@@ -21,7 +21,6 @@ return function GameRenderer(simulation) {
             drawGameOver();
         else {
             addChildren();
-            drawParticles();
         }
     };
 
@@ -54,6 +53,9 @@ return function GameRenderer(simulation) {
         self.children.push( createPaddlesRenderer() );
         for (let rowGroup of simulation.getChildren())
             self.children.push( createRowGroupRenderer( rowGroup ) )
+        for (let effect of simulation.getParticleEffects()) {
+            self.children.push( createParticleEffectRenderer( effect ) )
+        }
         const countdown = simulation.getCountdown();
         if (countdown.value > 0)
             self.children.push( createCountdownRenderer( countdown ) );
@@ -83,6 +85,10 @@ return function GameRenderer(simulation) {
         return RowGroupRenderer( rowGroup );
     };
 
+    const createParticleEffectRenderer = function (effect) {
+        return ParticleEffectRenderer( effect );
+    };
+
     const createCountdownRenderer = function (countdown) {
         return CountdownRenderer( countdown );
     };
@@ -100,12 +106,6 @@ return function GameRenderer(simulation) {
             bottomRight: {x: self.width, y: self.height},
             color: "#000033"
         });
-    };
-
-    const drawParticles = function () {
-        const particleSystem = simulation.getParticleSystem();
-        const renderer = ParticleRenderer( particleSystem, self.graphics );
-        renderer.render();
     };
 
     return self;

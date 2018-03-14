@@ -54,10 +54,11 @@ return function (ball, game, particleSystem) {
         const brickTransform = brick.toAncestorCoords( game );
         const noCollision = !collided( ball.transform, brickTransform );
         if (noCollision) return;
+        const color = brick.getParent().getParent().getColor();
         doReflection( brickTransform );
         brick.destroy();
         brickCount.count += 1;
-        particleSystem.addEffect( brickTransform );
+        particleSystem.addEffect( "brick shattering", color, brickTransform );
     };
 
     const collided = function (transform1, transform2) {
