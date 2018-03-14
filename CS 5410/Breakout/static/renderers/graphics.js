@@ -52,6 +52,10 @@ return function Graphics(context) {
         );
     };
 
+    self.drawImage = function (spec) {
+        context.drawImage( spec.image, spec.x, spec.y );
+    };
+
     return self;
 
 }

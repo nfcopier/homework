@@ -153,6 +153,8 @@ return function MenuSimulation(gameSimulation) {
             ["Developer", "Nathan Copier"],
             [],
             ["Built using HTML5 canvas."],
+            ["Gaussian function taken from sample code. Background image taken from"],
+            ["http://www.spyderonlines.com/picture/free-space-backgrounds.html."],
             ["No other libraries have been used."],
             ["To see more of my homework projects go to: "],
             ["https://github.com/nfcopier/homework"]

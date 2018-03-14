@@ -14,6 +14,14 @@ return function GameRenderer(simulation) {
 
     const self = Renderer( simulation.getTransform() );
 
+    const fetchImage = function () {
+        const image = new Image();
+        image.src = "./static/images/space_background.jpg";
+        image.onload = function () {
+            drawBackground = drawBackgroundImage( image );
+        };
+    };
+
     self.render = function () {
         clearCursor();
         drawBackground();
@@ -53,9 +61,8 @@ return function GameRenderer(simulation) {
         self.children.push( createPaddlesRenderer() );
         for (let rowGroup of simulation.getChildren())
             self.children.push( createRowGroupRenderer( rowGroup ) )
-        for (let effect of simulation.getParticleEffects()) {
+        for (let effect of simulation.getParticleEffects())
             self.children.push( createParticleEffectRenderer( effect ) )
-        }
         const countdown = simulation.getCountdown();
         if (countdown.value > 0)
             self.children.push( createCountdownRenderer( countdown ) );
@@ -100,13 +107,22 @@ return function GameRenderer(simulation) {
 
     const clearCursor = function () { self.graphics.clearCursor(); };
 
-    const drawBackground = function () {
+    const drawBackgroundRectangle = function () {
         self.graphics.drawRectangle({
             upperLeft: {x: 0, y: 0},
             bottomRight: {x: self.width, y: self.height},
             color: "#000033"
         });
     };
+
+    const drawBackgroundImage = function(image) { return function () {
+        const spec = { x: 0, y: 0, image: image };
+        self.graphics.drawImage( spec );
+    }};
+
+    let drawBackground = drawBackgroundRectangle;
+
+    fetchImage();
 
     return self;
 
