@@ -24,7 +24,6 @@ return function (effect) {
             },
             color: color
         };
-        if (spec.bottomRight.x > 59) debugger;
         self.graphics.drawRectangle( spec );
     };
     
