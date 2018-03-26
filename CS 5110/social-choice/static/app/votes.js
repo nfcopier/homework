@@ -10,6 +10,18 @@ return function Votes(candidates) {
 
     const votes = Collection();
 
+    self.add = function (name, choices) {
+        const choiceTree = BinaryTree();
+        for (let choice of choices) {
+            choiceTree.insert(choice);
+        }
+        return {
+            name: name,
+            choices: choiceTree,
+            isDisabled: false
+        }
+    };
+
     self.addRandom = function (count) {
         for (let vote of _generateRandomVotes(count))
             votes.add( vote );
@@ -24,6 +36,7 @@ return function Votes(candidates) {
         return {
             name: _generateRandomName(),
             choices: _generateRandomChoices(),
+            isDisabled: false
         }
     };
 

@@ -1,6 +1,6 @@
 import utils from "./utils/index.js"
-import votes from "./votes/index.js"
-import app from "./app.js"
+import votes from "./votes.js"
+import app   from "./app.js"
 
 export default function (
     libraries
