@@ -17,7 +17,7 @@ return function Tabs(app) {
     const contents = $("<div>");
 
     const tabs = [
-        InputTab( app.input ),
+        InputTab( app.votes ),
         GraphTab( app.majority ),
         ResultsTab( app.results ),
     ];

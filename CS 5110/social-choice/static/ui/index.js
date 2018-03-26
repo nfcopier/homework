@@ -4,31 +4,30 @@ import resultsTab from "./results_tab/index.js"
 import tabs from "./tabs.js"
 
 export default function (
-    backbone,
-    $
+    libraries
 ) {
 
     const InputTab = inputTab(
-        $,
-        backbone.View
+        libraries.$,
+        libraries.backbone.View
     );
 
     const GraphTab = graphTab(
-        $,
-        backbone.View
+        libraries.$,
+        libraries.backbone.View
     );
 
     const ResultsTab = resultsTab(
-        $,
-        backbone.View
+        libraries.$,
+        libraries.backbone.View
     );
 
     return tabs(
         InputTab,
         GraphTab,
         ResultsTab,
-        $,
-        backbone.View
+        libraries.$,
+        libraries.backbone.View
     );
 
 }

@@ -1,15 +1,19 @@
-export default function () {
+import utils from "./utils/index.js"
+import votes from "./votes/index.js"
+import app from "./app.js"
 
-return function App() {
+export default function (
+    libraries
+) {
 
-    const self = {};
+    const Votes = votes(
+        utils.nameList,
+        utils.BinaryTree,
+        libraries.backbone.Collection
+    );
 
-    self.input = {};
-
-    self.start = function () { };
-
-    return self;
-
-}
+    return app(
+        Votes
+    );
 
 }
