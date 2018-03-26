@@ -3,11 +3,11 @@ export default function (
     View
 ) {
 
-    const LABEL_TEXT = "Majority Graph";
+    const LABEL_TEXT = "Results";
     const HIDDEN_CLASS = "is-hidden";
     const SELECTED_CLASS = "is-active";
 
-    return function GraphTab(majority) {
+    return function ResultsTab(results) {
 
         const self = new View();
 

@@ -13,10 +13,8 @@ export default function (
         $
     );
 
-    const daApp = App();
-    const daUi = Ui(daApp);
+    const daUi = Ui(App());
 
     $(".main").html(daUi.render().el);
-    daApp.start();
 
 }

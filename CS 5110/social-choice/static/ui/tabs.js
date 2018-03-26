@@ -1,23 +1,25 @@
 export default function (
     InputTab,
     GraphTab,
-    BordaTab,
+    ResultsTab,
     $,
     View
 ) {
+
+const TABS_CLASSES = "tabs is-centered";
 
 return function Tabs(app) {
 
     const self = new View();
 
-    const barWrapper = $("<div>").addClass("tabs is-centered");
+    const barWrapper = $("<div>").addClass(TABS_CLASSES);
     const tabBar = $("<ul>");
     const contents = $("<div>");
 
     const tabs = [
         InputTab( app.input ),
-        // GraphTab( app.majority ),
-        // BordaTab( app.borda ),
+        GraphTab( app.majority ),
+        ResultsTab( app.results ),
     ];
 
     self.render = function () {
@@ -25,6 +27,7 @@ return function Tabs(app) {
         _listenToTabs();
         _renderTabLabels();
         _renderTabContents();
+        tabs[0].select();
         return self;
     };
 

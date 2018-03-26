@@ -11,17 +11,23 @@ return function InputTab(input) {
 
     const self = new View();
 
-    const _triggerSelect = function () {
-        self.trigger("select");
+    const _triggerSelect = function (e) {
+        e.preventDefault();
+        self.trigger("select", self);
     };
 
     const anchor = $("<a>").text(LABEL_TEXT);
-    self.listenTo(anchor, "click", _triggerSelect);
     self.label = $("<li>").html(anchor);
 
     self.render = function() {
+        anchor.click(_triggerSelect);
         self.unselect();
         return self;
+    };
+
+    self.select = function() {
+        self.label.addClass(SELECTED_CLASS);
+        self.$el.removeClass(HIDDEN_CLASS);
     };
 
     self.unselect = function() {
