@@ -9,7 +9,7 @@ export default function (
 
     return function GraphTab(majority) {
 
-        const self = new View();
+        const self = View();
 
         const _triggerSelect = function (e) {
             e.preventDefault();

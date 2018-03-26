@@ -1,5 +1,5 @@
 export default function (
-    InputTab,
+    VotesTab,
     GraphTab,
     ResultsTab,
     $,
@@ -17,7 +17,7 @@ return function Tabs(app) {
     const contents = $("<div>");
 
     const tabs = [
-        InputTab( app.votes ),
+        VotesTab( app.votes ),
         GraphTab( app.majority ),
         ResultsTab( app.results ),
     ];

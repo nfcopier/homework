@@ -7,9 +7,9 @@ const LABEL_TEXT = "Votes";
 const HIDDEN_CLASS = "is-hidden";
 const SELECTED_CLASS = "is-active";
 
-return function InputTab(input) {
+return function VotesTab(votes) {
 
-    const self = new View();
+    const self = View();
 
     const _triggerSelect = function (e) {
         e.preventDefault();
