@@ -1,30 +1,38 @@
 export default function (
-    nameList,
-    BinaryTree,
-    Collection
+    names,
+    BinaryTree
 ) {
 
 return function Votes(candidates) {
 
     const self = {};
 
-    const votes = Collection();
+    let votes = [];
+
+    self[Symbol.iterator] = function* () {
+        yield* votes;
+    };
 
     self.add = function (name, choices) {
+        const vote = _createVoteFrom(name, choices);
+        votes.push(vote);
+    };
+
+    const _createVoteFrom = function (name, choices) {
         const choiceTree = BinaryTree();
         for (let choice of choices) {
             choiceTree.insert(choice);
         }
         return {
-            name: name,
-            choices: choiceTree,
+            name      : name,
+            choices   : choiceTree,
             isDisabled: false
-        }
+        };
     };
 
     self.addRandom = function (count) {
         for (let vote of _generateRandomVotes(count))
-            votes.add( vote );
+            votes.push( vote );
     };
 
     const _generateRandomVotes = function* (count) {
@@ -34,15 +42,10 @@ return function Votes(candidates) {
 
     const _createRandomVote = function () {
         return {
-            name: _generateRandomName(),
+            name: names.random(),
             choices: _generateRandomChoices(),
             isDisabled: false
         }
-    };
-
-    const _generateRandomName = function () {
-        const index = Math.floor(Math.random() * nameList.length);
-        return nameList[index];
     };
 
     const _generateRandomChoices = function () {

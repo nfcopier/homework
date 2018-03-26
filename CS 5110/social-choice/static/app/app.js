@@ -1,4 +1,5 @@
 export default function (
+    Candidates,
     Votes
 ) {
 
@@ -6,7 +7,9 @@ export default function (
 
         const self = {};
 
-        const votes = Votes([]);
+        const candidates = Candidates();
+
+        const votes = Votes(candidates);
 
         self.votes = function () { return votes; };
 

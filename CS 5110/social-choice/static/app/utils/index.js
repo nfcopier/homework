@@ -1,7 +1,7 @@
 import BinaryTree from "./binary_tree.js"
-import nameList from "./name_list.js"
+import names      from "./names.js"
 
 export default {
     BinaryTree,
-    nameList
+    names: names
 }
