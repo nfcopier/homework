@@ -1,42 +1,15 @@
 export default function (
-    $,
-    View
+    Tab
 ) {
 
-    const LABEL_TEXT = "Results";
-    const HIDDEN_CLASS = "is-hidden";
-    const SELECTED_CLASS = "is-active";
+const LABEL_TEXT = "Results";
 
-    return function ResultsTab(results) {
+return function ResultsTab(results) {
 
-        const self = View();
+    const self = Tab( LABEL_TEXT );
 
-        const _triggerSelect = function (e) {
-            e.preventDefault();
-            self.trigger("select", self);
-        };
+    return self;
 
-        const anchor = $("<a>").text(LABEL_TEXT);
-        self.label = $("<li>").html(anchor);
-
-        self.render = function() {
-            anchor.click(_triggerSelect);
-            self.unselect();
-            return self;
-        };
-
-        self.select = function() {
-            self.label.addClass(SELECTED_CLASS);
-            self.$el.removeClass(HIDDEN_CLASS);
-        };
-
-        self.unselect = function() {
-            self.label.removeClass(SELECTED_CLASS);
-            self.$el.addClass(HIDDEN_CLASS);
-        };
-
-        return self;
-
-    }
+}
 
 }

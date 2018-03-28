@@ -3,5 +3,5 @@ import names      from "./names.js"
 
 export default {
     BinaryTree,
-    names: names
+    names: names()
 }

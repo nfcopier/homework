@@ -11,7 +11,8 @@ export default function (
 
         const votes = Votes(candidates);
 
-        self.votes = function () { return votes; };
+        self.candidates = () => candidates;
+        self.votes = () => votes;
 
         self.start = function () { };
 

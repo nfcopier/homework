@@ -27,6 +27,8 @@ return function Candidates() {
         return newCandidates;
     };
 
+    self.toArray = () => Array.from( candidates );
+
     const _generateRandom = function* (count) {
         for (let i = 0; i < count; i++)
             yield _createRandomCandidate();
@@ -39,12 +41,14 @@ return function Candidates() {
         }
     };
 
+    self.count = () => candidates.length;
+
     const ids = function* () {
         let nextId = 1;
         while (true) {
             yield nextId++;
         }
-    };
+    }();
 
     return self;
 

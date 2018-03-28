@@ -24,6 +24,7 @@ return function Votes(candidates) {
             choiceTree.insert(choice);
         }
         return {
+            id        : ids.next().value,
             name      : name,
             choices   : choiceTree,
             isDisabled: false
@@ -42,8 +43,9 @@ return function Votes(candidates) {
 
     const _createRandomVote = function () {
         return {
-            name: names.random(),
-            choices: _generateRandomChoices(),
+            id        : ids.next().value,
+            name      : names.random(),
+            choices   : _generateRandomChoices(),
             isDisabled: false
         }
     };
@@ -56,6 +58,15 @@ return function Votes(candidates) {
         }
         return choiceTree;
     };
+
+    self.toArray = () => Array.from( self );
+
+    const ids = function* () {
+        let nextId = 1;
+        while (true) {
+            yield nextId++;
+        }
+    }();
 
     return self;
 

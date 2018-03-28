@@ -1,3 +1,5 @@
+import table      from "./table.js"
+import tab        from "./tab.js"
 import votesTab   from "./votes_tab/index.js"
 import graphTab   from "./graph_tab/index.js"
 import resultsTab from "./results_tab/index.js"
@@ -7,19 +9,28 @@ export default function (
     libraries
 ) {
 
-    const VotesTab = votesTab(
+    const Table = table(
+        libraries.backbone.View,
+        libraries.$
+    );
+
+    const Tab = tab(
         libraries.$,
         libraries.backbone.View
+    );
+
+    const VotesTab = votesTab(
+        libraries.backbone.View,
+        Table,
+        Tab
     );
 
     const GraphTab = graphTab(
-        libraries.$,
-        libraries.backbone.View
+        Tab
     );
 
     const ResultsTab = resultsTab(
-        libraries.$,
-        libraries.backbone.View
+        Tab
     );
 
     return tabs(
