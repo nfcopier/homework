@@ -10,16 +10,16 @@ const TABS_CLASSES = "tabs is-centered";
 
 return function Tabs(app) {
 
-    const self = new View();
+    const self = new View({ className: "main-content container" });
 
     const barWrapper = $("<div>").addClass(TABS_CLASSES);
     const tabBar = $("<ul>");
-    const contents = $("<div>");
+    const contents = $("<div>").addClass( "tab-content" );
 
     const tabs = [
-        VotesTab( app.candidates(), app.votes() ),
+        VotesTab( app.candidates(), app.votes(), app.results() ),
         GraphTab( app.majority ),
-        ResultsTab( app.results ),
+        ResultsTab( app.results() ),
     ];
 
     self.render = function () {

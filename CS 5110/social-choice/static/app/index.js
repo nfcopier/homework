@@ -1,7 +1,8 @@
 import utils from "./utils/index.js"
 import candidates from "./candidates.js"
 import votes from "./votes.js"
-import app   from "./app.js"
+import results from "./results.js"
+import app from "./app.js"
 
 export default function (
     libraries
@@ -17,9 +18,12 @@ export default function (
         libraries.backbone.Collection
     );
 
+    const Results = results();
+
     return app(
         Candidates,
-        Votes
+        Votes,
+        Results
     );
 
 }

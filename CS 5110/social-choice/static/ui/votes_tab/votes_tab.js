@@ -6,12 +6,12 @@ export default function (
 
     const LABEL_TEXT = "Votes";
 
-    return function VotesTab(candidates, votes) {
+    return function VotesTab(candidates, votes, results) {
 
         const self = Tab( LABEL_TEXT );
 
         const candidateTable = CandidateTable( candidates );
-        const voterTable = VoterTable( candidates, votes );
+        const voterTable = VoterTable( candidates, votes, results );
 
         const _superRender = self.render;
         self.render = function () {

@@ -8,7 +8,7 @@ const SELECTED_CLASS = "is-active";
 
 return function Tab(label) {
 
-    const self = View();
+    const self = View({ className: HIDDEN_CLASS });
 
     const _triggerSelect = function (e) {
         e.preventDefault();
@@ -26,6 +26,7 @@ return function Tab(label) {
     self.select = function() {
         self.label.addClass( SELECTED_CLASS );
         self.$el.removeClass( HIDDEN_CLASS );
+        self.render();
     };
 
     self.unselect = function() {

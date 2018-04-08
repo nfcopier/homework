@@ -30,6 +30,7 @@ export default function (
     );
 
     const ResultsTab = resultsTab(
+        Table,
         Tab
     );
 

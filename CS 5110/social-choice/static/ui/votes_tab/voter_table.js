@@ -3,7 +3,7 @@ export default function (
     Table
 ) {
 
-    return function VoterTable(candidates, voters) {
+    return function VoterTable(candidates, voters, results) {
 
         const self = View();
 
@@ -20,6 +20,7 @@ export default function (
             else {
                 voters.addRandom(count);
                 self.render();
+                results.calculate();
             }
         };
 
@@ -50,7 +51,7 @@ export default function (
             const names = array.map( c => c.name );
             const ids = array.map( c => c.id );
             const table = Table(
-                ["Id", "Name", ...names],
+                ["Id", "Voter Name", ...names],
                 ["id", "name", ...ids],
                 voters.toArray().map( _toViewModel )
             );
@@ -63,10 +64,9 @@ export default function (
                 name: vote.name
             };
             const choices = Array.from( vote.choices );
-            const noVoteCount = candidates.count() - choices.length;
             Array.from( candidates ).forEach( c => model[c.id] = 0 );
             choices.forEach( (choice, index) => {
-                model[choice.value] = index + 1 + noVoteCount;
+                model[choice.value] = candidates.count() - index;
             });
             return model;
         };

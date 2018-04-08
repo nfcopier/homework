@@ -1,6 +1,7 @@
 export default function (
     Candidates,
-    Votes
+    Votes,
+    Results
 ) {
 
     return function App() {
@@ -8,11 +9,12 @@ export default function (
         const self = {};
 
         const candidates = Candidates();
-
-        const votes = Votes(candidates);
+        const votes = Votes( candidates );
+        const results = Results( candidates, votes );
 
         self.candidates = () => candidates;
         self.votes = () => votes;
+        self.results = () => results;
 
         self.start = function () { };
 
