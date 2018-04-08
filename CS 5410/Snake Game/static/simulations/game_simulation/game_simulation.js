@@ -67,8 +67,9 @@ return function GameSimulation() {
         const food = squareFactory.spawnRandom();
         if (obstacles.intersects( food ))
             return createFood;
-        if (snake.intersects([food]))
-            return createFood();
+        for (let segment of snake.segments())
+            if (segment.intersects(food))
+                return createFood();
         return food;
     };
 
@@ -149,9 +150,11 @@ return function GameSimulation() {
     };
 
     const checkObstacleHit = function () {
-        if (snake.intersects(obstacles.children()))
+        if (snake.intersects( obstacles.children() ))
             endGame();
         if (snake.exceeds( ROW_COUNT, COLUMN_COUNT ))
+            endGame();
+        if (snake.intersects( snake.segments().slice(1) ))
             endGame();
     };
 
