@@ -2,6 +2,10 @@ export default function (
     CountdownRenderer,
     ScoreRenderer,
     AnalyticsRenderer,
+    GameAreaRenderer,
+    FoodRenderer,
+    ObstacleRenderer,
+    SnakeSegmentRenderer,
     Renderer
 ) {
 
@@ -42,11 +46,22 @@ return function GameRenderer(simulation) {
     };
 
     const addChildren = function () {
+        self.children.push( createGameAreaRenderer() );
+        for (let food of simulation.getFood())
+            self.children.push( createFoodRenderer( food ) );
+        for (let obstacle of simulation.getObstacles())
+            self.children.push( createObstacleRenderer( obstacle ) );
+        for (let snakeSegment of simulation.getSnakeSegments())
+            self.children.push( createSnakeSegmentRenderer( snakeSegment ) );
         self.children.push( createScoreRenderer() );
         const countdown = simulation.getCountdown();
         if (countdown.value > 0)
             self.children.push( createCountdownRenderer( countdown ) );
         self.children.push( createAnalyticsRenderer() );
+    };
+
+    const createGameAreaRenderer = function () {
+        return GameAreaRenderer( transform );
     };
 
     const createScoreRenderer = function () {
@@ -65,6 +80,18 @@ return function GameRenderer(simulation) {
     };
 
     const clearCursor = function () { self.graphics.clearCursor(); };
+
+    const createFoodRenderer = function (transform) {
+        return new FoodRenderer( transform );
+    };
+
+    const createObstacleRenderer = function (transform) {
+        return new ObstacleRenderer( transform );
+    };
+
+    const createSnakeSegmentRenderer = function (transform) {
+        return new SnakeSegmentRenderer( transform );
+    };
 
     return self;
 

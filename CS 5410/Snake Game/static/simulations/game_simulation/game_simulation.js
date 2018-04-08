@@ -6,6 +6,10 @@ export default function (
     Actions
 ) {
 
+const ROW_COUNT = 48;
+const COLUMN_COUNT = 64;
+const OBSTACLE_COUNT = 15;
+
 const Multipliers = {
     EASY: 0.5,
     NORMAL: 1,
@@ -26,6 +30,8 @@ return function GameSimulation() {
 
     const scoreRepo = ScoreRepo();
     const difficultyRepo = DifficultyRepo();
+    const squareFactory = gameObjects.SquareFactory( ROW_COUNT, COLUMN_COUNT, transform );
+    const obstacles = gameObjects.Obstacles( squareFactory );
     let countdown = null;
     let scoreMultiplier = null;
     let otherAction = Actions.NONE;
@@ -37,7 +43,9 @@ return function GameSimulation() {
     let fps = 0;
     let timeSinceLastCheck = 0;
 
-    resetGame();
+    const init = function() {
+        resetGame();
+    };
 
     function resetGame() {
         resetCountdown();
@@ -128,6 +136,18 @@ return function GameSimulation() {
         };
     };
 
+    self.getFood = function() {
+        return [];
+    };
+
+    self.getObstacles = function() {
+        return obstacles.children().map( o => o.getTransform());
+    };
+
+    self.getSnakeSegments = function() {
+        return [];
+    };
+
     self.isGameOver = function () { return gameOver; };
 
     self.updateDifficulty = function () {
@@ -137,6 +157,8 @@ return function GameSimulation() {
         for (let ball of balls)
             ball.setDifficulty( difficulty );
     };
+
+    init();
 
     return self;
 
