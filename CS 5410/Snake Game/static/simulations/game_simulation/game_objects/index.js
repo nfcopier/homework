@@ -2,9 +2,11 @@ import gameObject from "./game_object.js"
 import square from "./square.js"
 import squareFactory from "./square_factory.js"
 import obstacles from "./obstacles.js"
+import snake from "./snake.js"
 
 export default function (
-    Difficulties
+    Difficulties,
+    Directions
 ) {
 
     const GameObject = gameObject();
@@ -17,9 +19,14 @@ export default function (
         Square
     );
 
+    const Snake = snake(
+        Directions
+    );
+
     return {
         GameObject: GameObject,
         SquareFactory: SquareFactory,
-        Obstacles: Obstacles
+        Obstacles: Obstacles,
+        Snake: Snake
     }
 }

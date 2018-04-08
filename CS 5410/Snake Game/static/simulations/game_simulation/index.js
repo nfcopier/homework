@@ -5,11 +5,13 @@ export default function (
     ScoreRepo,
     DifficultyRepo,
     Difficulties,
+    Directions,
     Actions
 ) {
 
     const gameObjects = g(
-        Difficulties
+        Difficulties,
+        Directions
     );
 
     return gameSimulation(
@@ -17,6 +19,7 @@ export default function (
         ScoreRepo,
         DifficultyRepo,
         Difficulties,
+        Directions,
         Actions
     );
 

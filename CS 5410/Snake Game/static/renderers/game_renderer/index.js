@@ -36,7 +36,7 @@ export default function (
     );
 
     const SnakeSegmentRenderer = blockRenderer(
-        "#bda27f",
+        "yellow",
         Renderer
     );
 

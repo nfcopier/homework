@@ -5,6 +5,7 @@ import gameSimulation from "./game_simulation/index.js"
 
 export default function (
     Difficulties,
+    Directions,
     Actions
 ) {
 
@@ -25,6 +26,7 @@ export default function (
         ScoreRepo,
         DifficultyRepo,
         Difficulties,
+        Directions,
         Actions
     );
 

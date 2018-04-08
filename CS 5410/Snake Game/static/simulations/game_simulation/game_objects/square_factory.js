@@ -12,8 +12,15 @@ return function SquareFactory(rowCount, columnCount, transform) {
     };
 
     self.spawnRandom = function () {
-        const location = randomLocation();
-        return Square(location, createSquareTransform(location));
+        return createSquareAt( randomLocation() );
+    };
+
+    self.spawnAt = function (location) {
+        return createSquareAt( location );
+    };
+
+    const createSquareAt = function (location) {
+        return Square(location, createSquareTransform(location))
     };
 
     const createSquareTransform = function (location) {

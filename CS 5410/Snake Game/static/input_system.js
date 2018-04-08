@@ -58,6 +58,10 @@ return function InputSystem(canvas) {
                 return Actions.MOVE_LEFT;
             case Directions.RIGHT:
                 return Actions.MOVE_RIGHT;
+            case Directions.TOP:
+                return Actions.MOVE_UP;
+            case Directions.BOTTOM:
+                return Actions.MOVE_DOWN;
             default:
                 return Actions.NONE;
         }
