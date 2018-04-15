@@ -1,7 +1,4 @@
 export default function (
-    VotesTab,
-    GraphTab,
-    ResultsTab,
     $,
     View
 ) {
@@ -17,9 +14,6 @@ return function Tabs(app) {
     const contents = $("<div>").addClass( "tab-content" );
 
     const tabs = [
-        VotesTab( app.candidates(), app.votes(), app.results() ),
-        GraphTab( app.majority ),
-        ResultsTab( app.results() ),
     ];
 
     self.render = function () {
