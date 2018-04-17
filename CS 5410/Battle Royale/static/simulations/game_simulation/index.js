@@ -5,15 +5,12 @@ import gameSimulation from "./game_simulation.js"
 
 export default function (
     ScoreRepo,
-    DifficultyRepo,
-    Difficulties,
     Actions
 ) {
 
     const collisionSystems = c();
 
     const gameObjects = g(
-        Difficulties
     );
 
     const ParticleSystem = p();
@@ -23,8 +20,6 @@ export default function (
         collisionSystems,
         ParticleSystem,
         ScoreRepo,
-        DifficultyRepo,
-        Difficulties,
         Actions
     );
 

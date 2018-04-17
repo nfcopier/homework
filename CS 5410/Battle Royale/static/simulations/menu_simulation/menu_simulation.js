@@ -1,8 +1,6 @@
 export default function (
     ScoreRepo,
-    DifficultyRepo,
     Actions,
-    Difficulties,
     Menu
 ) {
 
@@ -19,7 +17,6 @@ return function MenuSimulation(gameSimulation) {
     };
 
     const scoreRepo = ScoreRepo();
-    const difficultyRepo = DifficultyRepo();
     let gameAction = Actions.NONE;
     let menu = null;
     let options = null;
@@ -41,16 +38,8 @@ return function MenuSimulation(gameSimulation) {
                 return gameAction = Actions.RESUME_GAME;
             case "New Game":
                 return gameAction = Actions.NEW_GAME;
-            case "Difficulty":
-                return showDifficultyMenu();
             case "Main Menu":
                 return showMainMenu();
-            case "Easy":
-                return changeDifficulty( Difficulties.EASY );
-            case "Normal":
-                return changeDifficulty( Difficulties.NORMAL );
-            case "Hard":
-                return changeDifficulty( Difficulties.HARD );
             case "High Scores":
                 return showHighScores();
             case "Reset":
@@ -61,12 +50,6 @@ return function MenuSimulation(gameSimulation) {
                 return gameAction = Actions.NONE;
         }
 
-    };
-
-    const changeDifficulty = function (newDifficulty) {
-        difficultyRepo.update( newDifficulty );
-        gameAction = Actions.CHANGE_DIFFICULTY;
-        disableDifficultyButton();
     };
 
     self.getMenuName = function () { return menu.getName(); };
@@ -85,32 +68,10 @@ return function MenuSimulation(gameSimulation) {
             menu.addButton( "Resume" );
         }
         menu.addButton( "New Game" );
-        menu.addButton( "Difficulty" );
         menu.addButton( "High Scores" );
         menu.addButton( "Credits" );
         resetOptions();
     }
-
-    function showDifficultyMenu () {
-        showSubMenu( "Difficulty" );
-        menu.addButton( "Easy" );
-        menu.addButton( "Normal" );
-        menu.addButton( "Hard" );
-        disableDifficultyButton();
-        resetOptions();
-    }
-
-    const disableDifficultyButton = function () {
-        const difficulty = difficultyRepo.getDifficulty();
-        switch (difficulty) {
-            case Difficulties.EASY:
-                return menu.disable( "Easy" );
-            case Difficulties.NORMAL:
-                return menu.disable( "Normal" );
-            case Difficulties.HARD:
-                return menu.disable( "Hard" );
-        }
-    };
 
     const showHighScores = function () {
         showSubMenu( "High Scores" );

@@ -1,10 +1,6 @@
 export default function (
     CountdownRenderer,
-    PaddleRenderer,
-    BallRenderer,
     ScoreRenderer,
-    PaddlesRenderer,
-    RowGroupRenderer,
     AnalyticsRenderer,
     ParticleEffectRenderer,
     Renderer
@@ -56,13 +52,7 @@ return function GameRenderer(simulation) {
     };
 
     const addChildren = function () {
-        self.children.push( createPaddleRenderer() );
-        for (let ball of simulation.getBalls())
-            self.children.push( createBallRenderer( ball ) );
         self.children.push( createScoreRenderer() );
-        self.children.push( createPaddlesRenderer() );
-        for (let rowGroup of simulation.getChildren())
-            self.children.push( createRowGroupRenderer( rowGroup ) )
         for (let effect of simulation.getParticleEffects())
             self.children.push( createParticleEffectRenderer( effect ) )
         const countdown = simulation.getCountdown();
@@ -71,27 +61,10 @@ return function GameRenderer(simulation) {
         self.children.push( createAnalyticsRenderer() );
     };
 
-    const createPaddleRenderer = function () {
-        return PaddleRenderer( simulation.getPaddle() );
-    };
-
-    const createBallRenderer = function (ball) {
-        return BallRenderer( ball );
-    };
-
     const createScoreRenderer = function () {
         const score =  simulation.getScore();
         const gameTransform = simulation.getTransform();
         return ScoreRenderer( score, gameTransform );
-    };
-
-    const createPaddlesRenderer = function () {
-        const paddleCount = simulation.getPaddleCount();
-        return PaddlesRenderer( paddleCount, simulation.getTransform() );
-    };
-
-    const createRowGroupRenderer = function (rowGroup) {
-        return RowGroupRenderer( rowGroup );
     };
 
     const createParticleEffectRenderer = function (effect) {

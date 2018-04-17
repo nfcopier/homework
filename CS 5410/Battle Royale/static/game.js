@@ -57,19 +57,10 @@ export default function (
                 this._showMenu();
                 break;
             }
-            case Actions.CHANGE_DIFFICULTY: {
-                this._updateDifficulty();
-                break;
-            }
             default: {
                 return;
             }
         }
-    };
-
-    Game.prototype._updateDifficulty = function () {
-        if (this._gameSimulation)
-            this._gameSimulation.updateDifficulty();
     };
 
     Game.prototype._startNewGame = function () {

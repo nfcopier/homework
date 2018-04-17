@@ -3,18 +3,14 @@ import menuSimulation from "./menu_simulation.js"
 
 export default function (
     ScoreRepo,
-    DifficultyRepo,
-    Actions,
-    Difficulties
+    Actions
 ) {
 
     const Menu = menu();
 
     return menuSimulation(
         ScoreRepo,
-        DifficultyRepo,
         Actions,
-        Difficulties,
         Menu
     );
 
