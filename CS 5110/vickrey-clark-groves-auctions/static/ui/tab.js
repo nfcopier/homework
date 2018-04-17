@@ -16,12 +16,8 @@ return function Tab(label) {
     };
 
     const anchor = $("<a>").text( label );
+    anchor.click(_triggerSelect);
     self.label = $("<li>").html( anchor );
-
-    self.render = function() {
-        anchor.click(_triggerSelect);
-        return self;
-    };
 
     self.select = function() {
         self.label.addClass( SELECTED_CLASS );

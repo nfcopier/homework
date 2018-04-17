@@ -22,3 +22,9 @@ html, body {
     overflow-y: auto;
     padding-top: 3rem;
 }
+
+.delete-row {
+    border-left: 0 solid;
+    text-align: right;
+    cursor: pointer;
+}

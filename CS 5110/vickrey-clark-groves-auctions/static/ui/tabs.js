@@ -1,4 +1,6 @@
 export default function (
+    BiddersTab,
+    ResultsTab,
     $,
     View
 ) {
@@ -14,6 +16,8 @@ return function Tabs(app) {
     const contents = $("<div>").addClass( "tab-content" );
 
     const tabs = [
+        BiddersTab( app.slots(), app.bidders() ),
+        ResultsTab( app )
     ];
 
     self.render = function () {
