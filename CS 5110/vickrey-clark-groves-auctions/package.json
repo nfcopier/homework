@@ -1,5 +1,5 @@
 {
-  "name": "vickrey-clark-grove-auctions",
+  "name": "vickrey-clark-groves-auctions",
   "version": "0.0.1",
   "dependencies": {
     "express": "^4.16.3"
