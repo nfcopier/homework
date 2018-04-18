@@ -45,7 +45,7 @@ return function MenuSimulation(gameSimulation) {
             case "Register":
                 return showRegistration();
             case "Submit":
-                return register();
+                return gameAction = Actions.REGISTER_USER;
             case "Main Menu":
                 return showMainMenu();
             case "High Scores":
@@ -74,6 +74,8 @@ return function MenuSimulation(gameSimulation) {
         return g;
     };
 
+    self.getValues = () => menu.getValues();
+
     function showJoin() {
         const menu = SubMenu( "Join Game" );
         menu.addTextField( "username" );
@@ -92,11 +94,6 @@ return function MenuSimulation(gameSimulation) {
         menu.addTextField( "password" );
         // menu.addTextField( "confirm password" );
         menu.addButton( "Submit" );
-    }
-
-    function register() {
-        const credentials = menu.getValues();
-        showMainMenu();
     }
 
     function showMainMenu () {

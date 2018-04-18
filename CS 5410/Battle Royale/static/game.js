@@ -70,6 +70,11 @@ export default function (
                 this._ioStream.refreshScores();
                 break;
             }
+            case Actions.REGISTER_USER: {
+                this._ioStream.registerUser( this._simulation.getValues() );
+                this._showMenu();
+                break;
+            }
             default: {
                 return;
             }

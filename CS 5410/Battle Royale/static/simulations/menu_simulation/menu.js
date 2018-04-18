@@ -94,12 +94,10 @@ return function Menu(name, transform) {
     self.getTextFields = () => textFields;
 
     self.getValues = function() {
-        return textFields.map( t => {
-            return {
-                name: t.placeholder,
-                value: t.text
-            }
-        } );
+        return textFields.reduce( (acc, current) => {
+            acc[current.placeholder] = current.text;
+            return acc;
+        }, {} );
     };
 
     self.disable = function (buttonText) {

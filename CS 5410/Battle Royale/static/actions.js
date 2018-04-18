@@ -10,5 +10,7 @@ export default {
     PAUSE_GAME: 8,
     LEAVE_GAME: 9,
     BACK_SPACE: 10,
-    REFRESH_SCORES: 11
+    REFRESH_SCORES: 11,
+    REGISTER_USER: 12,
+    JOIN_GAME: 13,
 }

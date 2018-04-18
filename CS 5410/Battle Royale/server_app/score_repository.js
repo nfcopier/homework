@@ -1,6 +1,5 @@
 module.exports = function (fs) {
 
-const KEY = "scores";
 const FILE_NAME = "./scores.json";
 
 return function ScoreRepository() {
@@ -23,18 +22,18 @@ return function ScoreRepository() {
     };
 
     function ensureScores() {
-        const scores = getAll();
-        if (!scores) persistScores( [] );
+        if (!fs.exists( FILE_NAME ))  persistScores( [] );
     }
 
     function getAll() {
-        const raw = fs.readFileSync( FILE_NAME, "utf-8", "w+" ) || null;
-        return JSON.parse( raw );
+        const raw = fs.readFileSync( FILE_NAME );
+        if (!raw.length) return null;
+        return JSON.parse( raw )
     }
 
     function persistScores(scores) {
         const raw = JSON.stringify( scores );
-        fs.writeFile( FILE_NAME, raw, {encoding: "utf-8"} )
+        fs.writeFileSync( FILE_NAME, raw )
     }
 
     return self;

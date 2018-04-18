@@ -4,7 +4,7 @@ return function ScoresRenderer(scores) {
 
     const self = Renderer( scores.transform );
 
-    let currentY = 500;
+    let currentY = 400;
 
     const specTemplate = {
         font: "36px serif",

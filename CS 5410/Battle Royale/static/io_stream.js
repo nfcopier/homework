@@ -26,6 +26,10 @@ return function IOStream() {
         io.emit( "scores:refresh" );
     };
 
+    self.registerUser = function (credentials) {
+        io.emit( "user:register", credentials );
+    };
+
     return self;
 
 }
