@@ -20,17 +20,36 @@ return function InputSystem(canvas) {
     };
 
     const onKeyDown = function (e) {
-        const direction = getDirection( e );
-        if (direction) actions.move = getMoveActionFrom( direction );
+        const xDirection = getDirectionX( e );
+        if (xDirection) actions.move.x = getMoveActionFrom( xDirection );
+        const yDirection = getDirectionY( e );
+        if (yDirection) actions.move.y = getMoveActionFrom( yDirection );
         actions.other = getOtherActionFrom( e );
     };
 
     const onKeyUp = function (e) {
-        const moveEvent = getDirection( e );
-        if (moveEvent) actions.move = Actions.STOP_PADDLE
+        const xDirection = getDirectionX( e );
+        if (xDirection) actions.move.x = Actions.NONE;
+        const yDirection = getDirectionY( e );
+        if (yDirection) actions.move.y = Actions.NONE
     };
 
-    const getDirection = function (e) {
+    const getDirectionX = function (e) {
+        switch (e.keyCode) {
+            case KeyCodes.DOM_VK_A:
+            case KeyCodes.DOM_VK_J:
+            case KeyCodes.DOM_VK_LEFT:
+                return Directions.LEFT;
+            case KeyCodes.DOM_VK_D:
+            case KeyCodes.DOM_VK_L:
+            case KeyCodes.DOM_VK_RIGHT:
+                return Directions.RIGHT;
+            default:
+                return null;
+        }
+    };
+
+    const getDirectionY = function (e) {
         switch (e.keyCode) {
             case KeyCodes.DOM_VK_W:
             case KeyCodes.DOM_VK_I:
@@ -40,14 +59,6 @@ return function InputSystem(canvas) {
             case KeyCodes.DOM_VK_K:
             case KeyCodes.DOM_VK_DOWN:
                 return Directions.BOTTOM;
-            case KeyCodes.DOM_VK_A:
-            case KeyCodes.DOM_VK_J:
-            case KeyCodes.DOM_VK_LEFT:
-                return Directions.LEFT;
-            case KeyCodes.DOM_VK_D:
-            case KeyCodes.DOM_VK_L:
-            case KeyCodes.DOM_VK_RIGHT:
-                return Directions.RIGHT;
             default:
                 return null;
         }
@@ -97,7 +108,7 @@ return function InputSystem(canvas) {
 
     function clearActions() {
         actions = {
-            move: Actions.NONE,
+            move: actions ? actions.move : { x: Actions.NONE, y: Actions.NONE},
             mousePosition: mousePosition,
             mouseUp: Actions.NONE,
             other: Actions.NONE

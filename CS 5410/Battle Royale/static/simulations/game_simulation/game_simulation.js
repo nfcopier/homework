@@ -70,6 +70,7 @@ return function GameSimulation() {
         gameTime += elapsedTime;
         updateFps( elapsedTime );
         updatePlayerRotation( actions.mousePosition );
+        updatePlayerVelocity( actions.move );
         particleSystem.update( elapsedTime );
     }
 
@@ -86,7 +87,34 @@ return function GameSimulation() {
         avatar.rotate( mousePosition )
     };
 
-    const updatePlayerVelocity = function () {
+    const updatePlayerVelocity = function (moveActions) {
+        const vector = {
+            x: xFrom( moveActions ),
+            y: yFrom( moveActions )
+        }
+        avatar.move( vector );
+    };
+
+    const xFrom = function(moveActions) {
+        switch (moveActions.x) {
+            case Actions.MOVE_LEFT:
+                return -1;
+            case Actions.MOVE_RIGHT:
+                return 1;
+            default:
+                return 0;
+        }
+    };
+
+    const yFrom = function(moveActions) {
+        switch (moveActions.y) {
+            case Actions.MOUSE_UP:
+                return 1;
+            case Actions.MOVE_DOWN:
+                return -1;
+            default:
+                return 0;
+        }
     };
 
     self.getAction = function () { return otherAction; };
