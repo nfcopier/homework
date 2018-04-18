@@ -1,5 +1,4 @@
 export default function (
-    ScoreRepo,
     Actions,
     Menu
 ) {
@@ -16,7 +15,6 @@ return function MenuSimulation(gameSimulation) {
         height: 768
     };
 
-    const scoreRepo = ScoreRepo();
     let gameAction = Actions.NONE;
     let menu = null;
     let options = null;
@@ -25,26 +23,36 @@ return function MenuSimulation(gameSimulation) {
     showMainMenu();
 
     self.update = function (actions) {
-        menu.updateButtons( actions.mousePosition );
+        menu.updateFields( actions.mousePosition );
         if (actions.mouseUp !== Actions.NONE)
             processClick();
+        menu.appendText( actions.text );
+        if (actions.other === Actions.BACK_SPACE)
+            menu.backspace();
     };
 
     const processClick = function () {
         const button = menu.getSelectedButton();
+        menu.handleClick();
         switch (button) {
             case "Resume":
                 return gameAction = Actions.RESUME_GAME;
-            case "New Game":
-                return gameAction = Actions.NEW_GAME;
+            case "Join Game":
+                return showJoin();
+            case "Join":
+                return joinGame();
+            case "Register":
+                return showRegistration();
+            case "Submit":
+                return register();
             case "Main Menu":
                 return showMainMenu();
             case "High Scores":
                 return showHighScores();
-            case "Reset":
-                return resetHighScores();
             case "Credits":
                 return showCredits();
+            case "Leave Game":
+                return gameAction = Actions.LEAVE_GAME;
             default:
                 return gameAction = Actions.NONE;
         }
@@ -57,41 +65,68 @@ return function MenuSimulation(gameSimulation) {
         return menu.getButtons();
     };
 
+    self.getTextFields = () => menu.getTextFields();
+
     self.getAction = function () {
         return gameAction;
     };
+
+    function showJoin() {
+        const menu = SubMenu( "Join Game" );
+        menu.addTextField( "username" );
+        menu.addTextField( "password" );
+        menu.addButton( "Join" );
+    }
+
+    function joinGame() {
+        const credentials = menu.getValues();
+        gameAction = Actions.NEW_GAME;
+    }
+
+    function showRegistration() {
+        const menu = SubMenu( "Register" );
+        menu.addTextField( "username" );
+        menu.addTextField( "password" );
+        // menu.addTextField( "confirm password" );
+        menu.addButton( "Submit" );
+    }
+
+    function register() {
+        const credentials = menu.getValues();
+        showMainMenu();
+    }
 
     function showMainMenu () {
         menu = Menu( "Main Menu", self.transform );
         if (gameSimulation) {
             menu.addButton( "Resume" );
+            menu.addButton( "Leave Game" )
         }
-        menu.addButton( "New Game" );
-        menu.addButton( "High Scores" );
-        menu.addButton( "Credits" );
+        else {
+            menu.addButton( "Join Game" );
+            menu.addButton( "Register" );
+            menu.addButton( "High Scores" );
+            menu.addButton( "Credits" );
+        }
         resetOptions();
     }
 
     const showHighScores = function () {
-        showSubMenu( "High Scores" );
-        menu.addButton( "Reset" );
+        SubMenu( "High Scores" );
         resetOptions();
         options.highScores = true;
     };
 
-    const resetHighScores = function () {
-        scoreRepo.reset();
-    };
-
     const showCredits = function () {
-        showSubMenu( "Credits" );
+        SubMenu( "Credits" );
         resetOptions();
         options.credits = true;
     };
 
-    const showSubMenu = function (name) {
-        menu = new Menu( name, self.transform );
+    const SubMenu = function (name) {
+        menu = Menu( name, self.transform );
         menu.addButton( "Main Menu" );
+        return menu;
     };
 
     self.getOptions = function () { return options; };

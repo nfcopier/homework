@@ -57,6 +57,11 @@ export default function (
                 this._showMenu();
                 break;
             }
+            case Actions.LEAVE_GAME: {
+                this._clearGame();
+                this._showMenu();
+                break;
+            }
             default: {
                 return;
             }

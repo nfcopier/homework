@@ -7,5 +7,7 @@ export default {
     MOUSE_UP: 5,
     NEW_GAME: 6,
     RESUME_GAME: 7,
-    PAUSE_GAME: 8
+    PAUSE_GAME: 8,
+    LEAVE_GAME: 9,
+    BACK_SPACE: 10
 }

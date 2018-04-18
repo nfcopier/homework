@@ -4,7 +4,6 @@ import p              from "./particle_system/index.js"
 import gameSimulation from "./game_simulation.js"
 
 export default function (
-    ScoreRepo,
     Actions
 ) {
 
@@ -19,7 +18,6 @@ export default function (
         gameObjects,
         collisionSystems,
         ParticleSystem,
-        ScoreRepo,
         Actions
     );
 

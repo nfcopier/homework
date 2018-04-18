@@ -2,7 +2,6 @@ export default function (
     gameObjects,
     collisionSystems,
     ParticleSystem,
-    ScoreRepo,
     Actions
 ) {
 
@@ -18,12 +17,10 @@ return function GameSimulation() {
 
     const self = gameObjects.GameObject( transform );
 
-    const scoreRepo = ScoreRepo();
     const particleSystem = new ParticleSystem();
     let countdown = null;
     let otherAction = Actions.NONE;
     let gameTime = 0;
-    let score = 0;
     let gameOver = false;
     let frameCount = 0;
     let fps = 0;
@@ -91,7 +88,7 @@ return function GameSimulation() {
         const vector = {
             x: xFrom( moveActions ),
             y: yFrom( moveActions )
-        }
+        };
         avatar.move( vector );
     };
 
@@ -121,7 +118,7 @@ return function GameSimulation() {
 
     self.getAvatars = () => avatar ? [avatar] : [];
 
-    self.getScore = function () { return score; };
+    self.getScore = function () { return 0; };
 
     self.getCountdown = function () {
         return {

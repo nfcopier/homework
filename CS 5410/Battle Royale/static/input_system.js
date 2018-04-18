@@ -4,6 +4,9 @@ export default function (
     Directions
 ) {
 
+const LOWER_A_CODE = "a".charCodeAt( 0 );
+const UPPER_A_CODE = "A".charCodeAt( 0 );
+
 return function InputSystem(canvas) {
 
     const self = {};
@@ -25,6 +28,7 @@ return function InputSystem(canvas) {
         const yDirection = getDirectionY( e );
         if (yDirection) actions.move.y = getMoveActionFrom( yDirection );
         actions.other = getOtherActionFrom( e );
+        if (isPrintable(e.keyCode)) appendText( e );
     };
 
     const onKeyUp = function (e) {
@@ -32,6 +36,21 @@ return function InputSystem(canvas) {
         if (xDirection) actions.move.x = Actions.NONE;
         const yDirection = getDirectionY( e );
         if (yDirection) actions.move.y = Actions.NONE
+    };
+
+    const isPrintable = function (keyCode) {
+        return keyCode > 48 && keyCode < 90;
+    };
+
+    const appendText = function (e) {
+        if (e.altKey || e.ctrlKey || e.metaKey) return;
+        actions.text += charFrom( e );
+
+    };
+
+    const charFrom = function (e) {
+        if (e.shiftKey) return String.fromCharCode( e.keyCode );
+        return String.fromCharCode( e.keyCode + LOWER_A_CODE - UPPER_A_CODE);
     };
 
     const getDirectionX = function (e) {
@@ -83,6 +102,8 @@ return function InputSystem(canvas) {
         switch (e.keyCode) {
             case KeyCodes.DOM_VK_ESCAPE:
                 return Actions.PAUSE_GAME;
+            case KeyCodes.DOM_VK_BACK_SPACE:
+                return Actions.BACK_SPACE;
             default:
                 return Actions.NONE;
         }
@@ -111,6 +132,7 @@ return function InputSystem(canvas) {
             move: actions ? actions.move : { x: Actions.NONE, y: Actions.NONE},
             mousePosition: mousePosition,
             mouseUp: Actions.NONE,
+            text: "",
             other: Actions.NONE
         };
     }

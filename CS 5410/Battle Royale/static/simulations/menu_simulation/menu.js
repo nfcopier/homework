@@ -8,9 +8,11 @@ return function Menu(name, transform) {
     const self = {};
 
     const buttons = [];
+    const textFields = [];
+    let currentField = null;
     const buttonX = (transform.width - BUTTON_WIDTH) / 2;
 
-    const buttonTransform = {
+    const fieldTransform = {
         x: buttonX,
         y: 300,
         theta: 0,
@@ -21,15 +23,50 @@ return function Menu(name, transform) {
     self.addButton = function (text) {
         buttons.push({
             text: text,
-            transform: Object.assign({}, buttonTransform),
+            transform: Object.assign({}, fieldTransform),
             isDisabled: false
         });
-        buttonTransform.y += 80;
+        fieldTransform.y += 80;
     };
 
-    self.updateButtons = function (mouseLocation) {
+    self.addTextField = function (placeholder) {
+        textFields.push({
+            placeholder: placeholder,
+            transform: Object.assign({}, fieldTransform),
+            text: null
+        });
+        fieldTransform.y += 80;
+    };
+
+    self.appendText = function(characters) {
+        if (!currentField) return;
+        currentField.text += characters;
+    };
+
+    self.backspace = function() {
+        if (!currentField) return;
+        currentField.text = currentField.text.slice(0, -1);
+    };
+
+    self.handleClick = function() {
+        for (let field of textFields) {
+            if (field.hasMouse) {
+                currentField = field;
+                if (!currentField.text) currentField.text = "";
+                return
+            }
+        }
+        if (!currentField) return;
+        if (!currentField.text.length) currentField.text = null;
+        currentField = null;
+    };
+
+    self.updateFields = function (mouseLocation) {
         for (let button of buttons) {
             button.hasMouse = checkCollision( button, mouseLocation );
+        }
+        for (let field of textFields) {
+            field.hasMouse = checkCollision( field, mouseLocation );
         }
     };
 
@@ -40,19 +77,30 @@ return function Menu(name, transform) {
         return null;
     };
 
-    const checkCollision = function (button, mouseLocation) {
+    const checkCollision = function (field, mouseLocation) {
         return (
-            !button.isDisabled &&
-            mouseLocation.x > button.transform.x &&
-            mouseLocation.x < button.transform.x + button.transform.width &&
-            mouseLocation.y > button.transform.y &&
-            mouseLocation.y < button.transform.y + button.transform.height
+            !field.isDisabled &&
+            mouseLocation.x > field.transform.x &&
+            mouseLocation.x < field.transform.x + field.transform.width &&
+            mouseLocation.y > field.transform.y &&
+            mouseLocation.y < field.transform.y + field.transform.height
         )
     };
 
     self.getName = function () { return name; };
 
     self.getButtons = function () { return buttons; };
+
+    self.getTextFields = () => textFields;
+
+    self.getValues = function() {
+        return textFields.map( t => {
+            return {
+                name: t.placeholder,
+                value: t.text
+            }
+        } );
+    };
 
     self.disable = function (buttonText) {
         for (let button of buttons) {

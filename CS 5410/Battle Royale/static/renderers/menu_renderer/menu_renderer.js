@@ -1,5 +1,6 @@
 export default function (
     ButtonRenderer,
+    TextFieldRenderer,
     ScoresRenderer,
     CreditsRenderer,
     Renderer
@@ -32,6 +33,7 @@ return function MenuRenderer(canvas, simulation) {
         drawTitle();
         drawMenuName();
         appendButtons();
+        appendTextFields();
         const options = simulation.getOptions();
         if (options.highScores)
             appendScores();
@@ -62,9 +64,13 @@ return function MenuRenderer(canvas, simulation) {
     };
 
     const appendButtons = function () {
-        for (let button of simulation.getButtons()) {
+        for (let button of simulation.getButtons())
             self.children.push( ButtonRenderer(button) );
-        }
+    };
+
+    const appendTextFields = function () {
+        for (let field of simulation.getTextFields())
+            self.children.push( TextFieldRenderer(field) )
     };
 
     const appendScores = function () {
