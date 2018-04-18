@@ -3,12 +3,14 @@ export default function (
     Actions,
     renderers,
     simulations,
-    InputSystem
+    InputSystem,
+    IOStream
 ) {
 
     function Game() {
         this._canvas = Canvas();
         this._inputSystem = InputSystem( this._canvas );
+        this._ioStream = IOStream();
         this._clearGame();
         this._showMenu();
     }
@@ -20,13 +22,15 @@ export default function (
         parent.appendChild(this._canvas.el());
         this._doLoop(this._lastTime);
         this._inputSystem.startListening();
+        this._ioStream.startListening();
     };
 
     Game.prototype._doLoop = function (currentTime) {
         const elapsedTime = currentTime - this._lastTime;
         this._lastTime = currentTime;
         const actions = this._inputSystem.getActions( currentTime );
-        this._simulation.update( actions, elapsedTime );
+        const input = this._ioStream.input();
+        this._simulation.update( actions, input, elapsedTime );
         this._checkGameAction();
         this._canvas.render();
         requestAnimationFrame( this._doLoop.bind(this) );
@@ -60,6 +64,10 @@ export default function (
             case Actions.LEAVE_GAME: {
                 this._clearGame();
                 this._showMenu();
+                break;
+            }
+            case Actions.REFRESH_SCORES: {
+                this._ioStream.refreshScores();
                 break;
             }
             default: {

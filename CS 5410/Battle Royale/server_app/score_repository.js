@@ -1,6 +1,7 @@
-export default function () {
+module.exports = function (fs) {
 
 const KEY = "scores";
+const FILE_NAME = "./scores.json";
 
 return function ScoreRepository() {
 
@@ -27,17 +28,17 @@ return function ScoreRepository() {
     }
 
     function getAll() {
-        const raw = localStorage.getItem( KEY ) || null;
+        const raw = fs.readFileSync( FILE_NAME, "utf-8", "w+" ) || null;
         return JSON.parse( raw );
     }
 
     function persistScores(scores) {
         const raw = JSON.stringify( scores );
-        localStorage.setItem( KEY, raw )
+        fs.writeFile( FILE_NAME, raw, {encoding: "utf-8"} )
     }
 
     return self;
 
 }
 
-}
+};

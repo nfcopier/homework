@@ -39,7 +39,7 @@ return function GameSimulation() {
         countdown = 3000;
     }
 
-    function updateCountdown (actions, elapsedTime) {
+    function updateCountdown (actions, input, elapsedTime) {
         otherAction = actions.other;
         countdown -= elapsedTime;
         gameTime += elapsedTime;
@@ -61,7 +61,7 @@ return function GameSimulation() {
         };
     }
 
-    function updateGame (actions, elapsedTime) {
+    function updateGame (actions, input, elapsedTime) {
         otherAction = actions.other;
         if (gameOver) return;
         gameTime += elapsedTime;

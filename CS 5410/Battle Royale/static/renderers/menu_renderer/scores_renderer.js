@@ -24,7 +24,7 @@ return function ScoresRenderer(scores) {
     const drawScore = function (place, score) {
         const spec = Object.assign( {}, specTemplate );
         const placeString = getStringFrom( place );
-        spec.text = `${placeString} - ${score}`;
+        spec.text = `${placeString}: ${score.username} - ${score.score}`;
         spec.location = { x: getX(), y: getY() };
         self.graphics.drawText( spec )
     };

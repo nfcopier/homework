@@ -18,17 +18,18 @@ return function MenuSimulation(gameSimulation) {
     let gameAction = Actions.NONE;
     let menu = null;
     let options = null;
+    let highScores = [];
     resetOptions();
-
     showMainMenu();
 
-    self.update = function (actions) {
+    self.update = function (actions, input) {
         menu.updateFields( actions.mousePosition );
         if (actions.mouseUp !== Actions.NONE)
             processClick();
         menu.appendText( actions.text );
         if (actions.other === Actions.BACK_SPACE)
             menu.backspace();
+        if (input.highScores) highScores = input.highScores;
     };
 
     const processClick = function () {
@@ -68,7 +69,9 @@ return function MenuSimulation(gameSimulation) {
     self.getTextFields = () => menu.getTextFields();
 
     self.getAction = function () {
-        return gameAction;
+        const g = gameAction;
+        gameAction = Actions.NONE;
+        return g;
     };
 
     function showJoin() {
@@ -112,6 +115,7 @@ return function MenuSimulation(gameSimulation) {
     }
 
     const showHighScores = function () {
+        gameAction = Actions.REFRESH_SCORES;
         SubMenu( "High Scores" );
         resetOptions();
         options.highScores = true;
@@ -136,7 +140,7 @@ return function MenuSimulation(gameSimulation) {
     }
 
     self.getHighScores = function () {
-        return scoreRepo.getAll();
+        return highScores;
     };
 
     self.getCredits = function () {

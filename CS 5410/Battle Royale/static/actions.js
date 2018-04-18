@@ -9,5 +9,6 @@ export default {
     RESUME_GAME: 7,
     PAUSE_GAME: 8,
     LEAVE_GAME: 9,
-    BACK_SPACE: 10
+    BACK_SPACE: 10,
+    REFRESH_SCORES: 11
 }

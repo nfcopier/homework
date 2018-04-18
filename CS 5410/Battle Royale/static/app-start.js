@@ -4,6 +4,7 @@ import canvas from "./canvas.js"
 import r from "./renderers/index.js"
 import s from "./simulations/index.js"
 import inputSystem from "./input_system.js"
+import ioStream from "./io_stream.js"
 import game from "./game.js"
 import Directions from "./directions.js"
 
@@ -26,12 +27,18 @@ export default function () {
         Directions
     );
 
+    const IOStream = ioStream(
+        window.io
+    );
+    delete window.io;
+
     const Game = game(
         Canvas,
         Actions,
         renderers,
         simulations,
-        InputSystem
+        InputSystem,
+        IOStream
     );
 
     const gameInstance = new Game();
