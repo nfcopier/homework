@@ -28,6 +28,7 @@ return function GameSimulation() {
     let frameCount = 0;
     let fps = 0;
     let timeSinceLastCheck = 0;
+    let avatar = null;
 
     resetGame();
 
@@ -47,7 +48,20 @@ return function GameSimulation() {
         gameTime += elapsedTime;
         updateFps( elapsedTime );
         particleSystem.update( elapsedTime );
-        if (countdown <= 0) self.update = updateGame;
+        if (countdown <= 0) spawnAvatar();
+    }
+
+    function spawnAvatar() {
+        const newLocation = nextSpawnLocation();
+        avatar = gameObjects.Avatar( newLocation );
+        self.update = updateGame;
+    }
+
+    function nextSpawnLocation() {
+        return {
+            x: Math.floor(Math.random() * transform.width),
+            y: Math.floor(Math.random() * transform.height)
+        };
     }
 
     function updateGame (actions, elapsedTime) {
@@ -55,7 +69,7 @@ return function GameSimulation() {
         if (gameOver) return;
         gameTime += elapsedTime;
         updateFps( elapsedTime );
-        updatePlayerDirection( actions.move );
+        updatePlayerRotation( actions.mousePosition );
         particleSystem.update( elapsedTime );
     }
 
@@ -68,18 +82,16 @@ return function GameSimulation() {
         timeSinceLastCheck = 0;
     };
 
-    const updatePlayerDirection = function (moveAction) {
-        switch(moveAction) {
-            case Actions.MOVE_LEFT:
-                return ;
-            case Actions.MOVE_RIGHT:
-                return ;
-            case Actions.STOP_PADDLE:
-                return ;
-        }
+    const updatePlayerRotation = function (mousePosition) {
+        avatar.rotate( mousePosition )
+    };
+
+    const updatePlayerVelocity = function () {
     };
 
     self.getAction = function () { return otherAction; };
+
+    self.getAvatars = () => avatar ? [avatar] : [];
 
     self.getScore = function () { return score; };
 

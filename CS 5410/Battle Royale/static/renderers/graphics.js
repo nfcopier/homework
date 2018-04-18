@@ -63,10 +63,10 @@ return function Graphics(context) {
     self.drawImage = function (spec) {
         context.drawImage(
             spec.image,
-            spec.x,
-            spec.y,
-            spec.width,
-            spec.height
+            spec.upperLeft.x,
+            spec.upperLeft.y,
+            spec.bottomRight.x,
+            spec.bottomRight.y
         );
     };
 

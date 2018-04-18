@@ -20,8 +20,11 @@ return function Renderer(transform) {
     };
 
     const applyTransformTo = function (context) {
-        context.translate( transform.x, transform.y );
-        context.rotate( transform.theta );
+        const widthHalf = transform.width / 2;
+        const heightHalf = transform.height / 2;
+        context.translate( transform.x+widthHalf, transform.y+heightHalf );
+        context.rotate( -transform.theta );
+        context.translate( -widthHalf, -heightHalf );
     };
 
     self.render = function () {

@@ -1,5 +1,6 @@
 export default function (
     CountdownRenderer,
+    AvatarRenderer,
     ScoreRenderer,
     AnalyticsRenderer,
     ParticleEffectRenderer,
@@ -52,14 +53,18 @@ return function GameRenderer(simulation) {
     };
 
     const addChildren = function () {
-        self.children.push( createScoreRenderer() );
+        for (let avatar of simulation.getAvatars())
+            self.children.push( createAvatarRenderer( avatar ) )
         for (let effect of simulation.getParticleEffects())
             self.children.push( createParticleEffectRenderer( effect ) )
+        self.children.push( createScoreRenderer() );
+        self.children.push( createAnalyticsRenderer() );
         const countdown = simulation.getCountdown();
         if (countdown.value > 0)
             self.children.push( createCountdownRenderer( countdown ) );
-        self.children.push( createAnalyticsRenderer() );
     };
+
+    const createAvatarRenderer = (avatar) => AvatarRenderer( avatar );
 
     const createScoreRenderer = function () {
         const score =  simulation.getScore();
@@ -92,11 +97,15 @@ return function GameRenderer(simulation) {
 
     const drawBackgroundImage = function(image) { return function () {
         const spec = {
-            x: transform.x,
-            y: transform.y,
             image: image,
-            width: transform.width,
-            height: transform.height
+            upperLeft: {
+                x: transform.x,
+                y: transform.y
+            },
+            bottomRight: {
+                x : transform.width,
+                y: transform.height
+            }
         };
         self.graphics.drawImage( spec );
     }};

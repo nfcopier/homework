@@ -8,6 +8,7 @@ return function InputSystem(canvas) {
 
     const self = {};
     let actions = null;
+    let mousePosition = { x: 0, y: 0};
 
     clearActions();
 
@@ -58,6 +59,10 @@ return function InputSystem(canvas) {
                 return Actions.MOVE_LEFT;
             case Directions.RIGHT:
                 return Actions.MOVE_RIGHT;
+            case Directions.TOP:
+                return Actions.MOUSE_UP;
+            case Directions.BOTTOM:
+                return Actions.MOVE_DOWN;
             default:
                 return Actions.NONE;
         }
@@ -74,7 +79,7 @@ return function InputSystem(canvas) {
 
     const onMouseMove = function(event) {
         const canvasScale = canvas.getScale();
-        actions.mouseMove = {
+        mousePosition = {
             x: canvasScale.x * event.clientX,
             y: canvasScale.y * event.clientY
         };
@@ -93,7 +98,7 @@ return function InputSystem(canvas) {
     function clearActions() {
         actions = {
             move: Actions.NONE,
-            mouseMove: Actions.NONE,
+            mousePosition: mousePosition,
             mouseUp: Actions.NONE,
             other: Actions.NONE
         };

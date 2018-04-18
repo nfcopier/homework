@@ -25,8 +25,7 @@ return function MenuSimulation(gameSimulation) {
     showMainMenu();
 
     self.update = function (actions) {
-        if (actions.mouseMove !== Actions.NONE)
-            menu.updateButtons( actions.mouseMove );
+        menu.updateButtons( actions.mousePosition );
         if (actions.mouseUp !== Actions.NONE)
             processClick();
     };
