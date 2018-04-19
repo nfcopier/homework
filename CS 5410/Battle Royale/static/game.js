@@ -31,6 +31,7 @@ export default function (
         const actions = this._inputSystem.getActions( currentTime );
         this._ioStream.sendInput( actions );
         const input = this._ioStream.input();
+        if (input.respawn) this._startNewGame();
         this._simulation.update( actions, input, elapsedTime );
         this._checkGameAction();
         this._canvas.render();
@@ -78,7 +79,6 @@ export default function (
             }
             case Actions.JOIN_GAME: {
                 this._ioStream.joinGame();
-                this._startNewGame();
                 break;
             }
             default: {

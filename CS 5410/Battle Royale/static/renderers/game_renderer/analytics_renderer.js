@@ -34,9 +34,8 @@ return function AnalyticsRenderer(analytics, gameTransform) {
 
     const gameMinutes = Math.floor( analytics.gameTime / 60000 );
     const gameSeconds = ("00" + Math.floor( analytics.gameTime / 1000 ) % 60).slice(-2);
-    const gameMilli = ("000" + analytics.gameTime % 1000).slice(-3);
     const gameTimeSpec = {
-        text: `${gameMinutes}:${gameSeconds}:${gameMilli}`,
+        text: `${gameMinutes}:${gameSeconds}`,
         font: "36px serif",
         color: "blue",
         alignment: "right",

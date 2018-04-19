@@ -10,7 +10,9 @@ return function IOStream() {
 
     self.startListening = function() {
         io.on( "scores:update", updateScores );
-        io.on( "server:update", updateFromServer );
+        io.on( "server:respawn", respawnPlayer );
+        io.on( "server:game_state", updateGame );
+        io.on( "server:player_state", updatePlayer );
     };
 
     const updateScores = (scores) => input.highScores = scores;
@@ -23,13 +25,21 @@ return function IOStream() {
 
     self.refreshScores = () => io.emit( "scores:refresh" );
 
-    self.registerUser = (credentials) =>io.emit( "user:register", credentials );
+    self.registerUser = (credentials) => io.emit( "user:register", credentials );
 
-    const updateFromServer = (serverState) => input.serverState = serverState;
+    const respawnPlayer = (location) => input.respawn = location;
+
+    const updateGame = (gameState) => input.gameState = gameState;
+
+    const updatePlayer = (playerState) => {
+        setTimeout( () => input.playerState = playerState, 500);
+    }
 
     self.joinGame = () => io.emit( "game:join" );
 
-    self.sendInput = (input) => io.emit( "game:input", input );
+    self.sendInput = (input) => {
+        setTimeout( () => io.emit( "game:input", input ), 500);
+    }
 
     return self;
 

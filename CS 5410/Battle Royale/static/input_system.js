@@ -18,6 +18,7 @@ return function InputSystem(canvas) {
     self.startListening = function () {
         window.addEventListener("keydown", onKeyDown, false);
         window.addEventListener("keyup", onKeyUp, false);
+        window.addEventListener("touchend", onTouchEnd);
         window.addEventListener("mousemove", onMouseMove);
         window.addEventListener("mouseup", onMouseUp);
     };
@@ -107,6 +108,11 @@ return function InputSystem(canvas) {
             default:
                 return Actions.NONE;
         }
+    };
+
+    const onTouchEnd = function (e) {
+        onMouseMove( e );
+        onMouseUp();
     };
 
     const onMouseMove = function(event) {

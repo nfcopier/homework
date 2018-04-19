@@ -69,9 +69,14 @@ return function Client(socket) {
         }
     };
 
-    self.sendState = function(gameState) {
-        socket.emit( "server:update", gameState )
-    };
+    self.respawn = (location) =>
+        socket.emit( "server:respawn", location );
+
+    self.sendPlayerState = (playerState) =>
+        socket.emit( "server:player_state", playerState );
+
+    self.sendGameState = (gameState) =>
+        socket.emit( "server:game_state", gameState );
 
     resetInput();
 

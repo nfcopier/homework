@@ -1,7 +1,8 @@
-const g              = require("./game_objects/index.js");
-const c              = require("./collision_systems/index.js");
+const g              = require("./game_objects/index");
+const c              = require("./collision_systems/index");
 const actions        = require("./actions");
-const gameSimulation = require("./game_simulation.js");
+const player         = require("./player");
+const gameSimulation = require("./game_simulation");
 
 module.exports = function () {
 
@@ -9,10 +10,14 @@ module.exports = function () {
 
     const gameObjects = g();
 
+    const Player = player(
+        actions,
+        gameObjects.Avatar
+    );
+
     return gameSimulation(
-        gameObjects,
-        collisionSystems,
-        actions
+        Player,
+        gameObjects
     );
 
 };

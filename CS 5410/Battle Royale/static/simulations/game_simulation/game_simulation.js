@@ -18,33 +18,39 @@ return function GameSimulation() {
     const self = gameObjects.GameObject( transform );
 
     const particleSystem = new ParticleSystem();
-    let currentState = {};
+    let playerState = {};
     let countdown = null;
     let otherAction = Actions.NONE;
     let gameOver = false;
     let frameCount = 0;
     let fps = 0;
     let timeSinceLastCheck = 0;
+    let gameState = {};
 
-    resetGame();
+    const updateGame = self.update = function(actions, input, elapsedTime) {
+        if (input.gameState) gameState = input.gameState;
+        if (input.respawn) return respawn( input.respawn );
+        if (input.playerState) playerState = input.playerState;
+    };
 
-    function resetGame() {
-        resetCountdown();
-        particleSystem.reset();
-    }
-
-    function resetCountdown() {
+    const respawn = function(location) {
         self.update = updateCountdown;
         countdown = 3000;
-    }
+    };
 
-    function updateCountdown (actions, input, elapsedTime) {
-        if (input.serverState) currentState = input.serverState;
+    const updateCountdown = function(actions, input, elapsedTime) {
+        if (input.gameState) gameState = input.gameState;
+        if (input.playerState) return startGame( input, elapsedTime );
         otherAction = actions.other;
         countdown -= elapsedTime;
         updateFps( elapsedTime );
         particleSystem.update( elapsedTime );
-    }
+    };
+
+    const startGame = function (input, elapsedTime) {
+        self.update = updateGame;
+        self.update( {}, input, elapsedTime )
+    };
 
     const updateFps = function (elapsedTime) {
         frameCount += 1;
@@ -57,7 +63,7 @@ return function GameSimulation() {
 
     self.getAction = function () { return otherAction; };
 
-    self.getAvatars = () => currentState.transform ? [gameObjects.Avatar(currentState.transform)] : [];
+    self.getAvatars = () => playerState.transform ? [gameObjects.Avatar(playerState.transform)] : [];
 
     self.getScore = function () { return 0; };
 
@@ -71,7 +77,7 @@ return function GameSimulation() {
     self.getAnalytics = function () {
         return {
             fps: fps,
-            gameTime: currentState.gameTime
+            gameTime: gameState.gameTime
         };
     };
 
