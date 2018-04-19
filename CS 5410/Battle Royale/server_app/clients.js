@@ -14,6 +14,10 @@ return function Clients() {
         client.startListening();
     };
 
+    self.wantToJoin = function () {
+        return clients.filter( c => c.wantsToJoin() );
+    };
+
     return self;
 
 }

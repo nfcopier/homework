@@ -18,14 +18,13 @@ return function GameSimulation() {
     const self = gameObjects.GameObject( transform );
 
     const particleSystem = new ParticleSystem();
+    let currentState = {};
     let countdown = null;
     let otherAction = Actions.NONE;
-    let gameTime = 0;
     let gameOver = false;
     let frameCount = 0;
     let fps = 0;
     let timeSinceLastCheck = 0;
-    let avatar = null;
 
     resetGame();
 
@@ -40,34 +39,10 @@ return function GameSimulation() {
     }
 
     function updateCountdown (actions, input, elapsedTime) {
+        if (input.serverState) currentState = input.serverState;
         otherAction = actions.other;
         countdown -= elapsedTime;
-        gameTime += elapsedTime;
         updateFps( elapsedTime );
-        particleSystem.update( elapsedTime );
-        if (countdown <= 0) spawnAvatar();
-    }
-
-    function spawnAvatar() {
-        const newLocation = nextSpawnLocation();
-        avatar = gameObjects.Avatar( newLocation );
-        self.update = updateGame;
-    }
-
-    function nextSpawnLocation() {
-        return {
-            x: Math.floor(Math.random() * transform.width),
-            y: Math.floor(Math.random() * transform.height)
-        };
-    }
-
-    function updateGame (actions, input, elapsedTime) {
-        otherAction = actions.other;
-        if (gameOver) return;
-        gameTime += elapsedTime;
-        updateFps( elapsedTime );
-        updatePlayerRotation( actions.mousePosition );
-        updatePlayerVelocity( actions.move );
         particleSystem.update( elapsedTime );
     }
 
@@ -80,43 +55,9 @@ return function GameSimulation() {
         timeSinceLastCheck = 0;
     };
 
-    const updatePlayerRotation = function (mousePosition) {
-        avatar.rotate( mousePosition )
-    };
-
-    const updatePlayerVelocity = function (moveActions) {
-        const vector = {
-            x: xFrom( moveActions ),
-            y: yFrom( moveActions )
-        };
-        avatar.move( vector );
-    };
-
-    const xFrom = function(moveActions) {
-        switch (moveActions.x) {
-            case Actions.MOVE_LEFT:
-                return -1;
-            case Actions.MOVE_RIGHT:
-                return 1;
-            default:
-                return 0;
-        }
-    };
-
-    const yFrom = function(moveActions) {
-        switch (moveActions.y) {
-            case Actions.MOUSE_UP:
-                return 1;
-            case Actions.MOVE_DOWN:
-                return -1;
-            default:
-                return 0;
-        }
-    };
-
     self.getAction = function () { return otherAction; };
 
-    self.getAvatars = () => avatar ? [avatar] : [];
+    self.getAvatars = () => currentState.transform ? [gameObjects.Avatar(currentState.transform)] : [];
 
     self.getScore = function () { return 0; };
 
@@ -130,7 +71,7 @@ return function GameSimulation() {
     self.getAnalytics = function () {
         return {
             fps: fps,
-            gameTime: gameTime
+            gameTime: currentState.gameTime
         };
     };
 

@@ -7,6 +7,9 @@ return function Client(socket) {
 
     const self = {};
 
+    let wantsToJoin = false;
+    let input;
+
     const scoreRepo = ScoreRepo();
 
     const UserErrors = [
@@ -19,6 +22,8 @@ return function Client(socket) {
     self.startListening = function () {
         socket.on( "scores:refresh", getScores );
         socket.on( "user:register", registerUser );
+        socket.on( "game:join", ()  => wantsToJoin = true );
+        socket.on( "game:input", (i) => input = i )
     };
 
     const getScores = function () {
@@ -39,6 +44,36 @@ return function Client(socket) {
                 socket.emit( `error:unknown:${e}` );
         }
     };
+
+    self.gameInput = () => self;
+
+    self.wantsToJoin = function () {
+        const returnVal = wantsToJoin;
+        wantsToJoin = false;
+        return returnVal;
+    };
+
+    self.input = function () {
+        const returnVal = input;
+        resetInput();
+        return returnVal;
+    };
+
+    const resetInput = function() {
+        input = {
+            move: input ? input.move : {x:0,y:0},
+            mousePosition: input ? input.mousePosition : {x:0,y:0},
+            mouseUp: 0,
+            text: "",
+            other: 0
+        }
+    };
+
+    self.sendState = function(gameState) {
+        socket.emit( "server:update", gameState )
+    };
+
+    resetInput();
 
     return self;
 

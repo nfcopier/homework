@@ -9,12 +9,11 @@ return function IOStream() {
     let input = {};
 
     self.startListening = function() {
-        io.on( "scores:update", updateScores )
+        io.on( "scores:update", updateScores );
+        io.on( "server:update", updateFromServer );
     };
 
-    const updateScores = function(scores) {
-        input.highScores = scores;
-    };
+    const updateScores = (scores) => input.highScores = scores;
 
     self.input = function() {
         const currentInput = input;
@@ -22,13 +21,15 @@ return function IOStream() {
         return currentInput;
     };
 
-    self.refreshScores = function() {
-        io.emit( "scores:refresh" );
-    };
+    self.refreshScores = () => io.emit( "scores:refresh" );
 
-    self.registerUser = function (credentials) {
-        io.emit( "user:register", credentials );
-    };
+    self.registerUser = (credentials) =>io.emit( "user:register", credentials );
+
+    const updateFromServer = (serverState) => input.serverState = serverState;
+
+    self.joinGame = () => io.emit( "game:join" );
+
+    self.sendInput = (input) => io.emit( "game:input", input );
 
     return self;
 

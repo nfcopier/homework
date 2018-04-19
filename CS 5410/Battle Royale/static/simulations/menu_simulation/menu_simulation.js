@@ -41,7 +41,7 @@ return function MenuSimulation(gameSimulation) {
             case "Join Game":
                 return showJoin();
             case "Join":
-                return joinGame();
+                return gameAction = Actions.JOIN_GAME;
             case "Register":
                 return showRegistration();
             case "Submit":
@@ -81,11 +81,6 @@ return function MenuSimulation(gameSimulation) {
         menu.addTextField( "username" );
         menu.addTextField( "password" );
         menu.addButton( "Join" );
-    }
-
-    function joinGame() {
-        const credentials = menu.getValues();
-        gameAction = Actions.NEW_GAME;
     }
 
     function showRegistration() {

@@ -1,10 +1,18 @@
-export default function (
+module.exports = function (
     GameObject
 ) {
 
 const MAX_SPEED = 5;
 
-return function Avatar(transform) {
+return function Avatar(location) {
+
+    const transform = {
+        x: location.x,
+        y: location.y,
+        theta: 0,
+        width: 20,
+        height: 25
+    };
 
     const center = function() { return {
         x: transform.x + transform.width / 2,
@@ -55,4 +63,4 @@ return function Avatar(transform) {
 
 }
 
-}
+};

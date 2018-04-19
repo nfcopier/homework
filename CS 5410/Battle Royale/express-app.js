@@ -22,6 +22,8 @@ const initialize = function() {
 
     app.use("/static", ExpressApp.static("static"));
 
+    startGame();
+
     http.listen(port, function () {
         console.log(`Listening on port ${port}`);
     });
@@ -30,6 +32,19 @@ const initialize = function() {
 
 const handleClientConnect = function(socket) {
     self.clients.add( socket );
+};
+
+const startGame = function() {
+    self.game = serverApp.GameSimulation( self.clients );
+    doGameLoop( Date.now(), 0 );
+};
+
+const doGameLoop = function(currentTime, elapsedTime) {
+    self.game.update( elapsedTime );
+    setTimeout(() => {
+        const now = Date.now();
+        doGameLoop(now, now - currentTime)
+    }, 16)
 };
 
 

@@ -29,6 +29,7 @@ export default function (
         const elapsedTime = currentTime - this._lastTime;
         this._lastTime = currentTime;
         const actions = this._inputSystem.getActions( currentTime );
+        this._ioStream.sendInput( actions );
         const input = this._ioStream.input();
         this._simulation.update( actions, input, elapsedTime );
         this._checkGameAction();
@@ -73,6 +74,11 @@ export default function (
             case Actions.REGISTER_USER: {
                 this._ioStream.registerUser( this._simulation.getValues() );
                 this._showMenu();
+                break;
+            }
+            case Actions.JOIN_GAME: {
+                this._ioStream.joinGame();
+                this._startNewGame();
                 break;
             }
             default: {
