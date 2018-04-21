@@ -114,8 +114,8 @@ return function InputSystem(canvas) {
     };
 
     const onTouchEnd = function (e) {
-        // onMouseMove( e );
-        // onMouseUp();
+        onMouseMove( e );
+        onMouseUp();
     };
 
     const onMouseMove = function(event) {

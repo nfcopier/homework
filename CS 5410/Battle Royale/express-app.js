@@ -4,6 +4,7 @@ const IO = require("socket.io");
 const serverApp = require("./server_app")();
 
 const port = process.argv.length > 2 ? process.argv[1] : 3000;
+const TICK_LENGTH = 1000 / 60;
 
 const self = {};
 
@@ -40,11 +41,11 @@ const startGame = function() {
 };
 
 const doGameLoop = function(currentTime, elapsedTime) {
-    self.game.update( elapsedTime );
     setTimeout(() => {
         const now = Date.now();
         doGameLoop(now, now - currentTime)
-    }, 16)
+    }, TICK_LENGTH);
+    self.game.update( elapsedTime );
 };
 
 

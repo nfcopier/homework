@@ -8,14 +8,11 @@ const GAME_LENGTH = 15 * 60 * 1000;
 return function GameSimulation(clients) {
 
     const transform = {
-        x: 0,
-        y: 0,
-        theta: 0,
         width: 1024,
         height: 768
     };
 
-    const self = gameObjects.GameObject( transform );
+    const self = {};
 
     let players = [];
     let gameState = {
@@ -32,19 +29,32 @@ return function GameSimulation(clients) {
         clients.justLoggedIn().forEach( addPlayer );
         players = players.filter( isLoggedIn );
         players.forEach( doUpdate(elapsedTime) );
+        players.filter( isDead ).forEach( respawn );
+        gameState.playerData = players.filter( hasAvatar ).map( playerData );
+        gameState.elapsedTime = elapsedTime;
         players.forEach( send(gameState) );
     };
 
     const addPlayer = function (client) {
-        const player = Player( client );
-        const newLocation = nextSpawnLocation();
-        players.push( player );
-        player.respawn( newLocation );
+        const player = Player(client);
+        players.push(player);
+        respawn( player )
     };
 
     const isLoggedIn = (player) => player.isLoggedIn();
 
     const doUpdate = (elapsedTime) => (player) => player.update( elapsedTime );
+
+    const isDead = (player) => player.isDead();
+
+    const respawn = function(player) {
+        const newLocation = nextSpawnLocation();
+        player.respawn( newLocation );
+    };
+
+    const hasAvatar = (player) => player.hasAvatar();
+
+    const playerData = (player) => player.ownData();
 
     const send = (gameState) => function (player) {
         player.sendPlayerUpdate();

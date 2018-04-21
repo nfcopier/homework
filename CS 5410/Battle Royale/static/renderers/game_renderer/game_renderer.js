@@ -53,7 +53,7 @@ return function GameRenderer(simulation) {
     };
 
     const addChildren = function () {
-        for (let avatar of simulation.getAvatars())
+        for (let avatar of simulation.getEnemies())
             self.children.push( createAvatarRenderer( avatar, "red" ) )
         const playerState = simulation.getPlayerState();
         self.children.push( createAvatarRenderer(playerState, "green") );

@@ -49,7 +49,7 @@ return function Player(client) {
     };
 
     const updateRotation = function () {
-        avatar.rotate( input.mousePosition )
+        avatar.rotate( input.mousePosition );
     };
 
     const updateLocation = function (elapsedTime) {
@@ -117,10 +117,8 @@ return function Player(client) {
         missileInCoolDown = false;
         bulletInCoolDown = false;
         client.respawn( location );
-        self.update = updateCountdown
+        self.update = updateCountdown;
     };
-
-    self.avatar = () => avatar;
 
     self.sendPlayerUpdate = function () {
         if (!input) return;
@@ -138,7 +136,44 @@ return function Player(client) {
         };
     };
 
-    self.sendGameState = (gameState) => client.sendGameState( gameState );
+    self.ownData = function () {
+        return {
+            id: id,
+            transform : avatar.getTransform(),
+            missileAmmo: missileAmmo
+        };
+    };
+
+    self.sendGameState = function (gameState) {
+        const personalUpdate = personalUpdateFrom( gameState );
+        return client.sendGameState( personalUpdate );
+    };
+
+    const personalUpdateFrom = function(gameState) {
+        const personalUpdate = Object.assign( {}, gameState );
+        personalUpdate.enemies = getEnemiesFrom( gameState );
+        delete personalUpdate.playerData;
+        return personalUpdate;
+    };
+
+    const getEnemiesFrom = function(gameState) {
+        return gameState.playerData.filter( isntSelf ).filter( isNearby );
+    };
+
+    const isntSelf = (playerData) => playerData.id !== id;
+
+    const isNearby = function(playerData) {
+        const thisLocation = avatar ? avatar.getTransform() : location;
+        const otherLocation = playerData.transform;
+        const between = distanceBetween( thisLocation, otherLocation );
+        return between < 2000;
+    };
+
+    const distanceBetween = function(a, b) {
+        return Math.sqrt( a.x*b.x + a.y*b.y );
+    };
+
+    self.hasAvatar = () => !!avatar;
 
     self.damage = (value) => health -= value;
 
@@ -161,7 +196,7 @@ return function Player(client) {
         transform: avatar.getTransform(),
         missilesFired: missileFired,
         bulletsFired: bulletFired
-    }};
+    };};
 
     self.isDead = () => health <= 0;
 
@@ -171,6 +206,6 @@ return function Player(client) {
 
     return self;
 
-}
+};
 
 };

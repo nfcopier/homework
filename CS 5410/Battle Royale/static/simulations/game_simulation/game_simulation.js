@@ -27,36 +27,27 @@ return function GameSimulation() {
     let fps = 0;
     let timeSinceLastCheck = 0;
     let gameState = {};
+    let enemies = [];
 
-    const updateGame = self.update = function(actions, input, elapsedTime) {
+    self.update = function(actions, input, elapsedTime) {
+        updateGameWorld( actions, input, elapsedTime );
+        updateSelf( actions, input, elapsedTime );
+    };
+
+    const updateGameWorld = function (actions, input, elapsedTime) {
         updateFps( elapsedTime );
         otherAction = actions.other;
-        if (input.gameState) gameState = input.gameState;
+        if (input.gameState) updateGameState( input.gameState );
+        enemies.forEach( doInterpolation(elapsedTime) );
+        particleSystem.update( elapsedTime );
+    };
+
+    const updateAvatar = function(actions, input, elapsedTime) {
         if (input.respawn) return respawn( input.respawn );
         if (input.playerState) predictor.setKnown( input.playerState );
         predictor.update( actions, elapsedTime );
     };
-
-    const respawn = function(location) {
-        predictor = StatePredictor( location );
-        countdown = 3000;
-        self.update = updateCountdown;
-    };
-
-    const updateCountdown = function(actions, input, elapsedTime) {
-        updateFps( elapsedTime );
-        otherAction = actions.other;
-        if (input.gameState) gameState = input.gameState;
-        countdown -= elapsedTime;
-        particleSystem.update( elapsedTime );
-        if (input.playerState) return startGame( actions, input, elapsedTime );
-    };
-
-    const startGame = function (actions, input, elapsedTime) {
-        countdown = 0;
-        self.update = updateGame;
-        self.update( actions, input, elapsedTime )
-    };
+    let updateSelf = updateAvatar;
 
     const updateFps = function (elapsedTime) {
         frameCount += 1;
@@ -67,11 +58,67 @@ return function GameSimulation() {
         timeSinceLastCheck = 0;
     };
 
+    const updateGameState = function (newGameState) {
+        newGameState.enemies.forEach( updateGoal(newGameState.elapsedTime) );
+        enemies = enemies.filter( stillExistsIn( newGameState.enemies) );
+        gameState = newGameState;
+    };
+
+    const updateGoal = function (updateWindow) {
+        const enemyObject = enemies.reduce( toObject, {} );
+        return function (newEnemy) {
+            if (!updateWindow) return;
+            const currentEnemy = enemyObject[newEnemy.id];
+            if (!currentEnemy) {
+                enemies.push( newEnemy );
+            } else {
+                currentEnemy.goalWindow = updateWindow;
+                currentEnemy.goalTransform = newEnemy.transform;
+            }
+        };
+    };
+
+    const stillExistsIn = function (newEnemies) {
+        const enemyObject = newEnemies.reduce( toObject, {} );
+        return (enemy) => enemyObject[enemy.id];
+    };
+
+    const toObject = function(accumulated, enemy) {
+        accumulated[enemy.id] = enemy;
+        return accumulated;
+    };
+
+    const doInterpolation = (elapsedTime) => function (enemy) {
+        if (!enemy.goalWindow || !enemy.goalTransform) return;
+        const increment = elapsedTime / enemy.goalWindow;
+        if (!increment) return;
+        enemy.transform.x += (enemy.goalTransform.x  - enemy.transform.x) * increment;
+        enemy.transform.y += (enemy.goalTransform.y  - enemy.transform.y) * increment;
+        enemy.transform.theta += (enemy.goalTransform.theta  - enemy.transform.theta) * increment;
+    };
+
+    const respawn = function(location) {
+        predictor = StatePredictor( location );
+        countdown = 3000;
+        updateSelf = updateCountdown;
+    };
+
+    const updateCountdown = function(actions, input, elapsedTime) {
+        countdown -= elapsedTime;
+        if (input.playerState) return startGame( actions, input, elapsedTime );
+    };
+
+    const startGame = function (actions, input, elapsedTime) {
+        countdown = 0;
+        updateSelf = updateAvatar;
+        updateSelf( actions, input, elapsedTime );
+    };
+
     self.getAction = function () { return otherAction; };
 
     self.getPlayerState = () => predictor.state();
 
-    self.getAvatars = () => [];
+    self.getEnemies = () => enemies;
 
     self.getCountdown = () => countdown;
 
@@ -88,6 +135,6 @@ return function GameSimulation() {
 
     return self;
 
-}
+};
 
 }
