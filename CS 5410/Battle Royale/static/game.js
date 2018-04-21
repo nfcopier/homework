@@ -11,7 +11,7 @@ export default function (
         this._canvas = Canvas();
         this._inputSystem = InputSystem( this._canvas );
         this._ioStream = IOStream();
-        this._clearGame();
+        this._leaveGame();
         this._showMenu();
     }
 
@@ -29,6 +29,7 @@ export default function (
         const elapsedTime = this._getElapsedTimeFrom( currentTime );
         const input = this._ioStream.input();
         if (input.respawn) this._startNewGame();
+        if (input.loggedout) this._clearGame();
         const actions = this._inputSystem.getActions( elapsedTime );
         this._ioStream.sendInput( actions );
         this._simulation.update( actions, input, elapsedTime );
@@ -44,8 +45,6 @@ export default function (
     };
 
     Game.prototype._showMenu = function () {
-        if (this._gameSimulation && this._gameSimulation.isGameOver())
-            this._clearGame();
         this._simulation =
             simulations.MenuSimulation( this._gameSimulation );
         this._canvas.setRenderer(
@@ -69,8 +68,7 @@ export default function (
                 break;
             }
             case Actions.LEAVE_GAME: {
-                this._clearGame();
-                this._showMenu();
+                this._leaveGame();
                 break;
             }
             case Actions.REFRESH_SCORES: {
@@ -103,8 +101,13 @@ export default function (
         );
     };
 
+    Game.prototype._leaveGame = function () {
+        this._ioStream.leaveGame();
+    };
+
     Game.prototype._clearGame = function () {
         this._gameSimulation = null;
+        this._showMenu();
     };
 
     return Game;

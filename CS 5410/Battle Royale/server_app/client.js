@@ -8,6 +8,7 @@ return function Client(socket) {
     const self = {};
 
     let justLoggedIn = false;
+    let isLoggedIn = false;
     let input = null;
 
     const scoreRepo = ScoreRepo();
@@ -22,14 +23,19 @@ return function Client(socket) {
     self.startListening = function () {
         socket.on( "scores:refresh", getScores );
         socket.on( "user:register", registerUser );
-        socket.on( "game:join", logInUser );
-        socket.on( "game:input", (i) => input = i )
+        socket.on( "game:join", joinGame );
+        socket.on( "game:input", (i) => input = i );
+        socket.on( "game:left", leaveGame );
+        socket.on( "disconnect", leaveGame );
     };
 
-    const logInUser = function ({ username, password } = {}) {
+    const joinGame = function ({ username, password } = {}) {
         try {
             const isAuthorized = users.check(username, password);
-            if (isAuthorized) justLoggedIn = true;
+            if (!isAuthorized) return;
+            justLoggedIn = true;
+            isLoggedIn = true;
+            console.log( "Player joined the game!" );
         } catch (e) {
             if (UserErrors.includes(e))
                 socket.emit( `error:user:${e}` );
@@ -57,11 +63,20 @@ return function Client(socket) {
         }
     };
 
+    const leaveGame = function() {
+        if (!isLoggedIn) return;
+        isLoggedIn = false;
+        socket.emit( "user:logged_out" );
+        console.log( "Player left the game!" );
+    };
+
     self.justLoggedIn = function () {
         const returnVal = justLoggedIn;
         justLoggedIn = false;
         return returnVal;
     };
+
+    self.isLoggedIn = () => isLoggedIn;
 
     self.input = function () {
         const returnVal = input;

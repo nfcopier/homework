@@ -167,6 +167,8 @@ return function Player(client) {
 
     self.id = () => id;
 
+    self.isLoggedIn = () => client.isLoggedIn();
+
     return self;
 
 }

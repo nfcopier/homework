@@ -13,4 +13,5 @@ export default {
     REFRESH_SCORES: 11,
     REGISTER_USER: 12,
     JOIN_GAME: 13,
+    LOGGED_OUT: 14
 }

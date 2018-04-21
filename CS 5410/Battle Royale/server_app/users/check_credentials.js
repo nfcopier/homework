@@ -6,13 +6,14 @@ return !string || !string.trim().length
 
 return function CheckCredentials(username, password) {
 
+    return true;
     if (isNullOrEmpty( username ))
         throw "username_empty";
     if (isNullOrEmpty( password ))
         throw "password_empty";
     const userRepo = UserRepository();
     const user = userRepo.getByUsername( username );
-    return true; //user && user.password === password;
+    return user && user.password === password;
 
 }
 

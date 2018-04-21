@@ -30,13 +30,9 @@ return function GameSimulation(clients) {
     self.update = function(elapsedTime) {
         gameState.gameTime -= elapsedTime;
         clients.justLoggedIn().forEach( addPlayer );
+        players = players.filter( isLoggedIn );
         players.forEach( doUpdate(elapsedTime) );
         players.forEach( send(gameState) );
-    };
-
-    const send = (gameState) => function (player) {
-        player.sendPlayerUpdate();
-        player.sendGameState( gameState )
     };
 
     const addPlayer = function (client) {
@@ -46,7 +42,14 @@ return function GameSimulation(clients) {
         player.respawn( newLocation );
     };
 
+    const isLoggedIn = (player) => player.isLoggedIn();
+
     const doUpdate = (elapsedTime) => (player) => player.update( elapsedTime );
+
+    const send = (gameState) => function (player) {
+        player.sendPlayerUpdate();
+        player.sendGameState( gameState )
+    };
 
     function nextSpawnLocation() {
         return {
