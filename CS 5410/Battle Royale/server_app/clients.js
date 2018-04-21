@@ -14,8 +14,8 @@ return function Clients() {
         client.startListening();
     };
 
-    self.wantToJoin = function () {
-        return clients.filter( c => c.wantsToJoin() );
+    self.justLoggedIn = function () {
+        return clients.filter( c => c.justLoggedIn() );
     };
 
     return self;

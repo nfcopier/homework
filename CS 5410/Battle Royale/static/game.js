@@ -79,11 +79,10 @@ export default function (
             }
             case Actions.REGISTER_USER: {
                 this._ioStream.registerUser( this._simulation.getValues() );
-                this._showMenu();
                 break;
             }
             case Actions.JOIN_GAME: {
-                this._ioStream.joinGame();
+                this._ioStream.joinGame( this._simulation.getValues() );
                 break;
             }
             default: {

@@ -16,7 +16,7 @@ return function Player(client) {
     const self = {};
 
     let score = 0;
-    let avatar = null;
+    let avatar;
     let input;
     let location;
     let health;
@@ -29,6 +29,7 @@ return function Player(client) {
     let bulletCoolDownTimer;
     let missileInCoolDown;
     let bulletInCoolDown;
+    const id = Math.floor( Math.random() * Number.MAX_SAFE_INTEGER );
 
     const updateCountdown = self.update = function(elapsedTime) {
         countdown -= elapsedTime;
@@ -121,17 +122,20 @@ return function Player(client) {
 
     self.avatar = () => avatar;
 
-    self.sendUpdate = function () {
+    self.sendPlayerUpdate = function () {
         if (!input) return;
-        const state = {
-            transform: avatar.getTransform(),
-            score: score,
-            health: health,
-            missileAmmo: missileAmmo,
-            bulletAmmo: bulletAmmo,
+        client.sendPlayerState( ownState() );
+    };
+
+    const ownState = function() {
+        return {
+            transform     : avatar.getTransform(),
+            score         : score,
+            health        : health,
+            missileAmmo   : missileAmmo,
+            bulletAmmo    : bulletAmmo,
             sequenceNumber: input.sequenceNumber
         };
-        client.sendPlayerState( state );
     };
 
     self.sendGameState = (gameState) => client.sendGameState( gameState );
@@ -160,6 +164,8 @@ return function Player(client) {
     }};
 
     self.isDead = () => health <= 0;
+
+    self.id = () => id;
 
     return self;
 

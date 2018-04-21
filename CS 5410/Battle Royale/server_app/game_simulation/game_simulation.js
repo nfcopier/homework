@@ -29,22 +29,24 @@ return function GameSimulation(clients) {
 
     self.update = function(elapsedTime) {
         gameState.gameTime -= elapsedTime;
-        for (let client of clients.wantToJoin())
-            addPlayerFrom( client );
-        for (let player of players)
-            player.update( elapsedTime );
-        for (let player of players)
-            player.sendUpdate();
-        for (let player of players)
-            player.sendGameState( gameState )
+        clients.justLoggedIn().forEach( addPlayer );
+        players.forEach( doUpdate(elapsedTime) );
+        players.forEach( send(gameState) );
     };
 
-    const addPlayerFrom = function (client) {
+    const send = (gameState) => function (player) {
+        player.sendPlayerUpdate();
+        player.sendGameState( gameState )
+    };
+
+    const addPlayer = function (client) {
         const player = Player( client );
         const newLocation = nextSpawnLocation();
         players.push( player );
         player.respawn( newLocation );
     };
+
+    const doUpdate = (elapsedTime) => (player) => player.update( elapsedTime );
 
     function nextSpawnLocation() {
         return {

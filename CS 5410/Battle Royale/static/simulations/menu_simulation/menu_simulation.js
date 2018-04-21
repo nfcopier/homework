@@ -30,6 +30,8 @@ return function MenuSimulation(gameSimulation) {
         if (actions.other === Actions.BACK_SPACE)
             menu.backspace();
         if (input.highScores) highScores = input.highScores;
+        if (input.registerSuccess && menu.getName() === "Register")
+            showMainMenu();
     };
 
     const processClick = function () {

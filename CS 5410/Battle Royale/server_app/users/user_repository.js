@@ -11,7 +11,7 @@ return function UserRepository() {
     };
 
     const ensureUsers = function() {
-        if (!fs.exists( FILE_NAME )) persistUsers( [] );
+        if (!fs.existsSync( FILE_NAME )) persistUsers( [] );
     };
 
     self.getAll = function() {
@@ -21,8 +21,8 @@ return function UserRepository() {
     };
 
     self.add = function (username, password) {
+        if (alreadyExists(username)) throw "user_exists";
         const users = self.getAll();
-        if (alreadyExists(users, username)) throw "user_exists";
         users.push({
             username: username,
             password: password
@@ -30,9 +30,13 @@ return function UserRepository() {
         persistUsers( users );
     };
 
-    const alreadyExists = function (users, username) {
-        return !!users.find( u => u.username === username );
+    const alreadyExists = (username) => !!self.getByUsername( username );
+
+    self.getByUsername = function (username) {
+        return self.getAll().find( has(username) );
     };
+
+    const has = username => user => user.username === username;
 
     const persistUsers = function(users) {
         const raw = JSON.stringify( users );
