@@ -23,8 +23,8 @@ return function Player(client) {
     let countdown;
     let missileAmmo;
     let bulletAmmo;
-    let missilesFired;
-    let bulletsFired;
+    let missileFired;
+    let bulletFired;
     let missileCoolDownTimer;
     let bulletCoolDownTimer;
     let missileInCoolDown;
@@ -38,7 +38,7 @@ return function Player(client) {
     };
 
     const updatePlayer = function() {
-        missilesFired = bulletsFired = false;
+        missileFired = bulletFired = false;
         input = client.input();
         if (!input) return;
         updateRotation();
@@ -100,7 +100,7 @@ return function Player(client) {
             if (bulletCoolDownTimer > 0) return;
             bulletInCoolDown = false;
         }
-        if (bulletsFired <= 0 || !input.bulletFired) return;
+        if (bulletFired <= 0 || !input.bulletFired) return;
         bulletFired = true;
         bulletAmmo -= 1;
         bulletInCoolDown = true;
@@ -155,8 +155,8 @@ return function Player(client) {
 
     self.projectilesFired = () => { return {
         transform: avatar.getTransform(),
-        missilesFired: missilesFired,
-        bulletsFired: bulletsFired
+        missilesFired: missileFired,
+        bulletsFired: bulletFired
     }};
 
     self.isDead = () => health <= 0;

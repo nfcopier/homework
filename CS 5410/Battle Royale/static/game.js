@@ -26,16 +26,21 @@ export default function (
     };
 
     Game.prototype._doLoop = function (currentTime) {
-        const elapsedTime = currentTime - this._lastTime;
-        this._lastTime = currentTime;
-        const actions = this._inputSystem.getActions( elapsedTime );
-        this._ioStream.sendInput( actions );
+        const elapsedTime = this._getElapsedTimeFrom( currentTime );
         const input = this._ioStream.input();
         if (input.respawn) this._startNewGame();
+        const actions = this._inputSystem.getActions( elapsedTime );
+        this._ioStream.sendInput( actions );
         this._simulation.update( actions, input, elapsedTime );
         this._checkGameAction();
         this._canvas.render();
         requestAnimationFrame( this._doLoop.bind(this) );
+    };
+
+    Game.prototype._getElapsedTimeFrom = function(currentTime) {
+        const elapsedTime = currentTime - this._lastTime;
+        this._lastTime = currentTime;
+        return elapsedTime;
     };
 
     Game.prototype._showMenu = function () {

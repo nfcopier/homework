@@ -8,7 +8,7 @@ return function Client(socket) {
     const self = {};
 
     let wantsToJoin = false;
-    let input;
+    let input = null;
 
     const scoreRepo = ScoreRepo();
 
@@ -53,11 +53,9 @@ return function Client(socket) {
 
     self.input = function () {
         const returnVal = input;
-        resetInput();
+        input = null;
         return returnVal;
     };
-
-    const resetInput = () => input = null;
 
     self.respawn = (location) =>
         socket.emit( "server:respawn", location );
@@ -67,8 +65,6 @@ return function Client(socket) {
 
     self.sendGameState = (gameState) =>
         socket.emit( "server:game_state", gameState );
-
-    resetInput();
 
     return self;
 

@@ -38,11 +38,11 @@ return function StatePredictor(location) {
         predictedTransform = avatar.getTransform();
     };
 
-    const updateFrom = function(actions, elapsedTime) {
+    const updateFrom = function(userInput, elapsedTime) {
         const input = {
-            sequenceNumber: actions.sequenceNumber,
-            move: Object.assign({}, actions.move),
-            mousePosition: Object.assign({}, actions.mousePosition)
+            sequenceNumber: userInput.sequenceNumber,
+            move: Object.assign({}, userInput.move),
+            mousePosition: Object.assign({}, userInput.mousePosition)
         };
         return {input: input, elapsedTime: elapsedTime};
     };

@@ -141,8 +141,8 @@ return function InputSystem(canvas) {
         sequenceNumber += 1;
         actions = {
             sequenceNumber: sequenceNumber,
-            move: actions.move,
-            mousePosition: mousePosition,
+            move: Object.assign( {}, actions.move ),
+            mousePosition: Object.assign( {}, mousePosition ),
             mouseUp: Actions.NONE,
             text: "",
             other: Actions.NONE
