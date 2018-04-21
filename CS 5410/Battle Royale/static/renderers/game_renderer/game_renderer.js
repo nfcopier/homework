@@ -54,20 +54,22 @@ return function GameRenderer(simulation) {
 
     const addChildren = function () {
         for (let avatar of simulation.getAvatars())
-            self.children.push( createAvatarRenderer( avatar ) )
+            self.children.push( createAvatarRenderer( avatar, "red" ) )
+        const playerState = simulation.getPlayerState();
+        self.children.push( createAvatarRenderer(playerState, "green") );
         for (let effect of simulation.getParticleEffects())
             self.children.push( createParticleEffectRenderer( effect ) )
-        self.children.push( createScoreRenderer() );
+        self.children.push( createScoreRenderer(playerState.score) );
         self.children.push( createAnalyticsRenderer() );
         const countdown = simulation.getCountdown();
-        if (countdown.value > 0)
+        if (countdown > 0)
             self.children.push( createCountdownRenderer( countdown ) );
     };
 
-    const createAvatarRenderer = (avatar) => AvatarRenderer( avatar );
+    const createAvatarRenderer = (playerState, color) =>
+        AvatarRenderer( playerState, color );
 
-    const createScoreRenderer = function () {
-        const score =  simulation.getScore();
+    const createScoreRenderer = function (score) {
         const gameTransform = simulation.getTransform();
         return ScoreRenderer( score, gameTransform );
     };
@@ -77,7 +79,7 @@ return function GameRenderer(simulation) {
     };
 
     const createCountdownRenderer = function (countdown) {
-        return CountdownRenderer( countdown );
+        return CountdownRenderer( countdown, transform );
     };
 
     const createAnalyticsRenderer = function() {

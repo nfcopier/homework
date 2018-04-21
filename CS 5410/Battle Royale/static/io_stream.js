@@ -37,8 +37,8 @@ return function IOStream() {
 
     self.joinGame = () => io.emit( "game:join" );
 
-    self.sendInput = (input) => {
-        setTimeout( () => io.emit( "game:input", input ), 500);
+    self.sendInput = (actions) => {
+        setTimeout( () => io.emit( "game:input", actions ), 500);
     }
 
     return self;

@@ -2,28 +2,24 @@ export default function (
     GameObject
 ) {
 
-const MAX_SPEED = 5;
+const MAX_SPEED = 0.25;
 
-return function Avatar(transform) {
+return function Avatar(sourceTransform) {
+
+    const transform = Object.assign( {}, sourceTransform );
 
     const center = function() { return {
         x: transform.x + transform.width / 2,
         y: transform.y + transform.height / 2
     } };
 
-    let hp = 20;
-
     const self = GameObject( transform );
 
-    self.damage = function(value) {
-        hp -= value
-    };
-
-    self.move = function(vector) {
+    self.move = function(vector, timeElapsed) {
         if (vector.x === 0 && vector.y === 0) return;
         const newVector = unitize( rotate( transform.theta, vector ) );
-        transform.x += MAX_SPEED * newVector.x;
-        transform.y -= MAX_SPEED * newVector.y;
+        transform.x += MAX_SPEED * timeElapsed * newVector.x;
+        transform.y -= MAX_SPEED * timeElapsed * newVector.y;
     };
 
     const rotate = function (theta, vector) {
@@ -40,6 +36,7 @@ return function Avatar(transform) {
             y: mag * vector.y
         };
     };
+
     self.rotate = function(mouseLocation) {
         const c = center();
         const vector = {
@@ -55,4 +52,4 @@ return function Avatar(transform) {
 
 }
 
-}
+};

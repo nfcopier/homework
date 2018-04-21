@@ -2,13 +2,9 @@ export default function (
     Renderer
 ) {
 
-let renderSprite = function (graphics, spec) {
-    graphics.drawRectangle( spec );
-};
+return function AvatarRenderer(playerState, color) {
 
-return function AvatarRenderer(avatar) {
-
-    const transform = avatar.getTransform();
+    const transform = playerState.transform;
 
     const self = Renderer( transform );
 
@@ -45,7 +41,7 @@ return function AvatarRenderer(avatar) {
 
     const calculateEngineSpec = function () {
         return {
-            color      : "green",
+            color      : color,
             upperLeft  : {
                 x: transform.width / 4,
                 y: 3 * transform.height / 8
@@ -73,7 +69,7 @@ return function AvatarRenderer(avatar) {
 
     const calculateTailSpec = function () {
         return {
-            color      : "green",
+            color      : color,
             upperLeft  : {
                 x: 7 * transform.width / 16,
                 y: 11 * transform.height / 16

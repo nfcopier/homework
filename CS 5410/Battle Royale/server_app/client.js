@@ -45,8 +45,6 @@ return function Client(socket) {
         }
     };
 
-    self.gameInput = () => self;
-
     self.wantsToJoin = function () {
         const returnVal = wantsToJoin;
         wantsToJoin = false;
@@ -59,15 +57,7 @@ return function Client(socket) {
         return returnVal;
     };
 
-    const resetInput = function() {
-        input = {
-            move: input ? input.move : {x:0,y:0},
-            mousePosition: input ? input.mousePosition : {x:0,y:0},
-            mouseUp: 0,
-            text: "",
-            other: 0
-        }
-    };
+    const resetInput = () => input = null;
 
     self.respawn = (location) =>
         socket.emit( "server:respawn", location );

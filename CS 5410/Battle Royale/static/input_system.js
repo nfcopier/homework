@@ -10,12 +10,15 @@ const UPPER_A_CODE = "A".charCodeAt( 0 );
 return function InputSystem(canvas) {
 
     const self = {};
-    let actions = null;
+    let actions = {
+        move: { x: Actions.NONE, y: Actions.NONE },
+        mousePosition: { x: 0, y: 0 }
+    };
     let mousePosition = { x: 0, y: 0};
-
-    clearActions();
+    let sequenceNumber = 0;
 
     self.startListening = function () {
+        resetActions();
         window.addEventListener("keydown", onKeyDown, false);
         window.addEventListener("keyup", onKeyUp, false);
         window.addEventListener("touchend", onTouchEnd);
@@ -36,7 +39,7 @@ return function InputSystem(canvas) {
         const xDirection = getDirectionX( e );
         if (xDirection) actions.move.x = Actions.NONE;
         const yDirection = getDirectionY( e );
-        if (yDirection) actions.move.y = Actions.NONE
+        if (yDirection) actions.move.y = Actions.NONE;
     };
 
     const isPrintable = function (keyCode) {
@@ -111,8 +114,8 @@ return function InputSystem(canvas) {
     };
 
     const onTouchEnd = function (e) {
-        onMouseMove( e );
-        onMouseUp();
+        // onMouseMove( e );
+        // onMouseUp();
     };
 
     const onMouseMove = function(event) {
@@ -127,15 +130,18 @@ return function InputSystem(canvas) {
         actions.mouseUp = Actions.MOUSE_UP;
     };
 
-    self.getActions = function () {
+    self.getActions = function (elapsedTime) {
         const currentActions = actions;
-        clearActions();
+        currentActions.elapsedTime = elapsedTime;
+        resetActions();
         return currentActions;
     };
 
-    function clearActions() {
+    function resetActions() {
+        sequenceNumber += 1;
         actions = {
-            move: actions ? actions.move : { x: Actions.NONE, y: Actions.NONE},
+            sequenceNumber: sequenceNumber,
+            move: actions.move,
             mousePosition: mousePosition,
             mouseUp: Actions.NONE,
             text: "",

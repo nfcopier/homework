@@ -1,5 +1,6 @@
 export default function (
     gameObjects,
+    StatePredictor,
     collisionSystems,
     ParticleSystem,
     Actions
@@ -18,7 +19,7 @@ return function GameSimulation() {
     const self = gameObjects.GameObject( transform );
 
     const particleSystem = new ParticleSystem();
-    let playerState = {};
+    let predictor;
     let countdown = null;
     let otherAction = Actions.NONE;
     let gameOver = false;
@@ -28,28 +29,33 @@ return function GameSimulation() {
     let gameState = {};
 
     const updateGame = self.update = function(actions, input, elapsedTime) {
+        updateFps( elapsedTime );
+        otherAction = actions.other;
         if (input.gameState) gameState = input.gameState;
         if (input.respawn) return respawn( input.respawn );
-        if (input.playerState) playerState = input.playerState;
+        if (input.playerState) predictor.setKnown( input.playerState );
+        predictor.update( actions, elapsedTime );
     };
 
     const respawn = function(location) {
-        self.update = updateCountdown;
+        predictor = StatePredictor( location );
         countdown = 3000;
+        self.update = updateCountdown;
     };
 
     const updateCountdown = function(actions, input, elapsedTime) {
-        if (input.gameState) gameState = input.gameState;
-        if (input.playerState) return startGame( input, elapsedTime );
-        otherAction = actions.other;
-        countdown -= elapsedTime;
         updateFps( elapsedTime );
+        otherAction = actions.other;
+        if (input.gameState) gameState = input.gameState;
+        countdown -= elapsedTime;
         particleSystem.update( elapsedTime );
+        if (input.playerState) return startGame( actions, input, elapsedTime );
     };
 
-    const startGame = function (input, elapsedTime) {
+    const startGame = function (actions, input, elapsedTime) {
+        countdown = 0;
         self.update = updateGame;
-        self.update( {}, input, elapsedTime )
+        self.update( actions, input, elapsedTime )
     };
 
     const updateFps = function (elapsedTime) {
@@ -63,16 +69,11 @@ return function GameSimulation() {
 
     self.getAction = function () { return otherAction; };
 
-    self.getAvatars = () => playerState.transform ? [gameObjects.Avatar(playerState.transform)] : [];
+    self.getPlayerState = () => predictor.state();
 
-    self.getScore = function () { return 0; };
+    self.getAvatars = () => [];
 
-    self.getCountdown = function () {
-        return {
-            value: countdown,
-            transform: transform
-        };
-    };
+    self.getCountdown = () => countdown;
 
     self.getAnalytics = function () {
         return {

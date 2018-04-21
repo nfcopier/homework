@@ -37,14 +37,14 @@ return function Player(client) {
         avatar = Avatar( location );
     };
 
-    const updatePlayer = function( elapsedTime ) {
+    const updatePlayer = function() {
         missilesFired = bulletsFired = false;
         input = client.input();
         if (!input) return;
         updateRotation();
-        updateLocation( elapsedTime );
-        fireMissile( elapsedTime );
-        fireBullet( elapsedTime );
+        updateLocation( input.elapsedTime );
+        fireMissile( input.elapsedTime );
+        fireBullet( input.elapsedTime );
     };
 
     const updateRotation = function () {
@@ -129,6 +129,7 @@ return function Player(client) {
             health: health,
             missileAmmo: missileAmmo,
             bulletAmmo: bulletAmmo,
+            sequenceNumber: input.sequenceNumber
         };
         client.sendPlayerState( state );
     };

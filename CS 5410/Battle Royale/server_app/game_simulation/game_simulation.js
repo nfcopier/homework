@@ -3,7 +3,7 @@ module.exports = function (
     gameObjects
 ) {
 
-const GAME_LENGTH = 10 * 60 * 1000;
+const GAME_LENGTH = 15 * 60 * 1000;
 
 return function GameSimulation(clients) {
 
@@ -42,8 +42,8 @@ return function GameSimulation(clients) {
     const addPlayerFrom = function (client) {
         const player = Player( client );
         const newLocation = nextSpawnLocation();
-        player.respawn( newLocation );
         players.push( player );
+        player.respawn( newLocation );
     };
 
     function nextSpawnLocation() {

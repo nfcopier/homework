@@ -28,7 +28,7 @@ export default function (
     Game.prototype._doLoop = function (currentTime) {
         const elapsedTime = currentTime - this._lastTime;
         this._lastTime = currentTime;
-        const actions = this._inputSystem.getActions( currentTime );
+        const actions = this._inputSystem.getActions( elapsedTime );
         this._ioStream.sendInput( actions );
         const input = this._ioStream.input();
         if (input.respawn) this._startNewGame();
