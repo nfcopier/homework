@@ -2,7 +2,7 @@ export default function (
     Graphics
 ) {
 
-return function Renderer(transform) {
+return function Renderer(transform, color = "red") {
 
     const self = {};
 
@@ -38,7 +38,7 @@ return function Renderer(transform) {
         self.graphics.drawRectangle({
             upperLeft: {x: 0, y: 0},
             bottomRight: {x: self.width, y: self.height},
-            color: "red"
+            color: color
         });
     };
 

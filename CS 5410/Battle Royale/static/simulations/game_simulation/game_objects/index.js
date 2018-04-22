@@ -1,4 +1,5 @@
 import gameObject from "./game_object.js"
+import building from "./building.js"
 import avatar from "./avatar.js"
 
 export default function (
@@ -8,8 +9,11 @@ export default function (
 
     const Avatar = avatar( GameObject );
 
+    const Building = building( GameObject );
+
     return {
         GameObject: GameObject,
-        Avatar: Avatar
+        Avatar: Avatar,
+        Building: Building
     }
 }

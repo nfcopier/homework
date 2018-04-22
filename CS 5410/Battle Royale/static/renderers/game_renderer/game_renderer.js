@@ -2,6 +2,7 @@ export default function (
     CountdownRenderer,
     AvatarRenderer,
     PlayerRenderer,
+    BuildingRenderer,
     MissileRenderer,
     BulletRenderer,
     ScoreRenderer,
@@ -20,16 +21,25 @@ return function GameRenderer(simulation) {
     const camera = Camera( transform );
 
     const fetchImage = function () {
-        const image = new Image();
-        image.src = "./static/images/space_background.jpg";
-        image.onload = function () {
-            drawBackground = drawBackgroundImage( image );
+        const spaceImage = new Image();
+        spaceImage.src = "./static/images/space_background.jpg";
+        spaceImage.onload = function () {
+            drawBackground = drawBackgroundImage( spaceImage, 1 );
+        };
+        const glassImage = new Image();
+        glassImage.src = "./static/images/brick_overlay - Copy.png";
+        glassImage.onload = function () {
+            drawOverlay = drawBackgroundImage( glassImage, 0.5 );
         };
     };
 
     const superRender = self._render;
     self._render = function(context, elapsedTime) {
-        self.render = () => drawBackground();
+        self.render = () => {
+            drawBackground();
+            drawOverlay();
+            drawBackgroundRectangle();
+        };
         superRender( context );
         const playerState = simulation.getAvatarState();
         self.render = renderGame( context, playerState );
@@ -87,15 +97,19 @@ return function GameRenderer(simulation) {
     };
 
     const addGameChildren = function (context, playerState) {
+        for (let building of simulation.playerBuildings())
+            self.children.push( BuildingRenderer( building ) );
         addEnemies( playerState );
-        if (playerState.hasAvatar)
-            self.children.push( PlayerRenderer( playerState ) );
         for (let missile of simulation.getMissiles())
             self.children.push( MissileRenderer( missile.transform ) );
         for (let bullet of simulation.getBullets())
-            self.children.push( BulletRenderer( bullet.transform ) );
+            self.children.push( BulletRenderer( bullet.transform, "silver" ) );
         for (let effect of simulation.getParticleEffects())
             self.children.push( createParticleEffectRenderer( effect ) );
+        for (let building of simulation.noPlayerBuildings())
+            self.children.push( BuildingRenderer( building ) );
+        if (playerState.hasAvatar)
+            self.children.push( PlayerRenderer( playerState ) );
     };
 
     const addEnemies = function (playerState) {
@@ -155,11 +169,11 @@ return function GameRenderer(simulation) {
         self.graphics.drawRectangle({
             upperLeft: {x: 0, y: 0},
             bottomRight: {x: self.width, y: self.height},
-            color: "#000033"
+            color: "rgba(0,0,255,0.25)",
         });
     };
 
-    const drawBackgroundImage = function(image) { return function () {
+    const drawBackgroundImage = function(image, alpha) { return function () {
         const spec = {
             image: image,
             upperLeft: {
@@ -169,7 +183,8 @@ return function GameRenderer(simulation) {
             bottomRight: {
                 x : transform.width,
                 y: transform.height
-            }
+            },
+            alpha: alpha
         };
         self.graphics.drawImage( spec );
     }};
@@ -177,6 +192,7 @@ return function GameRenderer(simulation) {
     self.camera = () => camera;
 
     let drawBackground = drawBackgroundRectangle;
+    let drawOverlay = () => {};
 
     fetchImage();
 

@@ -84,8 +84,8 @@ return function Client(socket) {
         return returnVal;
     };
 
-    self.respawn = (location) =>
-        socket.emit( "server:respawn", location );
+    self.respawn = (location, buildingData) =>
+        socket.emit( "server:respawn", location, buildingData );
 
     self.sendPlayerState = (playerState) =>
         socket.emit( "server:player_state", playerState );

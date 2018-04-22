@@ -1,6 +1,7 @@
 module.exports = function (
     Player,
-    gameObjects
+    gameObjects,
+    maps
 ) {
 
 return function GameSimulation(clients) {
@@ -11,6 +12,8 @@ return function GameSimulation(clients) {
     };
 
     const self = {};
+
+    let map = maps[Math.floor(Math.random()*maps.length)]();
 
     let players = [];
     let gameState = {
@@ -69,7 +72,7 @@ return function GameSimulation(clients) {
 
     const respawn = function(player) {
         const newLocation = nextSpawnLocation();
-        player.respawn( newLocation );
+        player.respawn( newLocation, map.playerBuildings() );
     };
 
     const spawnProjectiles = function (player) {

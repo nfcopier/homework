@@ -3,6 +3,7 @@ const avatar = require("./avatar");
 const projectile = require("./projectile");
 const missile = require("./missile");
 const bullet = require("./bullet");
+const building = require("./building");
 
 module.exports = function (
     CollisionDetector
@@ -18,10 +19,15 @@ module.exports = function (
 
     const Bullet = bullet( Projectile );
 
+    const Building = building(
+        GameObject
+    );
+
     return {
         GameObject: GameObject,
         Avatar: Avatar,
         Missile: Missile,
-        Bullet: Bullet
+        Bullet: Bullet,
+        Building: Building
     }
 };

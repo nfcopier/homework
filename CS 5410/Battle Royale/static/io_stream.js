@@ -29,7 +29,11 @@ return function IOStream() {
 
     self.registerUser = (credentials) => io.emit( "user:register", credentials );
 
-    const respawnPlayer = (location) => input.respawn = location;
+    const respawnPlayer = (location, buildingData) =>
+        input.respawn = {
+            location: location,
+            buildingData: buildingData
+        };
 
     const updateGame = (gameState) => input.gameState = gameState;
 

@@ -30,6 +30,7 @@ return function GameSimulation() {
     let enemies = [];
     let missiles = [];
     let bullets = [];
+    let buildings;
 
     self.update = function(actions, input, elapsedTime) {
         if (input.gameOver) return gameOver = true;
@@ -102,11 +103,14 @@ return function GameSimulation() {
         enemy.transform.theta += (enemy.goalTransform.theta  - enemy.transform.theta) * increment;
     };
 
-    const respawn = function(location) {
+    const respawn = function({location, buildingData}) {
+        buildings = buildingData.map( toBuilding );
         predictor = StatePredictor( location );
         countdown = 3000;
         updateSelf = updateCountdown;
     };
+
+    const toBuilding = (data) => gameObjects.Building( data );
 
     const updateCountdown = function(actions, input, elapsedTime) {
         countdown -= elapsedTime;
@@ -124,6 +128,12 @@ return function GameSimulation() {
     self.getAvatarState = () => predictor.state();
 
     self.getEnemies = () => enemies;
+
+    self.playerBuildings = () => buildings.filter( (b) => predictor ? b.contains( predictor.state().transform ) : [] ).map( toData );
+
+    self.noPlayerBuildings = () => buildings.filter( (b) => predictor ? !b.contains( predictor.state().transform ) : b ).map( toData );
+
+    const toData = (building) => building.data;
 
     self.getMissiles = () => missiles;
 

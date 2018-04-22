@@ -108,7 +108,7 @@ return function Player(client) {
         bulletCoolDownTimer = BULLET_COOL_DOWN;
     };
 
-    self.respawn = function(loc) {
+    self.respawn = function(loc, buildingData) {
         avatar = null;
         location = loc;
         health = FULL_HEALTH;
@@ -117,7 +117,7 @@ return function Player(client) {
         bulletAmmo = MAX_BULLET_AMMO;
         missileInCoolDown = false;
         bulletInCoolDown = false;
-        client.respawn( location );
+        client.respawn( location, buildingData );
         self.update = updateCountdown;
     };
 

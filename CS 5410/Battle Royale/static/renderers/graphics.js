@@ -61,6 +61,7 @@ return function Graphics(context) {
     };
 
     self.drawImage = function (spec) {
+        if (spec.alpha) context.globalAlpha = spec.alpha;
         context.drawImage(
             spec.image,
             spec.upperLeft.x,
@@ -68,6 +69,7 @@ return function Graphics(context) {
             spec.bottomRight.x,
             spec.bottomRight.y
         );
+        context.globalAlpha = 1;
     };
 
     self.clip = function (points) {
