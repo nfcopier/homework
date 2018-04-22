@@ -1,9 +1,6 @@
 module.exports = function (
-    Player,
-    gameObjects
+    Player
 ) {
-
-const GAME_LENGTH = 15 * 60 * 1000;
 
 return function GameSimulation(clients) {
 
@@ -21,11 +18,11 @@ return function GameSimulation(clients) {
             y: transform.height / 2,
             radius: Math.min( transform.width, transform.height )
         },
-        gameTime: GAME_LENGTH
+        gameTime: 0
     };
 
     self.update = function(elapsedTime) {
-        gameState.gameTime -= elapsedTime;
+        gameState.gameTime += elapsedTime;
         clients.justLoggedIn().forEach( addPlayer );
         players = players.filter( isLoggedIn );
         players.forEach( doUpdate(elapsedTime) );

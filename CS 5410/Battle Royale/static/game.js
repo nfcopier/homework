@@ -30,11 +30,12 @@ export default function (
         const input = this._ioStream.input();
         if (input.respawn) this._startNewGame();
         if (input.loggedout) this._clearGame();
-        const actions = this._inputSystem.getActions( elapsedTime );
+        const camera = this._canvas.camera();
+        const actions = this._inputSystem.getActions( elapsedTime, camera );
         this._ioStream.sendInput( actions );
         this._simulation.update( actions, input, elapsedTime );
         this._checkGameAction();
-        this._canvas.render();
+        this._canvas.render( elapsedTime );
         requestAnimationFrame( this._doLoop.bind(this) );
     };
 

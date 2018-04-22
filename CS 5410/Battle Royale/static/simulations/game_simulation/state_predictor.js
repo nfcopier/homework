@@ -14,6 +14,7 @@ return function StatePredictor(location) {
     let bulletAmmo;
     let health;
     let score;
+    let hasAvatar = false;
 
     const initialize = function() {
         updates = [];
@@ -31,6 +32,7 @@ return function StatePredictor(location) {
     };
 
     self.update = function(userInput, elapsedTime) {
+        hasAvatar = true;
         const latestUpdate = updateFrom( userInput, elapsedTime );
         updates.push( latestUpdate );
         const avatar = Avatar( knownTransform );
@@ -97,7 +99,8 @@ return function StatePredictor(location) {
             missileAmmo: missileAmmo,
             bulletAmmo: bulletAmmo,
             health: health,
-            score: score
+            score: score,
+            hasAvatar: hasAvatar
         }
     };
 

@@ -3,6 +3,7 @@ import avatarRenderer         from "./avatar_renderer.js"
 import scoreRenderer          from "./score_renderer.js"
 import analyticsRenderer      from "./analytics_renderer.js"
 import particleEffectRenderer from "./particle_effect_renderer.js"
+import camera                 from "./camera.js"
 import gameRenderer           from "./game_renderer.js"
 
 export default function (
@@ -29,12 +30,15 @@ export default function (
         Renderer
     );
 
+    const Camera = camera();
+
     return gameRenderer(
         CountdownRenderer,
         AvatarRenderer,
         ScoreRenderer,
         AnalyticsRenderer,
         ParticleEffectRenderer,
+        Camera,
         Renderer
     );
 

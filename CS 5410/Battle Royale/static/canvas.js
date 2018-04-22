@@ -25,14 +25,16 @@ return function Canvas() {
         renderer = newRenderer;
     };
 
-    self.render = function() {
+    self.render = function(elapsedTime) {
         clearCanvas();
-        renderer._render( context );
+        renderer._render( context, elapsedTime );
     };
 
     const clearCanvas = function () {
         context.clearRect(0, 0, canvas.width, canvas.height);
     };
+
+    self.camera = () => renderer.camera();
 
     return self;
 

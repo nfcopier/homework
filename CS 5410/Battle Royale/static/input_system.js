@@ -130,9 +130,15 @@ return function InputSystem(canvas) {
         actions.mouseUp = Actions.MOUSE_UP;
     };
 
-    self.getActions = function (elapsedTime) {
+    self.getActions = function (elapsedTime, camera) {
         const currentActions = actions;
         currentActions.elapsedTime = elapsedTime;
+        const cameraLocation =  camera ? camera.location() : null;
+        if (cameraLocation)
+            currentActions.mousePosition = {
+                x: currentActions.mousePosition.x + cameraLocation.x,
+                y: currentActions.mousePosition.y + cameraLocation.y
+            };
         resetActions();
         return currentActions;
     };

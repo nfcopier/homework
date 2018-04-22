@@ -89,6 +89,8 @@ return function MenuRenderer(canvas, simulation) {
         self.children.push( CreditsRenderer(creditsStuffs) );
     };
 
+    self.camera = () => null;
+
     return self;
 
 }
