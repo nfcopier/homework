@@ -3,7 +3,7 @@ export default function (
 ) {
 
 const MAX_SPEED = 0.25;
-const FOV_AREA = 768*768 / 4 * Math.tan( Math.PI / 12 );
+const FOV_AREA = 1024*1024 / 4 * Math.tan( Math.PI / 12 );
 
 return function Avatar(sourceTransform) {
 

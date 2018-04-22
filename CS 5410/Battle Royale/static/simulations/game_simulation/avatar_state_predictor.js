@@ -3,7 +3,7 @@ export default function (
     Avatar
 ) {
 
-return function StatePredictor(location) {
+return function AvatarStatePredictor(location) {
 
     const self = {};
 
@@ -13,7 +13,6 @@ return function StatePredictor(location) {
     let missileAmmo;
     let bulletAmmo;
     let health;
-    let score;
     let fov;
     let hasAvatar = false;
 
@@ -29,7 +28,6 @@ return function StatePredictor(location) {
         missileAmmo = 4;
         bulletAmmo = 200;
         health = 20;
-        score = 0;
     };
 
     self.update = function(userInput, elapsedTime) {
@@ -66,7 +64,6 @@ return function StatePredictor(location) {
         missileAmmo = newState.missileAmmo;
         bulletAmmo = newState.bulletAmmo;
         health = newState.health;
-        score = newState.score;
         updates = updates.filter( isNewerThan(newState) )
     };
 
@@ -101,7 +98,6 @@ return function StatePredictor(location) {
             missileAmmo: missileAmmo,
             bulletAmmo: bulletAmmo,
             health: health,
-            score: score,
             fov: fov,
             hasAvatar: hasAvatar
         }

@@ -6,6 +6,7 @@ module.exports = function (
     const BoundingBoxDetector = boundingBoxDetector();
 
     return {
+        BoundingBoxDetector: BoundingBoxDetector
     };
 
 };

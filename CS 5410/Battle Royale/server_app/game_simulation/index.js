@@ -8,7 +8,9 @@ module.exports = function () {
 
     const collisionSystems = c();
 
-    const gameObjects = g();
+    const gameObjects = g(
+        collisionSystems.BoundingBoxDetector
+    );
 
     const Player = player(
         actions,

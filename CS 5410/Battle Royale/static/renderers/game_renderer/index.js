@@ -20,6 +20,7 @@ export default function (
     );
 
     const PlayerRenderer = playerRenderer(
+        Renderer,
         AvatarRenderer
     );
 
@@ -41,6 +42,8 @@ export default function (
         CountdownRenderer,
         AvatarRenderer,
         PlayerRenderer,
+        Renderer,
+        Renderer,
         ScoreRenderer,
         AnalyticsRenderer,
         ParticleEffectRenderer,

@@ -2,6 +2,8 @@ export default function (
     CountdownRenderer,
     AvatarRenderer,
     PlayerRenderer,
+    MissileRenderer,
+    BulletRenderer,
     ScoreRenderer,
     AnalyticsRenderer,
     ParticleEffectRenderer,
@@ -29,7 +31,7 @@ return function GameRenderer(simulation) {
     self._render = function(context, elapsedTime) {
         self.render = () => drawBackground();
         superRender( context );
-        const playerState = simulation.getPlayerState();
+        const playerState = simulation.getAvatarState();
         self.render = renderGame( context, playerState );
         context.save();
         camera.update( playerState.transform, elapsedTime );
@@ -37,7 +39,7 @@ return function GameRenderer(simulation) {
         context.translate( -cameraLocation.x, -cameraLocation.y );
         superRender( context );
         context.restore();
-        self.render = renderUI( playerState );
+        self.render = renderUI();
         superRender( context );
     };
 
@@ -76,8 +78,8 @@ return function GameRenderer(simulation) {
         self.graphics.drawText( scoreSpec );
     };
 
-    const addUIChildren = function (playerState) {
-        self.children.push( createScoreRenderer(playerState.score) );
+    const addUIChildren = function () {
+        self.children.push( createScoreRenderer() );
         self.children.push( createAnalyticsRenderer() );
         const countdown = simulation.getCountdown();
         if (countdown > 0)
@@ -88,8 +90,12 @@ return function GameRenderer(simulation) {
         addEnemies( playerState );
         if (playerState.hasAvatar)
             self.children.push( PlayerRenderer( playerState ) );
+        for (let missile of simulation.getMissiles())
+            self.children.push( MissileRenderer( missile.transform ) );
+        for (let bullet of simulation.getBullets())
+            self.children.push( BulletRenderer( bullet.transform ) );
         for (let effect of simulation.getParticleEffects())
-            self.children.push( createParticleEffectRenderer( effect ) )
+            self.children.push( createParticleEffectRenderer( effect ) );
     };
 
     const addEnemies = function (playerState) {
@@ -124,7 +130,8 @@ return function GameRenderer(simulation) {
         };
     };
 
-    const createScoreRenderer = function (score) {
+    const createScoreRenderer = function () {
+        const score = simulation.getScore();
         const gameTransform = simulation.getTransform();
         return ScoreRenderer( score, gameTransform );
     };

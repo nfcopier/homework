@@ -4,12 +4,12 @@ module.exports = function (
 ) {
 
 const FULL_HEALTH = 20;
-const COUNTDOWN_TIME = 3000;
+const COUNTDOWN_TIME = 1000;
 const MAX_MISSILE_AMMO = 4;
 const MAX_BULLET_AMMO = 100;
 const BULLET_BUNDLE = 10;
 const MISSILE_COOL_DOWN = 1000;
-const BULLET_COOL_DOWN = 200;
+const BULLET_COOL_DOWN = 250;
 
 return function Player(client) {
 
@@ -88,7 +88,7 @@ return function Player(client) {
             if (missileCoolDownTimer > 0) return;
             missileInCoolDown = false;
         }
-        if (missileAmmo <= 0 || !input.missileFired) return;
+        if (missileAmmo <= 0 || input.fire !== Actions.FIRE_MISSILE) return;
         missileFired = true;
         missileAmmo -= 1;
         missileInCoolDown = true;
@@ -101,7 +101,7 @@ return function Player(client) {
             if (bulletCoolDownTimer > 0) return;
             bulletInCoolDown = false;
         }
-        if (bulletFired <= 0 || !input.bulletFired) return;
+        if (bulletAmmo <= 0 || input.fire !== Actions.FIRE_BULLET) return;
         bulletFired = true;
         bulletAmmo -= 1;
         bulletInCoolDown = true;
@@ -109,6 +109,7 @@ return function Player(client) {
     };
 
     self.respawn = function(loc) {
+        avatar = null;
         location = loc;
         health = FULL_HEALTH;
         countdown = COUNTDOWN_TIME;
@@ -121,7 +122,7 @@ return function Player(client) {
     };
 
     self.sendPlayerUpdate = function () {
-        if (!input) return;
+        if (!input || !self.hasAvatar()) return;
         client.sendPlayerState( ownState() );
     };
 
@@ -152,6 +153,9 @@ return function Player(client) {
     const personalUpdateFrom = function(gameState) {
         const personalUpdate = Object.assign( {}, gameState );
         personalUpdate.enemies = getEnemiesFrom( gameState );
+        personalUpdate.missiles = getMissilesFrom( gameState );
+        personalUpdate.bullets = getBulletsFrom( gameState );
+        personalUpdate.score = score;
         delete personalUpdate.playerData;
         return personalUpdate;
     };
@@ -162,9 +166,17 @@ return function Player(client) {
 
     const isntSelf = (playerData) => playerData.id !== id;
 
-    const isNearby = function(playerData) {
+    const getMissilesFrom = function (gameState) {
+        return gameState.missiles.filter( isNearby );
+    };
+
+    const getBulletsFrom = function (gameState) {
+        return gameState.bullets.filter( isNearby );
+    };
+
+    const isNearby = function(otherData) {
         const thisLocation = avatar ? avatar.getTransform() : location;
-        const otherLocation = playerData.transform;
+        const otherLocation = otherData.transform;
         const between = distanceBetween( thisLocation, otherLocation );
         return between < 2000;
     };
@@ -193,9 +205,9 @@ return function Player(client) {
     };
 
     self.projectilesFired = () => { return {
-        transform: avatar.getTransform(),
-        missilesFired: missileFired,
-        bulletsFired: bulletFired
+        transform   : avatar.getTransform(),
+        missileFired: missileFired,
+        bulletFired: bulletFired
     };};
 
     self.isDead = () => health <= 0;
@@ -203,6 +215,10 @@ return function Player(client) {
     self.id = () => id;
 
     self.isLoggedIn = () => client.isLoggedIn();
+
+    self.award = (points) => score += points;
+
+    self.getTransform = () => avatar.getTransform();
 
     return self;
 

@@ -1,5 +1,6 @@
 module.exports = function (
-    Player
+    Player,
+    gameObjects
 ) {
 
 return function GameSimulation(clients) {
@@ -21,14 +22,23 @@ return function GameSimulation(clients) {
         gameTime: 0
     };
 
+    let projectiles = [];
+
     self.update = function(elapsedTime) {
         gameState.gameTime += elapsedTime;
         clients.justLoggedIn().forEach( addPlayer );
         players = players.filter( isLoggedIn );
         players.forEach( doUpdate(elapsedTime) );
+        projectiles.forEach( doUpdate(elapsedTime) );
+        projectiles.forEach( doPlayerCollisions );
+        projectiles.forEach( doProjectileCollisions );
+        projectiles = projectiles.filter( isStillActive );
         players.filter( isDead ).forEach( respawn );
+        players.filter( hasAvatar ).forEach( spawnProjectiles );
         gameState.playerData = players.filter( hasAvatar ).map( playerData );
         gameState.elapsedTime = elapsedTime;
+        gameState.missiles = projectiles.filter( isMissile ).map( projectileData );
+        gameState.bullets = projectiles.filter( isBullet ).map( projectileData );
         players.forEach( send(gameState) );
     };
 
@@ -40,7 +50,20 @@ return function GameSimulation(clients) {
 
     const isLoggedIn = (player) => player.isLoggedIn();
 
-    const doUpdate = (elapsedTime) => (player) => player.update( elapsedTime );
+    const doUpdate = (elapsedTime) => (gameObject) =>
+        gameObject.update( elapsedTime );
+
+    const doPlayerCollisions = function(projectile) {
+        for (let player of players.filter( hasAvatar ))
+            projectile.doCollisionWithPlayer(player);
+    };
+
+    const doProjectileCollisions = function (projectile) {
+        for (let other of projectiles)
+            projectile.doCollisionWithProjectile( other );
+    };
+
+    const isStillActive = (projectile) => projectile.isActive();
 
     const isDead = (player) => player.isDead();
 
@@ -49,9 +72,30 @@ return function GameSimulation(clients) {
         player.respawn( newLocation );
     };
 
+    const spawnProjectiles = function (player) {
+        const projectiles = player.projectilesFired();
+        if (projectiles.bulletFired)
+            spawnBullet( player, projectiles.transform );
+        if (projectiles.missileFired)
+            spawnMissile( player, projectiles.transform );
+    };
+
+    const spawnBullet = function (owner, transform) {
+        projectiles.push( gameObjects.Bullet(owner, transform) )
+    };
+
+    const spawnMissile = function (owner, transform) {
+        projectiles.push( gameObjects.Missile(owner, transform) )
+    };
+
     const hasAvatar = (player) => player.hasAvatar();
 
+    const projectileData = (projectile) => projectile.ownData();
+
     const playerData = (player) => player.ownData();
+
+    const isMissile = (projectile) => projectile.isMissile();
+    const isBullet = (projectile) => projectile.isBullet();
 
     const send = (gameState) => function (player) {
         player.sendPlayerUpdate();

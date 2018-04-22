@@ -13,5 +13,7 @@ export default {
     REFRESH_SCORES: 11,
     REGISTER_USER: 12,
     JOIN_GAME: 13,
-    LOGGED_OUT: 14
+    LOGGED_OUT: 14,
+    FIRE_MISSILE: 15,
+    FIRE_BULLET: 16
 }

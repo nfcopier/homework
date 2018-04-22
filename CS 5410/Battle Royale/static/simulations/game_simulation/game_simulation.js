@@ -28,8 +28,11 @@ return function GameSimulation() {
     let timeSinceLastCheck = 0;
     let gameState = {};
     let enemies = [];
+    let missiles = [];
+    let bullets = [];
 
     self.update = function(actions, input, elapsedTime) {
+        if (input.gameOver) return gameOver = true;
         updateGameWorld( actions, input, elapsedTime );
         updateSelf( actions, input, elapsedTime );
     };
@@ -62,6 +65,8 @@ return function GameSimulation() {
         newGameState.enemies.forEach( updateGoal(newGameState.elapsedTime) );
         enemies = enemies.filter( stillExistsIn( newGameState.enemies) );
         gameState = newGameState;
+        missiles = gameState.missiles;
+        bullets = gameState.bullets;
     };
 
     const updateGoal = function (updateWindow) {
@@ -116,9 +121,15 @@ return function GameSimulation() {
 
     self.getAction = function () { return otherAction; };
 
-    self.getPlayerState = () => predictor.state();
+    self.getAvatarState = () => predictor.state();
 
     self.getEnemies = () => enemies;
+
+    self.getMissiles = () => missiles;
+
+    self.getBullets = () => bullets;
+
+    self.getScore = () => gameState.score;
 
     self.getCountdown = () => countdown;
 

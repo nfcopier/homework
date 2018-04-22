@@ -1,5 +1,5 @@
 import g              from "./game_objects/index.js"
-import statePredictor from "./state_predictor.js"
+import statePredictor from "./avatar_state_predictor.js"
 import c              from "./collision_systems/index.js"
 import p              from "./particle_system/index.js"
 import gameSimulation from "./game_simulation.js"
