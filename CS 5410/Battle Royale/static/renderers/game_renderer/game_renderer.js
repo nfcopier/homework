@@ -1,6 +1,7 @@
 export default function (
     CountdownRenderer,
     AvatarRenderer,
+    PlayerRenderer,
     ScoreRenderer,
     AnalyticsRenderer,
     ParticleEffectRenderer,
@@ -26,21 +27,22 @@ return function GameRenderer(simulation) {
 
     const superRender = self._render;
     self._render = function(context, elapsedTime) {
-        const playerState = simulation.getPlayerState();
-        self.render = renderUI( playerState );
+        self.render = () => drawBackground();
         superRender( context );
-        self.render = renderGame( playerState );
+        const playerState = simulation.getPlayerState();
+        self.render = renderGame( context, playerState );
         context.save();
         camera.update( playerState.transform, elapsedTime );
         const cameraLocation = camera.location();
         context.translate( -cameraLocation.x, -cameraLocation.y );
         superRender( context );
         context.restore();
+        self.render = renderUI( playerState );
+        superRender( context );
     };
 
     const renderUI = (playerState) => function() {
         clearCursor();
-        drawBackground();
         if (simulation.isGameOver())
             drawGameOver();
         else {
@@ -48,9 +50,9 @@ return function GameRenderer(simulation) {
         }
     };
 
-    const renderGame = (playerState) => function() {
+    const renderGame = (context, playerState) => function() {
         if (simulation.isGameOver()) return;
-        addGameChildren( playerState );
+        addGameChildren( context, playerState );
     };
 
     const drawGameOver = function () {
@@ -82,17 +84,45 @@ return function GameRenderer(simulation) {
             self.children.push( createCountdownRenderer( countdown ) );
     };
 
-    const addGameChildren = function (playerState) {
-        for (let avatar of simulation.getEnemies())
-            self.children.push( createAvatarRenderer( avatar, "red" ) )
+    const addGameChildren = function (context, playerState) {
+        addEnemies( playerState );
         if (playerState.hasAvatar)
-            self.children.push( createAvatarRenderer(playerState, "green") );
+            self.children.push( PlayerRenderer( playerState ) );
         for (let effect of simulation.getParticleEffects())
             self.children.push( createParticleEffectRenderer( effect ) )
     };
 
-    const createAvatarRenderer = (playerState, color) =>
-        AvatarRenderer( playerState, color );
+    const addEnemies = function (playerState) {
+        if (playerState.hasAvatar)
+            self.children.push( Fov( playerState ) );
+        for (let avatar of simulation.getEnemies())
+            self.children.push( AvatarRenderer( avatar ) );
+        if (playerState.hasAvatar)
+            self.children.push( restore() );
+    };
+
+    const Fov = function (playerState) {
+        return {
+            _render: function (context) {
+                context.save();
+                context.translate( playerState.transform.x+playerState.transform.width/2, playerState.transform.y+playerState.transform.height/2 );
+                context.rotate( -playerState.transform.theta );
+                context.translate( -playerState.transform.width/2, -playerState.height/2 );
+                self.graphics.clip( playerState.fov );
+                context.translate( playerState.transform.width/2, playerState.height/2 );
+                context.rotate( playerState.transform.theta );
+                context.translate( -playerState.transform.x-playerState.transform.width/2, -playerState.transform.y-playerState.transform.height/2 );
+            }
+        };
+    };
+
+    const restore = function () {
+        return {
+            _render: function (context) {
+                context.restore();
+            }
+        };
+    };
 
     const createScoreRenderer = function (score) {
         const gameTransform = simulation.getTransform();

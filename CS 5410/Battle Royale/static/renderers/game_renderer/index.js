@@ -1,5 +1,6 @@
 import countdownRenderer      from "./countdown_renderer.js"
 import avatarRenderer         from "./avatar_renderer.js"
+import playerRenderer         from "./player_renderer.js"
 import scoreRenderer          from "./score_renderer.js"
 import analyticsRenderer      from "./analytics_renderer.js"
 import particleEffectRenderer from "./particle_effect_renderer.js"
@@ -16,6 +17,10 @@ export default function (
 
     const AvatarRenderer = avatarRenderer(
         Renderer
+    );
+
+    const PlayerRenderer = playerRenderer(
+        AvatarRenderer
     );
 
     const ScoreRenderer = scoreRenderer(
@@ -35,6 +40,7 @@ export default function (
     return gameRenderer(
         CountdownRenderer,
         AvatarRenderer,
+        PlayerRenderer,
         ScoreRenderer,
         AnalyticsRenderer,
         ParticleEffectRenderer,

@@ -2,7 +2,7 @@ export default function (
     Renderer
 ) {
 
-return function AvatarRenderer(playerState, color) {
+return function AvatarRenderer(playerState, color = "red") {
 
     const transform = playerState.transform;
 

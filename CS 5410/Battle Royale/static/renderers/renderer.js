@@ -14,6 +14,7 @@ return function Renderer(transform) {
         context.save();
         applyTransformTo( context );
         self.graphics = Graphics( context );
+        self.renderChild = renderChildTo( context );
         self.render();
         renderChildrenTo( context );
         context.restore();
@@ -30,6 +31,8 @@ return function Renderer(transform) {
     self.render = function () {
         drawBackground();
     };
+
+    const renderChildTo = (context) => (child) => child._render( context );
 
     const drawBackground = function () {
         self.graphics.drawRectangle({

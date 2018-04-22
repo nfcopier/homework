@@ -14,6 +14,7 @@ return function StatePredictor(location) {
     let bulletAmmo;
     let health;
     let score;
+    let fov;
     let hasAvatar = false;
 
     const initialize = function() {
@@ -38,6 +39,7 @@ return function StatePredictor(location) {
         const avatar = Avatar( knownTransform );
         updates.forEach( applyTo(avatar) );
         predictedTransform = avatar.getTransform();
+        fov = avatar.fov();
     };
 
     const updateFrom = function(userInput, elapsedTime) {
@@ -100,6 +102,7 @@ return function StatePredictor(location) {
             bulletAmmo: bulletAmmo,
             health: health,
             score: score,
+            fov: fov,
             hasAvatar: hasAvatar
         }
     };

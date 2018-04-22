@@ -70,6 +70,25 @@ return function Graphics(context) {
         );
     };
 
+    self.clip = function (points) {
+        tracePath( points );
+        context.clip()
+    };
+
+    self.drawPath = function ({points, color}) {
+        context.strokeStyle = color;
+        tracePath( points );
+        context.stroke();
+    };
+
+    const tracePath = function ([firstPoint, ...tailPoints]) {
+        context.beginPath();
+        context.moveTo( firstPoint.x, firstPoint.y );
+        for (let point of tailPoints)
+            context.lineTo( point.x, point.y )
+        context.closePath();
+    };
+
     return self;
 
 }
