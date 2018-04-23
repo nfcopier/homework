@@ -1,6 +1,6 @@
 module.exports = function (
-    GameObject,
-    CollisionDetector
+    CollisionDetector,
+    GameObject
 ) {
 
 const KILL_AWARD = 10;

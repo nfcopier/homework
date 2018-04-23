@@ -24,7 +24,7 @@ return function GameRenderer(simulation) {
         const spaceImage = new Image();
         spaceImage.src = "./static/images/space_background.jpg";
         spaceImage.onload = function () {
-            drawBackground = drawBackgroundImage( spaceImage, 1 );
+            drawSpaceBackdrop = drawBackgroundImage( spaceImage, 1 );
         };
         const glassImage = new Image();
         glassImage.src = "./static/images/brick_overlay - Copy.png";
@@ -36,9 +36,9 @@ return function GameRenderer(simulation) {
     const superRender = self._render;
     self._render = function(context, elapsedTime) {
         self.render = () => {
-            drawBackground();
-            drawOverlay();
+            drawSpaceBackdrop();
             drawBackgroundRectangle();
+            drawOverlay();
         };
         superRender( context );
         const playerState = simulation.getAvatarState();
@@ -191,7 +191,7 @@ return function GameRenderer(simulation) {
 
     self.camera = () => camera;
 
-    let drawBackground = drawBackgroundRectangle;
+    let drawSpaceBackdrop = drawBackgroundRectangle;
     let drawOverlay = () => {};
 
     fetchImage();

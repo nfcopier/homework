@@ -5,6 +5,7 @@ return function GameObject(transform) {
     const self = {};
 
     let parent = null;
+    let previousTransform;
     const children = [];
 
     self.addChild = function (child) {
@@ -56,6 +57,14 @@ return function GameObject(transform) {
     };
 
     self.getTransform = function () { return transform; };
+
+    self.saveTransform = function() {
+        previousTransform = Object.assign( {}, transform );
+    };
+
+    self.previousTransform = () => previousTransform;
+
+    self.saveTransform();
 
     return self;
 

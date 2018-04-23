@@ -31,10 +31,13 @@ return function GameSimulation(clients) {
         gameState.gameTime += elapsedTime;
         clients.justLoggedIn().forEach( addPlayer );
         players = players.filter( isLoggedIn );
+        players.filter( hasAvatar ).forEach( saveTransform );
+        projectiles.forEach( saveTransform );
         players.forEach( doUpdate(elapsedTime) );
         projectiles.forEach( doUpdate(elapsedTime) );
-        projectiles.forEach( doPlayerCollisions );
-        projectiles.forEach( doProjectileCollisions );
+        map.buildings().forEach( doPlayerCollisions(elapsedTime) );
+        projectiles.forEach( doPlayerCollisions() );
+        projectiles.forEach( doProjectileCollisions() );
         projectiles = projectiles.filter( isStillActive );
         players.filter( isDead ).forEach( respawn );
         players.filter( hasAvatar ).forEach( spawnProjectiles );
@@ -53,17 +56,19 @@ return function GameSimulation(clients) {
 
     const isLoggedIn = (player) => player.isLoggedIn();
 
+    const saveTransform = (gameObject) => gameObject.saveTransform();
+
     const doUpdate = (elapsedTime) => (gameObject) =>
         gameObject.update( elapsedTime );
 
-    const doPlayerCollisions = function(projectile) {
+    const doPlayerCollisions = (elapsedTime) => function(gameObject) {
         for (let player of players.filter( hasAvatar ))
-            projectile.doCollisionWithPlayer(player);
+            gameObject.doCollisionWithPlayer( player, elapsedTime );
     };
 
-    const doProjectileCollisions = function (projectile) {
-        for (let other of projectiles)
-            projectile.doCollisionWithProjectile( other );
+    const doProjectileCollisions = (elapsedTime) => function (gameObject) {
+        for (let projectile of projectiles)
+            gameObject.doCollisionWithProjectile( projectile, elapsedTime );
     };
 
     const isStillActive = (projectile) => projectile.isActive();
@@ -71,8 +76,7 @@ return function GameSimulation(clients) {
     const isDead = (player) => player.isDead();
 
     const respawn = function(player) {
-        const newLocation = nextSpawnLocation();
-        player.respawn( newLocation, map.playerBuildings() );
+        player.respawn( map.randomSpawnPoint(), map.buildingData() );
     };
 
     const spawnProjectiles = function (player) {
@@ -104,13 +108,6 @@ return function GameSimulation(clients) {
         player.sendPlayerUpdate();
         player.sendGameState( gameState )
     };
-
-    function nextSpawnLocation() {
-        return {
-            x: Math.floor(Math.random() * transform.width),
-            y: Math.floor(Math.random() * transform.height)
-        };
-    }
 
     return self;
 

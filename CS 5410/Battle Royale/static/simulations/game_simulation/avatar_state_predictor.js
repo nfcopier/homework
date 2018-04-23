@@ -3,7 +3,7 @@ export default function (
     Avatar
 ) {
 
-return function AvatarStatePredictor(location) {
+return function AvatarStatePredictor(spawnPoint) {
 
     const self = {};
 
@@ -19,9 +19,9 @@ return function AvatarStatePredictor(location) {
     const initialize = function() {
         updates = [];
         predictedTransform = knownTransform = {
-            x: location.x,
-            y: location.y,
-            theta: 0,
+            x: spawnPoint.x,
+            y: spawnPoint.y,
+            theta: spawnPoint.theta,
             width: 20,
             height: 25
         };

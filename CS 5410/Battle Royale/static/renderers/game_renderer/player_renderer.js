@@ -25,7 +25,12 @@ return function PlayerRenderer(playerState) {
     };
 
     const renderFov = function () {
-        self.graphics.drawPath({ points: playerState.fov, color: "white" });
+        self.graphics.drawPath({
+            points: playerState.fov,
+            color: "white",
+            alpha: 1,
+            thickness: 1
+        });
     };
 
     return self;

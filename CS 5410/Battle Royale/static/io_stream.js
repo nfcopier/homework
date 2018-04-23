@@ -29,25 +29,21 @@ return function IOStream() {
 
     self.registerUser = (credentials) => io.emit( "user:register", credentials );
 
-    const respawnPlayer = (location, buildingData) =>
+    const respawnPlayer = (spawnPoint, buildingData) =>
         input.respawn = {
-            location: location,
+            spawnPoint  : spawnPoint,
             buildingData: buildingData
         };
 
     const updateGame = (gameState) => input.gameState = gameState;
 
-    const updatePlayer = (playerState) => {
-        setTimeout( () => input.playerState = playerState, 500);
-    }
+    const updatePlayer = (playerState) => input.playerState = playerState;
 
     const logoutUser = () => input.loggedout = true;
 
     self.joinGame = (credentials) => io.emit( "game:join", credentials );
 
-    self.sendInput = (actions) => {
-        setTimeout( () => io.emit( "game:input", actions ), 500);
-    }
+    self.sendInput = (actions) => io.emit( "game:input", actions );
 
     self.leaveGame = () => io.emit( "game:left" );
 

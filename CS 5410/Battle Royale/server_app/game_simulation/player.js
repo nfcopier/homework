@@ -18,7 +18,7 @@ return function Player(client) {
     let score = 0;
     let avatar;
     let input;
-    let location;
+    let spawnPoint;
     let health;
     let countdown;
     let missileAmmo;
@@ -35,7 +35,7 @@ return function Player(client) {
         countdown -= elapsedTime;
         if (countdown > 0) return;
         self.update = updatePlayer;
-        avatar = Avatar( location );
+        avatar = Avatar( spawnPoint );
     };
 
     const updatePlayer = function() {
@@ -108,16 +108,16 @@ return function Player(client) {
         bulletCoolDownTimer = BULLET_COOL_DOWN;
     };
 
-    self.respawn = function(loc, buildingData) {
+    self.respawn = function(newSpawnPoint, buildingData) {
         avatar = null;
-        location = loc;
+        spawnPoint = newSpawnPoint;
         health = FULL_HEALTH;
         countdown = COUNTDOWN_TIME;
         missileAmmo = MAX_MISSILE_AMMO;
         bulletAmmo = MAX_BULLET_AMMO;
         missileInCoolDown = false;
         bulletInCoolDown = false;
-        client.respawn( location, buildingData );
+        client.respawn( spawnPoint, buildingData );
         self.update = updateCountdown;
     };
 
@@ -175,7 +175,7 @@ return function Player(client) {
     };
 
     const isNearby = function(otherData) {
-        const thisLocation = avatar ? avatar.getTransform() : location;
+        const thisLocation = avatar ? avatar.getTransform() : spawnPoint;
         const otherLocation = otherData.transform;
         const between = distanceBetween( thisLocation, otherLocation );
         return between < 2000;
@@ -219,6 +219,10 @@ return function Player(client) {
     self.award = (points) => score += points;
 
     self.getTransform = () => avatar.getTransform();
+
+    self.previousTransform = () => avatar.previousTransform();
+
+    self.saveTransform = () => avatar.saveTransform();
 
     return self;
 

@@ -4,12 +4,12 @@ module.exports = function (
 
 const MAX_SPEED = 0.25;
 
-return function Avatar(location) {
+return function Avatar(spawnPoint) {
 
     const transform = {
-        x: location.x,
-        y: location.y,
         theta: 0,
+        x: spawnPoint.x,
+        y: spawnPoint.y,
         width: 20,
         height: 25
     };

@@ -103,9 +103,9 @@ return function GameSimulation() {
         enemy.transform.theta += (enemy.goalTransform.theta  - enemy.transform.theta) * increment;
     };
 
-    const respawn = function({location, buildingData}) {
+    const respawn = function({spawnPoint, buildingData}) {
         buildings = buildingData.map( toBuilding );
-        predictor = StatePredictor( location );
+        predictor = StatePredictor( spawnPoint );
         countdown = 3000;
         updateSelf = updateCountdown;
     };

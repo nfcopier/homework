@@ -72,15 +72,36 @@ return function Graphics(context) {
         context.globalAlpha = 1;
     };
 
+    self.drawCircle = function({center, radius, color, alpha}) {
+        if (alpha) context.globalAlpha = alpha;
+        context.fillStyle = color;
+        context.beginPath();
+        context.arc(
+            center.x,
+            center.y,
+            radius,
+            0,
+            2*Math.PI
+        );
+        context.fill();
+        context.globalAlpha = 0.5;
+    };
+
+    self.drawLine = function(spec) {};
+
     self.clip = function (points) {
         tracePath( points );
         context.clip()
     };
 
-    self.drawPath = function ({points, color}) {
+    self.drawPath = function ({points, color, alpha, thickness}) {
+        if (alpha) context.globalAlpha = alpha;
+        context.lineWidth = thickness;
         context.strokeStyle = color;
         tracePath( points );
         context.stroke();
+        context.globalAlpha = 0.5;
+        context.lineWidth = 1;
     };
 
     const tracePath = function ([firstPoint, ...tailPoints]) {
