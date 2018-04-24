@@ -29,7 +29,6 @@ export default function (
         const elapsedTime = this._getElapsedTimeFrom( currentTime );
         const input = this._ioStream.input();
         if (input.respawn) this._startNewGame();
-        if (input.loggedout) this._clearGame();
         const camera = this._canvas.camera();
         const actions = this._inputSystem.getActions( elapsedTime, camera );
         this._ioStream.sendInput( actions );
@@ -46,6 +45,8 @@ export default function (
     };
 
     Game.prototype._showMenu = function () {
+        if (this._gameSimulation && this._gameSimulation.isGameOver())
+            this._clearGame();
         this._simulation =
             simulations.MenuSimulation( this._gameSimulation );
         this._canvas.setRenderer(
@@ -96,6 +97,7 @@ export default function (
     };
 
     Game.prototype._resumeGame = function () {
+        if (!this._gameSimulation) return;
         this._simulation = this._gameSimulation;
         this._canvas.setRenderer(
             renderers.GameRenderer( this._simulation )
@@ -103,6 +105,7 @@ export default function (
     };
 
     Game.prototype._leaveGame = function () {
+        this._resumeGame();
         this._ioStream.leaveGame();
     };
 

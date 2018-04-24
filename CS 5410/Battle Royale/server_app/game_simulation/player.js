@@ -1,6 +1,7 @@
 module.exports = function (
     Actions,
-    Avatar
+    Avatar,
+    ScoreRepo
 ) {
 
 const FULL_HEALTH = 20;
@@ -29,6 +30,7 @@ return function Player(client) {
     let bulletCoolDownTimer;
     let missileInCoolDown;
     let bulletInCoolDown;
+    let scoreRepo = ScoreRepo();
     const id = Math.floor( Math.random() * Number.MAX_SAFE_INTEGER );
 
     const updateCountdown = self.update = function(elapsedTime) {
@@ -223,6 +225,11 @@ return function Player(client) {
     self.previousTransform = () => avatar.previousTransform();
 
     self.saveTransform = () => avatar.saveTransform();
+
+    self.endGame = function() {
+        scoreRepo.add({ username: client.username(), score: score });
+        client.endGame();
+    };
 
     return self;
 

@@ -40,12 +40,13 @@ return function GameSimulation(clients) {
         projectiles.forEach( doPlayerCollisions );
         projectiles.forEach( doProjectileCollisions );
         projectiles = projectiles.filter( isStillActive );
-        players.filter( isDead ).forEach( respawn );
+        players.filter( isDead ).forEach( endGame );
         players.filter( hasAvatar ).forEach( spawnProjectiles );
         gameState.playerData = players.filter( hasAvatar ).map( playerData );
         gameState.elapsedTime = elapsedTime;
         gameState.missiles = projectiles.filter( isMissile ).map( projectileData );
         gameState.bullets = projectiles.filter( isBullet ).map( projectileData );
+        gameState.playersRemaining = players.length;
         players.forEach( send(gameState) );
     };
 
@@ -98,9 +99,11 @@ return function GameSimulation(clients) {
 
     const hasAvatar = (player) => player.hasAvatar();
 
-    const projectileData = (projectile) => projectile.ownData();
+    const endGame = (player) => player.endGame();
 
     const playerData = (player) => player.ownData();
+
+    const projectileData = (projectile) => projectile.ownData();
 
     const isMissile = (projectile) => projectile.isMissile();
     const isBullet = (projectile) => projectile.isBullet();

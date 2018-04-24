@@ -7,9 +7,11 @@ const fs = require("fs");
 
 module.exports = function () {
 
-    const GameSimulation = gameSim();
-
     const ScoreRepo = scoreRepo( fs );
+
+    const GameSimulation = gameSim(
+        ScoreRepo
+    );
 
     const users = u( fs );
 

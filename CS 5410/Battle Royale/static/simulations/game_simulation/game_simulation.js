@@ -33,7 +33,8 @@ return function GameSimulation() {
     let buildings;
 
     self.update = function(actions, input, elapsedTime) {
-        if (input.gameOver) return gameOver = true;
+        if (input.loggedout) gameOver = true;
+        if (gameOver) return;
         updateGameWorld( actions, input, elapsedTime );
         updateSelf( actions, input, elapsedTime );
     };

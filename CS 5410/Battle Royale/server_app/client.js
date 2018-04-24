@@ -10,6 +10,7 @@ return function Client(socket) {
     let justLoggedIn = false;
     let isLoggedIn = false;
     let input = null;
+    let username;
 
     const scoreRepo = ScoreRepo();
 
@@ -29,8 +30,9 @@ return function Client(socket) {
         socket.on( "disconnect", leaveGame );
     };
 
-    const joinGame = function ({ username, password } = {}) {
+    const joinGame = function ({ uname, password } = {}) {
         try {
+            username = uname;
             const isAuthorized = users.check(username, password);
             if (!isAuthorized) return;
             justLoggedIn = true;
@@ -46,7 +48,6 @@ return function Client(socket) {
 
     const getScores = function () {
         const scores = scoreRepo.getAll();
-        scores.push({username: "Nathan", score: 720000});
         socket.emit( "scores:update", scores.slice(0, 5) );
     };
 
@@ -65,6 +66,7 @@ return function Client(socket) {
 
     const leaveGame = function() {
         if (!isLoggedIn) return;
+        username = null;
         isLoggedIn = false;
         socket.emit( "user:logged_out" );
         console.log( "Player left the game!" );
@@ -86,6 +88,12 @@ return function Client(socket) {
 
     self.respawn = (spawnPoint, buildingData) =>
         socket.emit( "server:respawn", spawnPoint, buildingData );
+
+    self.username = () => username;
+
+    self.endGame = function() {
+        leaveGame();
+    };
 
     self.sendPlayerState = (playerState) =>
         socket.emit( "server:player_state", playerState );

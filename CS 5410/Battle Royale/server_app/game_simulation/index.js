@@ -5,7 +5,9 @@ const player         = require("./player");
 const m              = require("./maps");
 const gameSimulation = require("./game_simulation");
 
-module.exports = function () {
+module.exports = function (
+    ScoreRepo
+) {
 
     const collisionSystems = c();
 
@@ -15,7 +17,8 @@ module.exports = function () {
 
     const Player = player(
         actions,
-        gameObjects.Avatar
+        gameObjects.Avatar,
+        ScoreRepo
     );
 
     const maps = m(

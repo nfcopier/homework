@@ -13,7 +13,7 @@ return function ScoreRepository() {
     self.add = function (newScore) {
         const scores = self.getAll();
         scores.push( newScore );
-        scores.sort((a, b) => b-a);
+        scores.sort((a, b) => b.score-a.score);
         persistScores( scores.slice(0,5) );
     };
 
