@@ -4,11 +4,13 @@ module.exports = function (
     maps
 ) {
 
+const BUBBLE_COUNTDOWN = 60 * 1000;
+
 return function GameSimulation(clients) {
 
     const transform = {
-        width: 1024,
-        height: 768
+        width: 1500,
+        height: 1500
     };
 
     const self = {};
@@ -18,9 +20,12 @@ return function GameSimulation(clients) {
     let players = [];
     let gameState = {
         bubble: {
-            x: transform.width / 2,
-            y: transform.height / 2,
-            radius: Math.min( transform.width, transform.height )
+            x: 0,
+            y: 0,
+            width: transform.width*2,
+            height: transform.height*2,
+            radius: Math.min( transform.width, transform.height ),
+            countdown: BUBBLE_COUNTDOWN
         },
         gameTime: 0
     };
@@ -31,10 +36,12 @@ return function GameSimulation(clients) {
         gameState.gameTime += elapsedTime;
         clients.justLoggedIn().forEach( addPlayer );
         players = players.filter( isLoggedIn );
+        doBubbleUpdate( elapsedTime );
         players.filter( hasAvatar ).forEach( saveTransform );
         projectiles.forEach( saveTransform );
         players.forEach( doUpdate(elapsedTime) );
         projectiles.forEach( doUpdate(elapsedTime) );
+        players.filter( hasAvatar ).filter( isOutsideBubble ).forEach( doBubbleDamage(elapsedTime) );
         map.powerUps().forEach( doPlayerCollisions );
         map.buildings().forEach( doPlayerCollisions );
         map.buildings().forEach( doProjectileCollisions );
@@ -60,10 +67,26 @@ return function GameSimulation(clients) {
 
     const isLoggedIn = (player) => player.isLoggedIn();
 
+    const doBubbleUpdate = function (elapsedTime) {
+        gameState.bubble.countdown -= elapsedTime;
+        if (gameState.bubble.countdown > 0) return;
+        gameState.bubble.radius /= 2;
+        gameState.bubble.countdown = BUBBLE_COUNTDOWN;
+    };
+
     const saveTransform = (gameObject) => gameObject.saveTransform();
 
     const doUpdate = (elapsedTime) => (gameObject) =>
         gameObject.update( elapsedTime );
+
+    const isOutsideBubble = function (player) {
+        const transform = player.getTransform();
+        const distanceFromCenter = transform.x*transform.x + transform.y*transform.y;
+        const bubbleRadius = gameState.bubble.radius*gameState.bubble.radius;
+        return distanceFromCenter > bubbleRadius;
+    };
+
+    const doBubbleDamage = (elapsedTime) => (player) => player.damage( 1/150 * elapsedTime );
 
     const doPlayerCollisions = function(gameObject) {
         for (let player of players.filter( hasAvatar ))
@@ -75,7 +98,7 @@ return function GameSimulation(clients) {
             gameObject.doCollisionWithProjectile( projectile );
     };
 
-    const isStillActive = (projectile) => projectile.isActive();
+    const isStillActive = (projectile) => projectile.isActive ();
 
     const isDead = (player) => player.isDead();
 

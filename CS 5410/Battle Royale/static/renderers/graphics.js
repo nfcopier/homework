@@ -105,6 +105,21 @@ return function Graphics(context) {
         context.lineWidth = 1;
     };
 
+    self.renderBubble = function (bubbleData) {
+        context.fillStyle = "blue";
+        context.globalAlpha = 0.8;
+        context.beginPath();
+        context.moveTo( -bubbleData.width, -bubbleData.height );
+        context.lineTo( bubbleData.width, -bubbleData.height );
+        context.lineTo( bubbleData.width, bubbleData.height );
+        context.lineTo( -bubbleData.width, bubbleData.height );
+        context.lineTo( -bubbleData.width, -bubbleData.height );
+        context.arc( bubbleData.x, bubbleData.y, bubbleData.radius, 0, 2*Math.PI, true );
+        context.closePath();
+        context.fill();
+        context.globalAlpha = 1;
+    };
+
     const tracePath = function ([firstPoint, ...tailPoints]) {
         context.beginPath();
         context.moveTo( firstPoint.x, firstPoint.y );

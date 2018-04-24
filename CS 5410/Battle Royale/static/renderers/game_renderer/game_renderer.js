@@ -51,6 +51,7 @@ return function GameRenderer(simulation) {
         camera.update( playerState.transform, elapsedTime );
         const cameraLocation = camera.location();
         context.translate( -cameraLocation.x, -cameraLocation.y );
+        self.graphics.renderBubble( simulation.bubbleData() );
         superRender( context );
         context.restore();
         self.render = renderUI();
@@ -74,7 +75,7 @@ return function GameRenderer(simulation) {
     const drawGameOver = function () {
         const mainSpec = {
             text: "Game Over",
-            location: {x: simulation.getTransform().width / 2, y: 200},
+            location: {x: transform.width / 2, y: 200},
             font: "96px serif",
             color: "blue",
             alignment: "center",
@@ -83,7 +84,7 @@ return function GameRenderer(simulation) {
         self.graphics.drawText( mainSpec );
         const scoreSpec = {
             text: `Score: ${simulation.getScore()}`,
-            location: {x: simulation.getTransform().width / 2, y: 350},
+            location: {x: transform.width / 2, y: 350},
             font: "48px serif",
             color: "blue",
             alignment: "center",
@@ -155,20 +156,17 @@ return function GameRenderer(simulation) {
 
     const createScoreRenderer = function () {
         const score = simulation.getScore();
-        const gameTransform = simulation.getTransform();
-        return ScoreRenderer( score, gameTransform );
+        return ScoreRenderer( score, transform );
     };
 
     const createHealthRenderer = function () {
         const playerState = simulation.getAvatarState();
-        const gameTransform = simulation.getTransform();
-        return HealthRenderer( playerState, gameTransform );
+        return HealthRenderer( playerState, transform );
     };
 
     const createPlayerCountRenderer = function () {
         const playerCount = simulation.playerCount();
-        const gameTransform = simulation.getTransform();
-        return PlayerCountRenderer( playerCount, gameTransform );
+        return PlayerCountRenderer( playerCount, transform );
     };
 
     const createParticleEffectRenderer = function (effect) {
@@ -181,13 +179,12 @@ return function GameRenderer(simulation) {
 
     const createAnalyticsRenderer = function() {
         const analytics = simulation.getAnalytics();
-        return new AnalyticsRenderer( analytics, simulation.getTransform() );
+        return new AnalyticsRenderer( analytics, transform );
     };
 
     const createAmmoRenderer = function () {
         const playerState = simulation.getAvatarState();
-        const gameTransform = simulation.getTransform();
-        return AmmoRenderer( playerState, gameTransform );
+        return AmmoRenderer( playerState, transform );
     };
 
     const clearCursor = function () { self.graphics.clearCursor(); };

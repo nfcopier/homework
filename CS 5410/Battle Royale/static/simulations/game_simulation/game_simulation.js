@@ -153,6 +153,8 @@ return function GameSimulation() {
         };
     };
 
+    self.bubbleData = () => gameState.bubble;
+
     self.isGameOver = function () { return gameOver; };
 
     self.playerCount = () => gameState.playersRemaining;
