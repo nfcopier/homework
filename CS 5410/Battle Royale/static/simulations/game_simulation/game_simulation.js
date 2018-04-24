@@ -136,9 +136,9 @@ return function GameSimulation() {
 
     const toData = (building) => building.data;
 
-    self.getMissiles = () => missiles;
+    self.missiles = () => missiles;
 
-    self.getBullets = () => bullets;
+    self.bullets = () => bullets;
 
     self.getScore = () => gameState.score;
 
@@ -152,6 +152,8 @@ return function GameSimulation() {
     };
 
     self.isGameOver = function () { return gameOver; };
+
+    self.playerCount = () => gameState.playersRemaining;
 
     self.getParticleEffects = function () { return particleSystem.getEffects(); };
 

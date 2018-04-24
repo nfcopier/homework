@@ -6,7 +6,10 @@ export default function (
     MissileRenderer,
     BulletRenderer,
     ScoreRenderer,
+    HealthRenderer,
+    PlayerCountRenderer,
     AnalyticsRenderer,
+    AmmoRenderer,
     ParticleEffectRenderer,
     Camera,
     Renderer
@@ -90,7 +93,10 @@ return function GameRenderer(simulation) {
 
     const addUIChildren = function () {
         self.children.push( createScoreRenderer() );
+        self.children.push( createHealthRenderer() );
+        self.children.push( createPlayerCountRenderer() );
         self.children.push( createAnalyticsRenderer() );
+        self.children.push( createAmmoRenderer() );
         const countdown = simulation.getCountdown();
         if (countdown > 0)
             self.children.push( createCountdownRenderer( countdown ) );
@@ -100,10 +106,10 @@ return function GameRenderer(simulation) {
         for (let building of simulation.playerBuildings())
             self.children.push( BuildingRenderer( building ) );
         addEnemies( playerState );
-        for (let missile of simulation.getMissiles())
+        for (let missile of simulation.missiles())
             self.children.push( MissileRenderer( missile.transform ) );
-        for (let bullet of simulation.getBullets())
-            self.children.push( BulletRenderer( bullet.transform, "silver" ) );
+        for (let bullet of simulation.bullets())
+            self.children.push( BulletRenderer( bullet.transform, "yellow" ) );
         for (let effect of simulation.getParticleEffects())
             self.children.push( createParticleEffectRenderer( effect ) );
         for (let building of simulation.noPlayerBuildings())
@@ -150,6 +156,18 @@ return function GameRenderer(simulation) {
         return ScoreRenderer( score, gameTransform );
     };
 
+    const createHealthRenderer = function () {
+        const playerState = simulation.getAvatarState();
+        const gameTransform = simulation.getTransform();
+        return HealthRenderer( playerState, gameTransform );
+    };
+
+    const createPlayerCountRenderer = function () {
+        const playerCount = simulation.playerCount();
+        const gameTransform = simulation.getTransform();
+        return PlayerCountRenderer( playerCount, gameTransform );
+    };
+
     const createParticleEffectRenderer = function (effect) {
         return ParticleEffectRenderer( effect );
     };
@@ -161,6 +179,12 @@ return function GameRenderer(simulation) {
     const createAnalyticsRenderer = function() {
         const analytics = simulation.getAnalytics();
         return new AnalyticsRenderer( analytics, simulation.getTransform() );
+    };
+
+    const createAmmoRenderer = function () {
+        const playerState = simulation.getAvatarState();
+        const gameTransform = simulation.getTransform();
+        return AmmoRenderer( playerState, gameTransform );
     };
 
     const clearCursor = function () { self.graphics.clearCursor(); };

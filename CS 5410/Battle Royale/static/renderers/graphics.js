@@ -32,6 +32,7 @@ return function Graphics(context) {
 
     self.strokeRectangle = function (spec) {
         context.strokeStyle = spec.color;
+        context.lineWidth = spec.thickness;
         context.strokeRect(
             spec.upperLeft.x,
             spec.upperLeft.y,
