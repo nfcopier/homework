@@ -20,14 +20,22 @@ return function Building(transform, color, wallSpecs) {
         };
     };
 
-    self.doCollisionWithPlayer = function (player, elapsedTime) {
+    self.doCollisionWithPlayer = function (player) {
         if (player.isDead()) return;
         const detector = CollisionDetector( transform, player.getTransform() );
         if (!detector.collisionOccurred()) return;
         for (let wall of walls)
-            wall.doCollisionWithPlayer( player, elapsedTime );
+            wall.doCollisionWithPlayer( player );
         for (let wall of walls)
-            wall.doCollisionWithPlayer( player, elapsedTime );
+            wall.doCollisionWithPlayer( player );
+    };
+
+    self.doCollisionWithProjectile = function (projectile) {
+        if (!projectile.isActive()) return;
+        const detector = CollisionDetector( transform, projectile.getTransform() );
+        if (!detector.collisionOccurred()) return;
+        for (let wall of walls)
+            wall.doCollisionWithProjectile( projectile );
     };
 
     return self;

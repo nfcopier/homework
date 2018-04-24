@@ -19,9 +19,9 @@ return function Wall(parent, point1, point2) {
 
     const self = GameObject( transform );
 
-    self.doCollisionWithPlayer = function (player, elapsedTime) {
+    self.doCollisionWithPlayer = function (player) {
         const detector =
-                  CollisionDetector( player, self, Math.round( elapsedTime ));
+                  CollisionDetector( player, self);
         const collisionPoint = detector.collisionOccurred();
         if (!collisionPoint) return;
         const thisTransform = self.getTransform();
@@ -30,6 +30,14 @@ return function Wall(parent, point1, point2) {
             t.y = collisionPoint.y;
         else
             t.x = collisionPoint.x;
+    };
+
+    self.doCollisionWithProjectile = function (projectile) {
+        const detector =
+                  CollisionDetector( projectile, self);
+        const collisionPoint = detector.collisionOccurred();
+        if (!collisionPoint) return;
+        projectile.end();
     };
 
     self.getTransform = function () {

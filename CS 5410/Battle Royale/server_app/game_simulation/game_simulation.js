@@ -35,9 +35,10 @@ return function GameSimulation(clients) {
         projectiles.forEach( saveTransform );
         players.forEach( doUpdate(elapsedTime) );
         projectiles.forEach( doUpdate(elapsedTime) );
-        map.buildings().forEach( doPlayerCollisions(elapsedTime) );
-        projectiles.forEach( doPlayerCollisions() );
-        projectiles.forEach( doProjectileCollisions() );
+        map.buildings().forEach( doPlayerCollisions );
+        map.buildings().forEach( doProjectileCollisions );
+        projectiles.forEach( doPlayerCollisions );
+        projectiles.forEach( doProjectileCollisions );
         projectiles = projectiles.filter( isStillActive );
         players.filter( isDead ).forEach( respawn );
         players.filter( hasAvatar ).forEach( spawnProjectiles );
@@ -61,14 +62,14 @@ return function GameSimulation(clients) {
     const doUpdate = (elapsedTime) => (gameObject) =>
         gameObject.update( elapsedTime );
 
-    const doPlayerCollisions = (elapsedTime) => function(gameObject) {
+    const doPlayerCollisions = function(gameObject) {
         for (let player of players.filter( hasAvatar ))
-            gameObject.doCollisionWithPlayer( player, elapsedTime );
+            gameObject.doCollisionWithPlayer( player );
     };
 
-    const doProjectileCollisions = (elapsedTime) => function (gameObject) {
+    const doProjectileCollisions = function (gameObject) {
         for (let projectile of projectiles)
-            gameObject.doCollisionWithProjectile( projectile, elapsedTime );
+            gameObject.doCollisionWithProjectile( projectile );
     };
 
     const isStillActive = (projectile) => projectile.isActive();
