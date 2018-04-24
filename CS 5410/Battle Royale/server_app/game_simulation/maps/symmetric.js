@@ -3,7 +3,7 @@ module.exports = function (
     PowerUp
 ) {
 
-return function Symmetric() {
+return function Symmetric({width, height}) {
 
     const self = {};
 
@@ -65,7 +65,12 @@ return function Symmetric() {
         return Building( transform, color, [] );
     };
 
-    self.buildingData = () => buildings.map( data );
+    self.buildingData = function() {
+        return {
+            extents: { width: width, height: height },
+            buildings: buildings.map( data )
+        };
+    };
 
     const data = (building) => building.data();
 

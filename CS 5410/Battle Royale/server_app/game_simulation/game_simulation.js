@@ -4,7 +4,7 @@ module.exports = function (
     maps
 ) {
 
-const BUBBLE_COUNTDOWN = 60 * 1000;
+const BUBBLE_COUNTDOWN = 5 * 60 * 1000;
 
 return function GameSimulation(clients) {
 
@@ -15,7 +15,7 @@ return function GameSimulation(clients) {
 
     const self = {};
 
-    let map = maps[Math.floor(Math.random()*maps.length)]();
+    let map = maps[Math.floor(Math.random()*maps.length)](transform);
 
     let players = [];
     let gameState = {

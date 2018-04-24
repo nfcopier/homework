@@ -88,6 +88,22 @@ return function Graphics(context) {
         context.globalAlpha = 0.5;
     };
 
+    self.strokeCircle = function({center, radius, color, alpha, thickness}) {
+        if (alpha) context.globalAlpha = alpha;
+        context.strokeStyle = color;
+        context.lineWidth = thickness;
+        context.beginPath();
+        context.arc(
+            center.x,
+            center.y,
+            radius,
+            0,
+            2*Math.PI
+        );
+        context.stroke();
+        context.globalAlpha = 0.5;
+    };
+
     self.drawLine = function(spec) {};
 
     self.clip = function (points) {

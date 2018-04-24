@@ -11,6 +11,7 @@ export default function (
     PlayerCountRenderer,
     AnalyticsRenderer,
     AmmoRenderer,
+    MapRenderer,
     ParticleEffectRenderer,
     Camera,
     Renderer
@@ -54,7 +55,7 @@ return function GameRenderer(simulation) {
         self.graphics.renderBubble( simulation.bubbleData() );
         superRender( context );
         context.restore();
-        self.render = renderUI();
+        self.render = renderUI( playerState );
         superRender( context );
     };
 
@@ -93,7 +94,8 @@ return function GameRenderer(simulation) {
         self.graphics.drawText( scoreSpec );
     };
 
-    const addUIChildren = function () {
+    const addUIChildren = function (playerState) {
+        self.children.push( createMapRenderer( playerState ) );
         self.children.push( createScoreRenderer() );
         self.children.push( createHealthRenderer() );
         self.children.push( createPlayerCountRenderer() );
@@ -152,6 +154,13 @@ return function GameRenderer(simulation) {
                 context.restore();
             }
         };
+    };
+
+    const createMapRenderer = function (playerState) {
+        const bubbleData = simulation.bubbleData();
+        const buildings = simulation.buildings();
+        const extents = simulation.extents();
+        return MapRenderer( transform, bubbleData, playerState, buildings, extents );
     };
 
     const createScoreRenderer = function () {

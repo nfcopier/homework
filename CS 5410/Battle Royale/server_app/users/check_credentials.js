@@ -6,7 +6,6 @@ return !string || !string.trim().length
 
 return function CheckCredentials(username, password) {
 
-    return true;
     if (isNullOrEmpty( username ))
         throw "username_empty";
     if (isNullOrEmpty( password ))

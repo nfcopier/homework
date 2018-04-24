@@ -31,6 +31,7 @@ return function GameSimulation() {
     let missiles = [];
     let bullets = [];
     let buildings;
+    let extents;
 
     self.update = function(actions, input, elapsedTime) {
         if (input.loggedout) gameOver = true;
@@ -105,7 +106,8 @@ return function GameSimulation() {
     };
 
     const respawn = function({spawnPoint, buildingData}) {
-        buildings = buildingData.map( toBuilding );
+        buildings = buildingData.buildings.map( toBuilding );
+        extents = buildingData.extents;
         predictor = StatePredictor( spawnPoint );
         countdown = 3000;
         updateSelf = updateCountdown;
@@ -129,6 +131,10 @@ return function GameSimulation() {
     self.getAvatarState = () => predictor.state();
 
     self.getEnemies = () => enemies;
+
+    self.buildings = () => buildings;
+
+    self.extents = () => extents;
 
     self.playerBuildings = () => buildings.filter( (b) => predictor ? b.contains( predictor.state().transform ) : [] ).map( toData );
 

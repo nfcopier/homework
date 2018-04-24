@@ -8,6 +8,7 @@ import healthRenderer         from "./health_renderer.js"
 import playerCountRenderer    from "./player_count_renderer.js"
 import analyticsRenderer      from "./analytics_renderer.js"
 import ammoRenderer           from "./ammo_renderer.js"
+import mapRenderer            from "./map_renderer.js"
 import particleEffectRenderer from "./particle_effect_renderer.js"
 import camera                 from "./camera.js"
 import gameRenderer           from "./game_renderer.js"
@@ -57,6 +58,10 @@ export default function (
         Renderer
     );
 
+    const MapRenderer = mapRenderer(
+        Renderer
+    );
+
     const ParticleEffectRenderer = particleEffectRenderer(
         Renderer
     );
@@ -76,6 +81,7 @@ export default function (
         PlayerCountRenderer,
         AnalyticsRenderer,
         AmmoRenderer,
+        MapRenderer,
         ParticleEffectRenderer,
         Camera,
         Renderer
