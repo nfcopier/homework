@@ -23,6 +23,7 @@ module.exports = function (
 
     const maps = m(
         gameObjects.Building,
+        gameObjects.PowerUp,
         () => {}
     );
 

@@ -140,6 +140,8 @@ return function GameSimulation() {
 
     self.bullets = () => bullets;
 
+    self.powerUps = () => gameState.powerUps;
+
     self.getScore = () => gameState.score;
 
     self.getCountdown = () => countdown;

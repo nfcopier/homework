@@ -3,6 +3,7 @@ export default function (
     AvatarRenderer,
     PlayerRenderer,
     BuildingRenderer,
+    PowerUpRenderer,
     MissileRenderer,
     BulletRenderer,
     ScoreRenderer,
@@ -106,6 +107,8 @@ return function GameRenderer(simulation) {
         for (let building of simulation.playerBuildings())
             self.children.push( BuildingRenderer( building ) );
         addEnemies( playerState );
+        for (let powerUp of simulation.powerUps())
+            self.children.push( PowerUpRenderer( powerUp ) );
         for (let missile of simulation.missiles())
             self.children.push( MissileRenderer( missile.transform ) );
         for (let bullet of simulation.bullets())

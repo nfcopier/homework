@@ -1,10 +1,14 @@
-module.exports = function (Building) {
+module.exports = function (
+    Building,
+    PowerUp
+) {
 
 return function Symmetric() {
 
     const self = {};
 
     let spawnPoints;
+    let powerUps;
     let buildings = [];
 
     const initialize = function() {
@@ -14,6 +18,7 @@ return function Symmetric() {
             width: 1000, height: 1000,
             theta: 0
         };
+        initializePowerUps();
         const wallSpecs = centerBuildingWalls();
         buildings.push( Building( centerTransform, "white", wallSpecs ) );
         // buildings.push( buildingTemplate(0, "red") );
@@ -25,6 +30,16 @@ return function Symmetric() {
             { x: 400, y: -400 },
             { x: 400, y: 400 },
             { x: -400, y: 400 }
+        ];
+    };
+
+    const initializePowerUps = function () {
+        powerUps = [
+            PowerUp( { x: -10, y: -10 }, "missile" ),
+            PowerUp( { x: -600, y: -600 }, "health" ),
+            PowerUp( { x: 580, y: -600 }, "bullets" ),
+            PowerUp( { x: -600, y: 580 }, "bullets" ),
+            PowerUp( { x: 580, y: 580 }, "health" )
         ];
     };
 
@@ -59,6 +74,8 @@ return function Symmetric() {
     };
 
     self.buildings = () => buildings;
+
+    self.powerUps = () => powerUps;
 
     initialize();
 

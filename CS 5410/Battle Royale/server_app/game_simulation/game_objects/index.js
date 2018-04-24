@@ -5,6 +5,7 @@ const missile = require("./missile");
 const bullet = require("./bullet");
 const wall = require("./wall");
 const building = require("./building");
+const powerUp = require("./power_up");
 
 module.exports = function (
     collisionSystems
@@ -34,11 +35,17 @@ module.exports = function (
         GameObject
     );
 
+    const PowerUp = powerUp(
+        collisionSystems.BoundingBoxDetector,
+        GameObject
+    );
+
     return {
         GameObject: GameObject,
         Avatar: Avatar,
         Missile: Missile,
         Bullet: Bullet,
-        Building: Building
+        Building: Building,
+        PowerUp: PowerUp
     }
 };

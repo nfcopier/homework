@@ -35,6 +35,7 @@ return function GameSimulation(clients) {
         projectiles.forEach( saveTransform );
         players.forEach( doUpdate(elapsedTime) );
         projectiles.forEach( doUpdate(elapsedTime) );
+        map.powerUps().forEach( doPlayerCollisions );
         map.buildings().forEach( doPlayerCollisions );
         map.buildings().forEach( doProjectileCollisions );
         projectiles.forEach( doPlayerCollisions );
@@ -46,6 +47,7 @@ return function GameSimulation(clients) {
         gameState.elapsedTime = elapsedTime;
         gameState.missiles = projectiles.filter( isMissile ).map( projectileData );
         gameState.bullets = projectiles.filter( isBullet ).map( projectileData );
+        gameState.powerUps = map.powerUps().map( powerUpData ).filter( notNull ) ;
         gameState.playersRemaining = players.length;
         players.forEach( send(gameState) );
     };
@@ -105,8 +107,12 @@ return function GameSimulation(clients) {
 
     const projectileData = (projectile) => projectile.ownData();
 
+    const powerUpData = (powerUp) => powerUp.data();
+
     const isMissile = (projectile) => projectile.isMissile();
     const isBullet = (projectile) => projectile.isBullet();
+
+    const notNull = (object) => !!object;
 
     const send = (gameState) => function (player) {
         player.sendPlayerUpdate();

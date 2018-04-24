@@ -2,6 +2,7 @@ import countdownRenderer      from "./countdown_renderer.js"
 import avatarRenderer         from "./avatar_renderer.js"
 import playerRenderer         from "./player_renderer.js"
 import buildingRenderer       from "./building_renderer.js"
+import powerUpRenderer        from "./power_up_renderer.js"
 import scoreRenderer          from "./score_renderer.js"
 import healthRenderer         from "./health_renderer.js"
 import playerCountRenderer    from "./player_count_renderer.js"
@@ -29,6 +30,10 @@ export default function (
     );
 
     const BuildingRenderer = buildingRenderer(
+        Renderer
+    );
+
+    const PowerUpRenderer = powerUpRenderer(
         Renderer
     );
 
@@ -63,6 +68,7 @@ export default function (
         AvatarRenderer,
         PlayerRenderer,
         BuildingRenderer,
+        PowerUpRenderer,
         Renderer,
         Renderer,
         ScoreRenderer,

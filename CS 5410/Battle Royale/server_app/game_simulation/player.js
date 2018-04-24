@@ -5,12 +5,13 @@ module.exports = function (
 ) {
 
 const FULL_HEALTH = 20;
-const COUNTDOWN_TIME = 1000;
+const COUNTDOWN_TIME = 3000;
 const MAX_MISSILE_AMMO = 4;
-const MAX_BULLET_AMMO = 100;
-const BULLET_BUNDLE = 10;
+const MAX_BULLET_AMMO = 200;
+const BULLET_BUNDLE = 50;
 const MISSILE_COOL_DOWN = 1000;
 const BULLET_COOL_DOWN = 250;
+const HEAL_RATE = 5;
 
 return function Player(client) {
 
@@ -115,8 +116,8 @@ return function Player(client) {
         spawnPoint = newSpawnPoint;
         health = FULL_HEALTH;
         countdown = COUNTDOWN_TIME;
-        missileAmmo = MAX_MISSILE_AMMO;
-        bulletAmmo = MAX_BULLET_AMMO;
+        missileAmmo = MAX_MISSILE_AMMO / 2;
+        bulletAmmo = MAX_BULLET_AMMO / 2;
         missileInCoolDown = false;
         bulletInCoolDown = false;
         client.respawn( spawnPoint, buildingData );
@@ -157,6 +158,7 @@ return function Player(client) {
         personalUpdate.enemies = getEnemiesFrom( gameState );
         personalUpdate.missiles = getMissilesFrom( gameState );
         personalUpdate.bullets = getBulletsFrom( gameState );
+        personalUpdate.powerUps = getPowerUpsFrom( gameState );
         personalUpdate.score = score;
         delete personalUpdate.playerData;
         return personalUpdate;
@@ -176,6 +178,10 @@ return function Player(client) {
         return gameState.bullets.filter( isNearby );
     };
 
+    const getPowerUpsFrom = function (gameState) {
+        return gameState.powerUps.filter( isNearby );
+    };
+
     const isNearby = function(otherData) {
         const thisLocation = avatar ? avatar.getTransform() : spawnPoint;
         const otherLocation = otherData.transform;
@@ -191,8 +197,8 @@ return function Player(client) {
 
     self.damage = (value) => health -= value;
 
-    self.heal = function (value) {
-        health += value;
+    self.heal = function () {
+        health += HEAL_RATE;
         if (health > FULL_HEALTH) health = FULL_HEALTH;
     };
 
