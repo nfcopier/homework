@@ -34,6 +34,7 @@ return function GameSimulation() {
     let extents;
 
     self.update = function(actions, input, elapsedTime) {
+        otherAction = actions.other;
         if (input.loggedout) gameOver = true;
         if (gameOver) return;
         updateGameWorld( actions, input, elapsedTime );
@@ -42,7 +43,6 @@ return function GameSimulation() {
 
     const updateGameWorld = function (actions, input, elapsedTime) {
         updateFps( elapsedTime );
-        otherAction = actions.other;
         if (input.gameState) updateGameState( input.gameState );
         enemies.forEach( doInterpolation(elapsedTime) );
         particleSystem.update( elapsedTime );

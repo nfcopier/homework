@@ -33,8 +33,10 @@ return function GameSimulation(clients) {
     let projectiles = [];
 
     self.update = function(elapsedTime) {
-        gameState.gameTime += elapsedTime;
         clients.justLoggedIn().forEach( addPlayer );
+        verifyGameIntegrity();
+        if (players.length < 1) return;
+        gameState.gameTime += elapsedTime;
         players = players.filter( isLoggedIn );
         doBubbleUpdate( elapsedTime );
         players.filter( hasAvatar ).forEach( saveTransform );
@@ -60,12 +62,25 @@ return function GameSimulation(clients) {
     };
 
     const addPlayer = function (client) {
+        if (gameState.gameTime > 2 * 60 * 1000) return;
         const player = Player(client);
         players.push(player);
         respawn( player )
     };
 
     const isLoggedIn = (player) => player.isLoggedIn();
+
+    const verifyGameIntegrity = function () {
+        if (!(
+            gameState.bubble.radius < 1 ||
+            !players.length ||
+            gameState.gameTime > 2 * 60 * 1000 && players.length < 2
+        )) return;
+        players.forEach( endGame );
+        players = [];
+        gameState.bubble.radius = Math.min( transform.width, transform.height );
+        gameState.gameTime = 0;
+    };
 
     const doBubbleUpdate = function (elapsedTime) {
         gameState.bubble.countdown -= elapsedTime;

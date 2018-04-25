@@ -30,10 +30,10 @@ return function Client(socket) {
         socket.on( "disconnect", leaveGame );
     };
 
-    const joinGame = function ({ uname, password } = {}) {
+    const joinGame = function (credentials = {}) {
         try {
-            username = uname;
-            const isAuthorized = users.check(username, password);
+            username = credentials.username;
+            const isAuthorized = users.check(username, credentials.password);
             if (!isAuthorized) return;
             justLoggedIn = true;
             isLoggedIn = true;
