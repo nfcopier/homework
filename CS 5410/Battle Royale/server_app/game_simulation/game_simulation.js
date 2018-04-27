@@ -4,7 +4,7 @@ module.exports = function (
     maps
 ) {
 
-const BUBBLE_COUNTDOWN = 5 * 60 * 1000;
+const BUBBLE_COUNTDOWN = 2 * 60 * 1000;
 
 return function GameSimulation(clients) {
 
@@ -44,6 +44,7 @@ return function GameSimulation(clients) {
         players.forEach( doUpdate(elapsedTime) );
         projectiles.forEach( doUpdate(elapsedTime) );
         players.filter( hasAvatar ).filter( isOutsideBubble ).forEach( doBubbleDamage(elapsedTime) );
+        map.powerUps().forEach( doUpdate( elapsedTime ) );
         map.powerUps().forEach( doPlayerCollisions );
         map.buildings().forEach( doPlayerCollisions );
         map.buildings().forEach( doProjectileCollisions );
