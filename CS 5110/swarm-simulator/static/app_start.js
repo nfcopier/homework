@@ -10,14 +10,15 @@ export default function () {
     const inputSource = InputSource( SIM_WIDTH, SIM_HEIGHT );
     const game = Game();
     const renderer = Renderer();
-    let lastTime = Date.now();
+    let lastTime = performance.now();
 
     const gameLoop = function (now) {
         const elapsedTime = now - lastTime;
         const input = inputSource.input();
         game.update( input, elapsedTime );
-        renderer.update( game.state() );
+        renderer.update( game.entities() );
         inputSource.reset();
+        lastTime = now;
         requestAnimationFrame( gameLoop );
     };
 

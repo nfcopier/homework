@@ -6,6 +6,8 @@ const ENVIRON_COLORS = {
     '3': "#444"
 };
 
+const ENTITY_SIGHT_SQUARED = 10000;
+
 const ENVIRON_RADIUS = 5;
 
 export default function () {
@@ -21,14 +23,29 @@ export default function () {
             addEntity( input.entity, input.mouseLocation);
         updateControlFrom( input.control );
         if (!isRunning) return;
+        agents.forEach( setOthers );
         agents.forEach( update( elapsedTime ) )
     };
 
     const addEntity = function (type, location) {
+        if (isOnTopOfExisting(location)) return;
         if ("123".includes(type))
             addEnviron( type, location );
         if ("abcd".includes(type))
             addAgent( type, location );
+    };
+
+    let distanceBetween = function (one, two) {
+        return (one.x - two.x) * (one.x - two.x) +
+            (one.y - two.y) * (one.y - two.y);
+    };
+
+    const isOnTopOfExisting = function (location) {
+        for (let entity of self.entities()) {
+            const distanceSquared = distanceBetween( location, entity );
+            if (distanceSquared < 100) return true;
+        }
+        return false;
     };
 
     const addEnviron = function (type, location) {
@@ -37,7 +54,8 @@ export default function () {
             color: color,
             type: type,
             radius: ENVIRON_RADIUS,
-            location: location
+            x: location.x,
+            y: location.y
         });
     };
 
@@ -58,9 +76,33 @@ export default function () {
         agents = [];
     };
 
-    const update = (elapsedTime) => function(entity) {};
+    const setOthers = function (entity) {
+        const others =
+                  agents.filter( e => e !== entity )
+                  .map( agentState )
+                  .concat( environs )
+                  .filter( isWithinSightOf( entity.state() ) )
+                  .map( relativeTo( entity.state() ) );
+        entity.setOthers( others );
+    };
 
-    self.state = () => environs.concat( agents.map( agentState ) );
+    const isWithinSightOf = (entity) => function (other) {
+        const distanceSquared =
+                  (entity.x-other.x)*(entity.x-other.x) + (entity.y-other.y)*(entity.y-other.y);
+        return distanceSquared < ENTITY_SIGHT_SQUARED;
+    };
+
+    const relativeTo = (entity) => function (other) {
+        return {
+            x: entity.x - other.x,
+            y: entity.y - other.y,
+            type: other.type
+        };
+    };
+
+    const update = (elapsedTime) => (entity) => entity.update( elapsedTime );
+
+    self.entities = () => environs.concat( agents.map( agentState ) );
 
     const agentState = (agent) => agent.state();
 

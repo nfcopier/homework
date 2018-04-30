@@ -12,6 +12,7 @@ export default function (simWidth, simHeight) {
 
     const $play = $("#play");
     const $pause = $("#pause");
+    const $reset = $("#reset");
 
     let input = {
         control  : null,
@@ -33,6 +34,7 @@ export default function (simWidth, simHeight) {
             $(`#${id}`).on("click", onChooseControl(id));
         $play.on( "click", onClickPlay );
         $pause.on( "click", onClickPause );
+        $reset.on( "click", onClickPause );
     };
 
     const onChooseEnviron = function (i) {
