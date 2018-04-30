@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Swam Simulator</title>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css"
+          integrity="sha256-2k1KVsNPRXxZOsXQ8aqcZ9GOOwmJTMoOB5o5Qp1d6/s="
+          crossorigin="anonymous"
+    />
+    <script defer
+            src="https://use.fontawesome.com/releases/v5.0.10/js/all.js"
+            integrity="sha384-slN8GvtUJGnv6ca26v8EzVaR9DC58QEwsIk9q1QXdCU8Yu8ck/tL/5szYlBbqmS+"
+            crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" href="./static/styles.css">
+</head>
+<body>
+<div class="main">
+    <div class="controls">
+        <div class="playback-controls frame">
+            <div class="buttons">
+                <button id="play" class="button is-success is-large">
+                    <span class="icon">
+                        <i class="fas fa-play"></i>
+                    </span>
+                    <span>Play</span>
+                </button>
+                <button id="pause" class="button is-warning is-large" disabled>
+                    <span class="icon">
+                        <i class="fas fa-pause"></i>
+                    </span>
+                    <span>Pause</span>
+                </button>
+            </div>
+            <div class="buttons">
+                <button id="reset" class="button is-danger is-fullwidth">Reset</button>
+            </div>
+        </div>
+        <div class="frame">
+            <button
+                    class="agent is-info is-outlined button"
+                    id="environ-1"
+            >
+                <span class="light-gray icon"></span>
+                <span class="agent-label">Environment 1</span>
+            </button>
+            <button
+                    class="agent is-info is-outlined button"
+                    id="environ-2"
+            >
+                <span class="brown icon"></span>
+                <span class="agent-label">Environment 2</span>
+            </button>
+            <button
+                    class="agent is-info is-outlined button"
+                    id="environ-3"
+            >
+                <span class="dark-gray icon"></span>
+                <span class="agent-label">Environment 3</span>
+            </button>
+        </div>
+        <div class="frame">
+            <button
+                    class="agent is-info is-outlined button"
+                    id="agent-a"
+            >
+                <span class="green icon"></span>
+                <span class="agent-label">Agent A</span>
+            </button>
+            <button
+                    class="agent is-info is-outlined button"
+                    id="agent-b"
+            >
+                <span class="magenta icon"></span>
+                <span class="agent-label">Agent B</span>
+            </button>
+            <button
+                    class="agent is-info is-outlined button"
+                    id="agent-c"
+            >
+                <span class="yellow icon"></span>
+                <span class="agent-label">Agent C</span>
+            </button>
+            <button
+                    class="agent is-info is-outlined button"
+                    id="agent-d"
+            >
+                <span class="red icon"></span>
+                <span class="agent-label">Agent D</span>
+            </button>
+        </div>
+    </div>
+    <canvas class="sim-canvas frame" width="1024" height="768"></canvas>
+</div>
+<script type="module">
+    import appStart from "./static/app_start.js"
+    appStart();
+</script>
+</body>
+</html>
