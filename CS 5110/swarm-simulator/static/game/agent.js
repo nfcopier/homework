@@ -5,17 +5,20 @@ const AGENT_COLORS = {
     'd': "#F00",
 };
 
+const AGENT_RADIUS = 6;
+
 export default function (type, location) {
 
     const self = {};
 
-    const color = AGENT_COLORS[type]
+    const color = AGENT_COLORS[type];
 
     self.update = function (others, elapsedTime) {};
 
     self.state = function () {
         return {
             color: color,
+            radius: AGENT_RADIUS,
             location: location
         };
     };

@@ -1,6 +1,11 @@
 export default function (simWidth, simHeight) {
 
     const $ = document.querySelector.bind(document);
+    const canvas = $(".sim-canvas");
+    const canvasLeft = canvas.offsetLeft;
+    const canvasTop = canvas.offsetTop;
+    const scaleX = simWidth / canvas.clientWidth;
+    const scaleY = simHeight / canvas.clientHeight;
     EventTarget.prototype.on = EventTarget.prototype.addEventListener;
 
     const self = {};
@@ -63,8 +68,8 @@ export default function (simWidth, simHeight) {
 
     const onMouseMove = function(event) {
         input.mouseLocation = {
-            x: event.offsetX,
-            y: event.offsetY
+            x: (event.x - canvasLeft) * scaleX,
+            y: (event.y - canvasTop) * scaleY
         };
     };
 

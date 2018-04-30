@@ -6,6 +6,8 @@ const ENVIRON_COLORS = {
     '3': "#444"
 };
 
+const ENVIRON_RADIUS = 5;
+
 export default function () {
 
     const self = {};
@@ -23,15 +25,20 @@ export default function () {
     };
 
     const addEntity = function (type, location) {
-        if (type in ['1', '2', '3'])
+        if ("123".includes(type))
             addEnviron( type, location );
-        if (type in ['a', 'b', 'c', 'd'])
+        if ("abcd".includes(type))
             addAgent( type, location );
     };
 
     const addEnviron = function (type, location) {
         const color = ENVIRON_COLORS[type];
-        environs.push({ color: color, type: type, location: location });
+        environs.push({
+            color: color,
+            type: type,
+            radius: ENVIRON_RADIUS,
+            location: location
+        });
     };
 
     const addAgent = function(type, location) {
