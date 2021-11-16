@@ -1,8 +1,8 @@
-import {Gaussian} from "./random.js"
-import shatteringEffect from "./brick_shattering_effect.js"
-import particleSystem from "./particle_system.js"
+import shatteringEffect from "./brick_shattering_effect.js";
+import particleSystem   from "./particle_system.js";
+import {Gaussian}       from "./random.js";
 
-export default function () {
+export default function() {
 
     const ShatteringEffect = shatteringEffect(
         {Gaussian: Gaussian}

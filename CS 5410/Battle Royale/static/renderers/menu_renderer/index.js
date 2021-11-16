@@ -1,10 +1,10 @@
-import buttonRenderer from "./button_renderer.js"
-import textRenderer from "./text_field_renderer.js"
-import scoresRenderer from "./scores_renderer.js"
-import creditsRenderer from "./credits_renderer.js"
-import menuRenderer from "./menu_renderer.js"
+import buttonRenderer  from "./button_renderer.js";
+import creditsRenderer from "./credits_renderer.js";
+import menuRenderer    from "./menu_renderer.js";
+import scoresRenderer  from "./scores_renderer.js";
+import textRenderer    from "./text_field_renderer.js";
 
-export default function (Renderer) {
+export default function(Renderer) {
 
     const ButtonRenderer = buttonRenderer(
         Renderer
@@ -28,6 +28,6 @@ export default function (Renderer) {
         ScoresRenderer,
         CreditsRenderer,
         Renderer
-    )
+    );
 
 }

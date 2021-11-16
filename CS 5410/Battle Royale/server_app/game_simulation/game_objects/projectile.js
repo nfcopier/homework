@@ -1,13 +1,11 @@
-module.exports = function (
-    CollisionDetector,
-    GameObject
-) {
+const GameObject = require("./game_object.js");
+const CollisionDetector = require("../collision_systems/bounding_box_detector.js");
 
 const KILL_AWARD = 10;
 
-return function Projectile(speed, width, height, lifetime, owner) {
+module.exports = function Projectile(speed, width, height, lifetime, owner) {
 
-    const id = Math.floor( Math.random() * Number.MAX_SAFE_INTEGER );
+    const id = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
 
     function calculateTransform() {
         const ownerTransform = owner.getTransform();
@@ -15,24 +13,24 @@ return function Projectile(speed, width, height, lifetime, owner) {
             x: ownerTransform.x + ownerTransform.width / 2,
             y: ownerTransform.y + ownerTransform.height / 2
         };
-        const offset = - ownerTransform.height / 2 - height;
+        const offset = -ownerTransform.height / 2 - height;
         const theta = ownerTransform.theta;
         return {
-            x: ownerCenter.x + offset * Math.sin( theta ),
-            y: ownerCenter.y + offset * Math.cos( theta ),
-            theta: theta,
-            width: width,
+            x     : ownerCenter.x + offset * Math.sin(theta),
+            y     : ownerCenter.y + offset * Math.cos(theta),
+            theta : theta,
+            width : width,
             height: height
-        }
+        };
     }
 
     const transform = calculateTransform();
 
-    const self = GameObject( transform );
+    const self = GameObject(transform);
 
     const velocity = {
-        x: speed * -Math.sin( transform.theta ),
-        y: speed * -Math.cos( transform.theta )
+        x: speed * -Math.sin(transform.theta),
+        y: speed * -Math.cos(transform.theta)
     };
 
     self.update = function(elapsedTime) {
@@ -41,18 +39,18 @@ return function Projectile(speed, width, height, lifetime, owner) {
         transform.y += velocity.y * elapsedTime;
     };
 
-    self.doCollisionWithPlayer = function (player) {
+    self.doCollisionWithPlayer = function(player) {
         if (player.isDead()) return;
-        const detector = CollisionDetector( transform, player.getTransform() );
+        const detector = CollisionDetector(transform, player.getTransform());
         if (!detector.collisionOccurred()) return;
-        player.damage( self.damage() );
-        if (player.isDead()) owner.award( KILL_AWARD );
+        player.damage(self.damage());
+        if (player.isDead()) owner.award(KILL_AWARD);
         self.end();
     };
 
-    self.doCollisionWithProjectile = function (projectile) {
+    self.doCollisionWithProjectile = function(projectile) {
         if (projectile === self) return;
-        const detector = CollisionDetector( transform, projectile.getTransform() );
+        const detector = CollisionDetector(transform, projectile.getTransform());
         if (!detector.collisionOccurred()) return;
         projectile.end();
         self.end();
@@ -65,16 +63,14 @@ return function Projectile(speed, width, height, lifetime, owner) {
     self.isMissile = () => false;
     self.isBullet = () => false;
 
-    self.ownData = function () {
+    self.ownData = function() {
         return {
-            id: id,
+            id       : id,
             transform: transform,
-            lifetime: lifetime
-        }
+            lifetime : lifetime
+        };
     };
 
     return self;
-
-}
 
 };

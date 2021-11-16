@@ -1,7 +1,7 @@
-import menuSimulation from "./menu_simulation/index.js"
-import gameSimulation from "./game_simulation/index.js"
+import gameSimulation from "./game_simulation/index.js";
+import menuSimulation from "./menu_simulation/index.js";
 
-export default function (
+export default function(
     Actions
 ) {
 

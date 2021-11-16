@@ -1,9 +1,9 @@
-import graphics from "./graphics.js"
-import renderer from "./renderer.js"
-import menuRenderer from "./menu_renderer/index.js"
-import gameRenderer from "./game_renderer/index.js"
+import gameRenderer from "./game_renderer/index.js";
+import graphics     from "./graphics.js";
+import menuRenderer from "./menu_renderer/index.js";
+import renderer     from "./renderer.js";
 
-export default function () {
+export default function() {
 
     const Graphics = graphics();
 

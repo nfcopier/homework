@@ -1,9 +1,7 @@
-module.exports = function (
-    Building,
-    PowerUp
-) {
+const Building = require("../game_objects/building.js");
+const PowerUp = require("../game_objects/power_up.js");
 
-return function Symmetric({width, height}) {
+module.exports = function Symmetric({width, height}) {
 
     const self = {};
 
@@ -14,68 +12,68 @@ return function Symmetric({width, height}) {
     const initialize = function() {
         initializeSpawns();
         const centerTransform = {
-            x: -500, y: -500,
+            x    : -500, y: -500,
             width: 1000, height: 1000,
             theta: 0
         };
         initializePowerUps();
         const wallSpecs = centerBuildingWalls();
-        buildings.push( Building( centerTransform, "white", wallSpecs ) );
+        buildings.push(Building(centerTransform, "white", wallSpecs));
         // buildings.push( buildingTemplate(0, "red") );
     };
 
-    const initializeSpawns = function () {
+    const initializeSpawns = function() {
         spawnPoints = [
-            { x: -400, y: -400 },
-            { x: 400, y: -400 },
-            { x: 400, y: 400 },
-            { x: -400, y: 400 }
+            {x: -400, y: -400},
+            {x: 400, y: -400},
+            {x: 400, y: 400},
+            {x: -400, y: 400}
         ];
     };
 
-    const initializePowerUps = function () {
+    const initializePowerUps = function() {
         powerUps = [
-            PowerUp( { x: -10, y: -10 }, "missile" ),
-            PowerUp( { x: -600, y: -600 }, "health" ),
-            PowerUp( { x: 580, y: -600 }, "bullets" ),
-            PowerUp( { x: -600, y: 580 }, "bullets" ),
-            PowerUp( { x: 580, y: 580 }, "health" )
+            PowerUp({x: -10, y: -10}, "missile"),
+            PowerUp({x: -600, y: -600}, "health"),
+            PowerUp({x: 580, y: -600}, "bullets"),
+            PowerUp({x: -600, y: 580}, "bullets"),
+            PowerUp({x: 580, y: 580}, "health")
         ];
     };
 
-    const centerBuildingWalls = function () {
+    const centerBuildingWalls = function() {
         return [
-            { p1: { x: 10, y: 10}, p2: { x: 440, y: 10 } },
-            { p1: { x: 560, y: 10}, p2: { x: 990, y: 10 } },
-            { p1: { x: 10, y: 990}, p2: { x: 440, y: 990 } },
-            { p1: { x: 560, y: 990}, p2: { x: 990, y: 990 } },
-            { p1: { x: 10, y: 10}, p2: { x: 10, y: 440 } },
-            { p1: { x: 10, y: 560}, p2: { x: 10, y: 990 } },
-            { p1: { x: 990, y: 10}, p2: { x: 990, y: 440 } },
-            { p1: { x: 990, y: 560}, p2: { x: 990, y: 990 } }
+            {p1: {x: 10, y: 10}, p2: {x: 440, y: 10}},
+            {p1: {x: 560, y: 10}, p2: {x: 990, y: 10}},
+            {p1: {x: 10, y: 990}, p2: {x: 440, y: 990}},
+            {p1: {x: 560, y: 990}, p2: {x: 990, y: 990}},
+            {p1: {x: 10, y: 10}, p2: {x: 10, y: 440}},
+            {p1: {x: 10, y: 560}, p2: {x: 10, y: 990}},
+            {p1: {x: 990, y: 10}, p2: {x: 990, y: 440}},
+            {p1: {x: 990, y: 560}, p2: {x: 990, y: 990}}
         ];
     };
 
     const buildingTemplate = function(rotation, color) {
         const transform = {
-            x: 1500, y: 1500,
+            x    : 1500, y: 1500,
             width: 500, height: 500,
             theta: rotation
         };
-        return Building( transform, color, [] );
+        return Building(transform, color, []);
     };
 
     self.buildingData = function() {
         return {
-            extents: { width: width, height: height },
-            buildings: buildings.map( data )
+            extents  : {width: width, height: height},
+            buildings: buildings.map(data)
         };
     };
 
     const data = (building) => building.data();
 
     self.randomSpawnPoint = function() {
-        return spawnPoints[ Math.floor( Math.random() * spawnPoints.length) ];
+        return spawnPoints[Math.floor(Math.random() * spawnPoints.length)];
     };
 
     self.buildings = () => buildings;
@@ -85,7 +83,5 @@ return function Symmetric({width, height}) {
     initialize();
 
     return self;
-
-};
 
 };

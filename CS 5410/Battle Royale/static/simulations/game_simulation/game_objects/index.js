@@ -1,19 +1,18 @@
-import gameObject from "./game_object.js"
-import building from "./building.js"
-import avatar from "./avatar.js"
+import avatar     from "./avatar.js";
+import building   from "./building.js";
+import gameObject from "./game_object.js";
 
-export default function (
-) {
+export default function() {
 
     const GameObject = gameObject();
 
-    const Avatar = avatar( GameObject );
+    const Avatar = avatar(GameObject);
 
-    const Building = building( GameObject );
+    const Building = building(GameObject);
 
     return {
         GameObject: GameObject,
-        Avatar: Avatar,
-        Building: Building
-    }
+        Avatar    : Avatar,
+        Building  : Building
+    };
 }

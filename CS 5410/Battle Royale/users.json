@@ -1,1 +1,14 @@
-[{"username":"Nathan","password":"isawesome"},{"username":"Joe","password":"QqRwSe"},{"username":"octoshrimpy","password":"test"}]
+[
+  {
+    "username": "Nathan",
+    "password": "isawesome"
+  },
+  {
+    "username": "Joe",
+    "password": "QqRwSe"
+  },
+  {
+    "username": "octoshrimpy",
+    "password": "test"
+  }
+]

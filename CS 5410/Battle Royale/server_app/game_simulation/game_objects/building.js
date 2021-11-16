@@ -1,45 +1,41 @@
-module.exports = function (
-    Wall,
-    CollisionDetector,
-    GameObject
-) {
+const Wall = require("./wall.js");
+const CollisionDetector = require("../collision_systems/bounding_box_detector.js");
+const GameObject = require("./game_object.js");
 
-return function Building(transform, color, wallSpecs) {
+module.exports = function Building(transform, color, wallSpecs) {
 
-    const self = GameObject( transform );
+    const self = GameObject(transform);
 
-    const walls = wallSpecs.map( (spec) => Wall( self, spec.p1, spec.p2 ) );
+    const walls = wallSpecs.map((spec) => Wall(self, spec.p1, spec.p2));
 
     self.walls = () => walls;
 
-    self.data = function () {
+    self.data = () => {
         return {
             transform: transform,
             color,
-            walls: wallSpecs
+            walls    : wallSpecs
         };
     };
 
-    self.doCollisionWithPlayer = function (player) {
+    self.doCollisionWithPlayer = (player) => {
         if (player.isDead()) return;
-        const detector = CollisionDetector( transform, player.getTransform() );
+        const detector = CollisionDetector(transform, player.getTransform());
         if (!detector.collisionOccurred()) return;
         for (let wall of walls)
-            wall.doCollisionWithPlayer( player );
+            wall.doCollisionWithPlayer(player);
         for (let wall of walls)
-            wall.doCollisionWithPlayer( player );
+            wall.doCollisionWithPlayer(player);
     };
 
-    self.doCollisionWithProjectile = function (projectile) {
+    self.doCollisionWithProjectile = (projectile) => {
         if (!projectile.isActive()) return;
-        const detector = CollisionDetector( transform, projectile.getTransform() );
+        const detector = CollisionDetector(transform, projectile.getTransform());
         if (!detector.collisionOccurred()) return;
         for (let wall of walls)
-            wall.doCollisionWithProjectile( projectile );
+            wall.doCollisionWithProjectile(projectile);
     };
 
     return self;
-
-};
 
 };

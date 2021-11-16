@@ -1,10 +1,10 @@
-import g              from "./game_objects/index.js"
-import statePredictor from "./avatar_state_predictor.js"
-import c              from "./collision_systems/index.js"
-import p              from "./particle_system/index.js"
-import gameSimulation from "./game_simulation.js"
+import statePredictor from "./avatar_state_predictor.js";
+import c              from "./collision_systems/index.js";
+import g              from "./game_objects/index.js";
+import gameSimulation from "./game_simulation.js";
+import p              from "./particle_system/index.js";
 
-export default function (
+export default function(
     Actions
 ) {
 

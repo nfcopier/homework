@@ -1,25 +1,21 @@
-module.exports = function (
-    Client
-) {
+const Client= require("./client.js");
 
-return function Clients() {
+module.exports = function Clients() {
 
     const self = {};
 
     clients = [];
 
-    self.add = function (clientSocket) {
+    self.add = (clientSocket) => {
         const client = Client(clientSocket);
-        clients.push( client );
+        clients.push(client);
         client.startListening();
     };
 
-    self.justLoggedIn = function () {
-        return clients.filter( c => c.justLoggedIn() );
+    self.justLoggedIn = () => {
+        return clients.filter(c => c.justLoggedIn());
     };
 
     return self;
-
-}
 
 };

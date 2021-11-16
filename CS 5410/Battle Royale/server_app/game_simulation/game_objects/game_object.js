@@ -1,6 +1,4 @@
-module.exports = function () {
-
-return function GameObject(transform) {
+module.exports = function GameObject(transform) {
 
     const self = {};
 
@@ -8,58 +6,57 @@ return function GameObject(transform) {
     let previousTransform;
     const children = [];
 
-    self.addChild = function (child) {
-        child._setParent( self );
-        children.push( child );
+    self.addChild = (child) => {
+        child._setParent(self);
+        children.push(child);
     };
 
-    self._setParent = function (newParent) { parent = newParent };
+    self._setParent = (newParent) => { parent = newParent; };
 
-    self.getParent = function () { return parent; };
+    self.getParent = () => { return parent; };
 
-    self.hasChildren = function () { return children.length > 0; };
+    self.hasChildren = () => { return children.length > 0; };
 
-    self.getChildren = function () { return children; };
+    self.getChildren = () => { return children; };
 
-    self.removeChild = function (child) {
-        const index = children.indexOf( child );
+    self.removeChild = (child) => {
+        const index = children.indexOf(child);
         if (index < 0) throw "This does not contain child";
-        children.splice( index, 1 );
+        children.splice(index, 1);
     };
 
-    self.destroy = function () {
-        parent.removeChild( self );
+    self.destroy = () => {
+        parent.removeChild(self);
     };
 
-    self.toAncestorCoords = function (ancestor) {
+    self.toAncestorCoords = (ancestor) => {
         if (ancestor == null) throw "Ancestor cannot be null";
-        const offset = getOffset( parent, ancestor );
-        if (offset === null) return null;
+        const offset = getOffset(parent, ancestor);
         return {
-            x: transform.x + offset.x,
-            y: transform.y + offset.y,
-            theta: transform.theta + offset.theta,
-            width: transform.width,
+            x     : transform.x + offset.x,
+            y     : transform.y + offset.y,
+            theta : transform.theta + offset.theta,
+            width : transform.width,
             height: transform.height
         };
     };
 
-    const getOffset = function (parent, ancestor) {
+    const getOffset = (parent, ancestor) => {
         if (ancestor === null) throw "Object is not an ancestor of this";
-        if (parent === ancestor) return { x: 0, y: 0, theta: 0};
-        const offset = getOffset( parent.getParent(), ancestor );
+        if (parent === ancestor) return {x: 0, y: 0, theta: 0};
+        const offset = getOffset(parent.getParent(), ancestor);
         const parentTransform = parent.getTransform();
         return {
-            x: parentTransform.x + offset.x,
-            y: parentTransform.y + offset.y,
+            x    : parentTransform.x + offset.x,
+            y    : parentTransform.y + offset.y,
             theta: parentTransform.theta + offset.theta
         };
     };
 
-    self.getTransform = function () { return transform; };
+    self.getTransform = () => { return transform; };
 
-    self.saveTransform = function() {
-        previousTransform = Object.assign( {}, transform );
+    self.saveTransform = () => {
+        previousTransform = Object.assign({}, transform);
     };
 
     self.previousTransform = () => previousTransform;
@@ -67,7 +64,5 @@ return function GameObject(transform) {
     self.saveTransform();
 
     return self;
-
-}
 
 };

@@ -1,16 +1,3 @@
-const symmetric = require("./symmetric");
+const Symmetric = require("./symmetric");
 
-module.exports = function (
-    Building,
-    PowerUp,
-    Wall
-) {
-
-    return [
-        symmetric(
-            Building,
-            PowerUp
-        )
-    ];
-
-};
+module.exports = [Symmetric];

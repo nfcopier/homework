@@ -1,4 +1,4 @@
-export default function (
+export default function(
     Canvas,
     Actions,
     renderers,
@@ -9,13 +9,13 @@ export default function (
 
     function Game() {
         this._canvas = Canvas();
-        this._inputSystem = InputSystem( this._canvas );
+        this._inputSystem = InputSystem(this._canvas);
         this._ioStream = IOStream();
         this._leaveGame();
         this._showMenu();
     }
 
-    Game.prototype.start = function () {
+    Game.prototype.start = function() {
         this._lastTime = performance.now();
         const parent = document.getElementsByClassName("main")[0];
         parent.innerHTML = "";
@@ -25,17 +25,17 @@ export default function (
         this._ioStream.startListening();
     };
 
-    Game.prototype._doLoop = function (currentTime) {
-        const elapsedTime = this._getElapsedTimeFrom( currentTime );
+    Game.prototype._doLoop = function(currentTime) {
+        const elapsedTime = this._getElapsedTimeFrom(currentTime);
         const input = this._ioStream.input();
         if (input.respawn) this._startNewGame();
         const camera = this._canvas.camera();
-        const actions = this._inputSystem.getActions( elapsedTime, camera );
-        this._ioStream.sendInput( actions );
-        this._simulation.update( actions, input, elapsedTime );
+        const actions = this._inputSystem.getActions(elapsedTime, camera);
+        this._ioStream.sendInput(actions);
+        this._simulation.update(actions, input, elapsedTime);
         this._checkGameAction();
-        this._canvas.render( elapsedTime );
-        requestAnimationFrame( this._doLoop.bind(this) );
+        this._canvas.render(elapsedTime);
+        requestAnimationFrame(this._doLoop.bind(this));
     };
 
     Game.prototype._getElapsedTimeFrom = function(currentTime) {
@@ -44,17 +44,17 @@ export default function (
         return elapsedTime;
     };
 
-    Game.prototype._showMenu = function () {
+    Game.prototype._showMenu = function() {
         if (this._gameSimulation && this._gameSimulation.isGameOver())
             this._clearGame();
         this._simulation =
-            simulations.MenuSimulation( this._gameSimulation );
+            simulations.MenuSimulation(this._gameSimulation);
         this._canvas.setRenderer(
-            renderers.MenuRenderer( this._canvas, this._simulation )
+            renderers.MenuRenderer(this._canvas, this._simulation)
         );
     };
 
-    Game.prototype._checkGameAction = function () {
+    Game.prototype._checkGameAction = function() {
         const action = this._simulation.getAction();
         switch (action) {
             case Actions.NEW_GAME: {
@@ -78,11 +78,11 @@ export default function (
                 break;
             }
             case Actions.REGISTER_USER: {
-                this._ioStream.registerUser( this._simulation.getValues() );
+                this._ioStream.registerUser(this._simulation.getValues());
                 break;
             }
             case Actions.JOIN_GAME: {
-                this._ioStream.joinGame( this._simulation.getValues() );
+                this._ioStream.joinGame(this._simulation.getValues());
                 break;
             }
             default: {
@@ -91,25 +91,25 @@ export default function (
         }
     };
 
-    Game.prototype._startNewGame = function () {
+    Game.prototype._startNewGame = function() {
         this._gameSimulation = simulations.GameSimulation();
         this._resumeGame();
     };
 
-    Game.prototype._resumeGame = function () {
+    Game.prototype._resumeGame = function() {
         if (!this._gameSimulation) return;
         this._simulation = this._gameSimulation;
         this._canvas.setRenderer(
-            renderers.GameRenderer( this._simulation )
+            renderers.GameRenderer(this._simulation)
         );
     };
 
-    Game.prototype._leaveGame = function () {
+    Game.prototype._leaveGame = function() {
         this._resumeGame();
         this._ioStream.leaveGame();
     };
 
-    Game.prototype._clearGame = function () {
+    Game.prototype._clearGame = function() {
         this._gameSimulation = null;
         this._showMenu();
     };
