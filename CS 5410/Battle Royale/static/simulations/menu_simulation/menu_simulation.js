@@ -41,9 +41,9 @@ export default function(
                 case "Resume":
                     return gameAction = Actions.RESUME_GAME;
                 case "Join Game":
-                    return showJoin();
+                    return showJoinMenu();
                 case "Join":
-                    return gameAction = Actions.JOIN_GAME;
+                    return awaitGame();
                 case "Register":
                     return showRegistration();
                 case "Submit":
@@ -78,12 +78,21 @@ export default function(
 
         self.getValues = () => menu.getValues();
 
-        function showJoin() {
+        function showJoinMenu() {
             const menu = SubMenu("Join Game");
-            menu.addTextField("username");
-            menu.addTextField("password");
+            // menu.addTextField("username");
+            // menu.addTextField("password");
             menu.addButton("Join");
         }
+
+        const awaitGame = () => {
+            const overlay = document.querySelector(".menu-overlay");
+            overlay.classList.add("enabled");
+            overlay.innerHTML = `<div class="menu-content">
+                Waiting for other players...
+            </div>`;
+            return gameAction = Actions.JOIN_GAME;
+        };
 
         function showRegistration() {
             const menu = SubMenu("Register");

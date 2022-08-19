@@ -16,3 +16,27 @@ canvas {
     width: 100%;
     height: 100%;
 }
+
+.menu-overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    pointer-events: none;
+    opacity: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #000033;
+}
+
+.menu-overlay.enabled {
+    pointer-events: initial;
+    opacity: 1;
+}
+
+.menu-content {
+    color: white;
+    font-size: xxx-large;
+}

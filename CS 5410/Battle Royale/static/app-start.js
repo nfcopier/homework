@@ -8,40 +8,36 @@ import KeyCodes    from "./key_codes.js";
 import r           from "./renderers/index.js";
 import s           from "./simulations/index.js";
 
-export default function() {
+const Canvas = canvas();
 
-    const Canvas = canvas();
+const renderers = r(
+    Directions
+);
 
-    const renderers = r(
-        Directions
-    );
+const simulations = s(
+    Actions,
+    Directions
+);
 
-    const simulations = s(
-        Actions,
-        Directions
-    );
+const InputSystem = inputSystem(
+    KeyCodes,
+    Actions,
+    Directions
+);
 
-    const InputSystem = inputSystem(
-        KeyCodes,
-        Actions,
-        Directions
-    );
+const IOStream = ioStream(
+    window.io
+);
+delete window.io;
 
-    const IOStream = ioStream(
-        window.io
-    );
-    delete window.io;
+const Game = game(
+    Canvas,
+    Actions,
+    renderers,
+    simulations,
+    InputSystem,
+    IOStream
+);
 
-    const Game = game(
-        Canvas,
-        Actions,
-        renderers,
-        simulations,
-        InputSystem,
-        IOStream
-    );
-
-    const gameInstance = new Game();
-    gameInstance.start();
-
-}
+const gameInstance = new Game();
+gameInstance.start();

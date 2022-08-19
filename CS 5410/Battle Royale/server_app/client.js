@@ -30,9 +30,9 @@ module.exports = function Client(socket) {
 
     const joinGame = (credentials = {}) => {
         try {
-            username = credentials.username;
-            const isAuthorized = users.check(username, credentials.password);
-            if (!isAuthorized) return;
+            // username = credentials.username;
+            // const isAuthorized = users.check(username, credentials.password);
+            // if (!isAuthorized) return;
             justLoggedIn = true;
             isLoggedIn = true;
             console.log("Player joined the game!");
