@@ -4,7 +4,7 @@ module.exports = function Clients() {
 
     const self = {};
 
-    clients = [];
+    const clients = [];
 
     self.add = (clientSocket) => {
         const client = Client(clientSocket);

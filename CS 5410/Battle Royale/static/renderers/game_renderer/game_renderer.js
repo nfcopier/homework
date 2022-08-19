@@ -125,8 +125,8 @@ export default function(
         };
 
         const addEnemies = function(playerState) {
-            if (playerState.hasAvatar)
-                self.children.push(Fov(playerState));
+            // if (playerState.hasAvatar)
+            //     self.children.push(Fov(playerState));
             for (let avatar of simulation.getEnemies())
                 self.children.push(AvatarRenderer(avatar));
             if (playerState.hasAvatar)

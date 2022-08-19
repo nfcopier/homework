@@ -16,7 +16,7 @@ export default function(
             for (let i = 0; i < playerState.missileAmmo; i++)
                 renderMissile(missilePlacements[i]);
             superRender();
-            renderFov();
+            // renderFov();
         };
 
         const renderMissile = function(xValue) {
