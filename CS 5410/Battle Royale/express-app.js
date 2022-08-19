@@ -4,7 +4,7 @@ const IO = require("socket.io");
 const Clients = require("./server_app/clients.js");
 const GameSimulation = require("./server_app/game_simulation/game_simulation.js")
 
-const port = process.argv.length > 2 ? process.argv[1] : 3000;
+const port = process.argv.length > 2 ? Number(process.argv[2]) : 3000;
 const TICK_LENGTH = 1000 / 60;
 
 const self = {};
