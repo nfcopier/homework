@@ -33,7 +33,7 @@ export default function(
             const camera = this._canvas.camera();
             const actions = this._inputSystem.getActions(elapsedTime, camera);
             this._ioStream.sendInput(actions);
-            this._simulation.update(actions, null, elapsedTime);
+            this._simulation.update(actions, input, elapsedTime);
             this._checkGameAction();
             this._canvas.render(elapsedTime);
             requestAnimationFrame(this._doLoop.bind(this));
