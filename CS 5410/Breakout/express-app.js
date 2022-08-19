@@ -1,6 +1,6 @@
 const ExpressApp = require("express");
 
-const port = process.argv.length > 2 ? process.argv[1] : 3000;
+const port = process.argv.length > 2 ? Number(process.argv[2]) : 3000;
 
 const app = ExpressApp();
 
